@@ -1,4 +1,5 @@
-package com.zheenbek.music_learn.entities;
+package com.zheenbek.music_learn.entity;
+
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,11 +12,12 @@ public class Assignment {
 
     private Long id;
 
+    private Integer number;
     private String status;
 
-    private String gitHubUrl;
+    private String githubUrl = "";
 
-    private String branch;
+    private String branch = "";
 
     private User assignedTo;
 
@@ -23,7 +25,8 @@ public class Assignment {
         this.id = id;
     }
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -36,12 +39,12 @@ public class Assignment {
         this.status = status;
     }
 
-    public String getGitHubUrl() {
-        return gitHubUrl;
+    public String getGithubUrl() {
+        return githubUrl;
     }
 
-    public void setGitHubUrl(String gitHubUrl) {
-        this.gitHubUrl = gitHubUrl;
+    public void setGithubUrl(String githubUrl) {
+        this.githubUrl = githubUrl;
     }
 
     public String getBranch() {
@@ -59,5 +62,13 @@ public class Assignment {
 
     public void setAssignedTo(User assignedTo) {
         this.assignedTo = assignedTo;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 }

@@ -1,14 +1,45 @@
-import React from 'react';
-// import useLocalStorageState from "../util/useLocalStorageState";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import httpReqAsync from "../services/httpReqAsync";
+import useLocalStorageState from "../util/useLocalStorageState";
 
 const Dashboard = () => {
-//   const [jwt, setJwt] = useLocalStorageState("", "jwt");
+  console.log("hello from Dashboard!");
+  const [jwt] = useLocalStorageState("", "jwt");
 
-    return (
-        <div>
-            Welcome to my dahsboard!
-        </div>
-    );
+  const [assignments, setAssignments] = useState(null);
+
+  useEffect(() => {
+    httpReqAsync("api/v1/assignments", "GET", jwt).then((assignmentData) => {
+      setAssignments(assignmentData);
+    });
+  }, [jwt]);
+
+  const createAssignment = () => {
+    console.log("creating a request!");
+    httpReqAsync("api/v1/assignments", "POST", jwt).then((assignment) => {
+      window.location.href = `/assignments/${assignment.id}`;
+    });
+  };
+  console.log("byebye from Dashboard!");
+
+  return (
+    <div style={{ margin: "2em" }}>
+      Welcome to my dahsboard!
+      {assignments ? (
+        assignments.map((assignment) => (
+          <div key={assignment.id}>
+            <Link to={`/assignments/${assignment.id}`}>
+              Assignment ID: {assignment.id}
+            </Link>
+          </div>
+        ))
+      ) : (
+        <></>
+      )}
+      <button onClick={createAssignment}>Submit New Assignment</button>
+    </div>
+  );
 };
 
 export default Dashboard;

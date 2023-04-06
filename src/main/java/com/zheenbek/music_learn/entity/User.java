@@ -1,13 +1,15 @@
-package com.zheenbek.music_learn.entities;
+package com.zheenbek.music_learn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,16 +24,12 @@ public class User implements UserDetails {
 
     private String username;
 
+    @JsonIgnore
     private String password;
 
-    //TODO: implement without having different role states
-//    private boolean hasTeacherRole;
-//
-//    private boolean hasStudentRole;
-//
-//    private boolean hasAdminRole;
-
-    private boolean hasUserRole;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    @JsonIgnore
+    private Set<Role> authorities = new HashSet<>();
 
     public User () {}
 
@@ -39,8 +37,6 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.startDate = startDate;
-        //TODO: implement without having different role states
-        this.hasUserRole = true;
     }
 
     public void setId(Long id) {
@@ -87,23 +83,13 @@ public class User implements UserDetails {
         this.username = username;
     }
 
+    public void setAuthorities(Set<Role> authorities) {
+        this.authorities = authorities;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<Role> roles = new HashSet<>();
-        if (hasUserRole) {
-            roles.add(new Role("ROLE_USER"));
-        }
-        //TODO: implement without having different role states
-//        if (hasAdminRole) {
-//            roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-//        }
-//        if (hasStudentRole) {
-//            roles.add(new SimpleGrantedAuthority("ROLE_STUENT"));
-//        }
-//        if (hasTeacherRole) {
-//            roles.add(new SimpleGrantedAuthority("ROLE_TEACHER"));
-//        }
-        return roles;
+        return authorities;
     }
 
     public String getPassword() {
@@ -114,36 +100,4 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    //TODO: implement without having different role states
-//    public boolean isHasTeacherRole() {
-//        return hasTeacherRole;
-//    }
-//
-//    public void setHasTeacherRole(boolean hasTeacherRole) {
-//        this.hasTeacherRole = hasTeacherRole;
-//    }
-//
-//    public boolean isHasStudentRole() {
-//        return hasStudentRole;
-//    }
-//
-//    public void setHasStudentRole(boolean hasStudentRole) {
-//        this.hasStudentRole = hasStudentRole;
-//    }
-//
-//    public boolean isHasAdminRole() {
-//        return hasAdminRole;
-//    }
-//
-//    public void setHasAdminRole(boolean hasAdminRole) {
-//        this.hasAdminRole = hasAdminRole;
-//    }
-
-    public boolean hasUserRole() {
-        return hasUserRole;
-    }
-
-    public void setHasUserRole(boolean hasUserRole) {
-        this.hasUserRole = hasUserRole;
-    }
 }

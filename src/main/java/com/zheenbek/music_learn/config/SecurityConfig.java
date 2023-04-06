@@ -1,6 +1,6 @@
 package com.zheenbek.music_learn.config;
 
-import com.zheenbek.music_learn.dao.UserRepository;
+import com.zheenbek.music_learn.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;

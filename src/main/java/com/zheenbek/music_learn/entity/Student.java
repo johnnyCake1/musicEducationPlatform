@@ -1,4 +1,4 @@
-package com.zheenbek.music_learn.entities;
+package com.zheenbek.music_learn.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

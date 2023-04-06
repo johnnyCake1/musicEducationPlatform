@@ -1,4 +1,4 @@
-package com.zheenbek.music_learn.entities;
+package com.zheenbek.music_learn.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 
