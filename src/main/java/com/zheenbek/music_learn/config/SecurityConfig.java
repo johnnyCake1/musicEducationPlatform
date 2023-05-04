@@ -69,8 +69,8 @@ public class SecurityConfig {
     UserDetailsService userDetailsService() {
         return new UserDetailsService() {
             @Override
-            public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-                return userRepo.findUserByUsername(email).orElseThrow(() -> new UsernameNotFoundException("invalid credentials"));
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                return userRepo.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("invalid credentials"));
             }
         };
     }

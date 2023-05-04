@@ -16,7 +16,6 @@ const Dashboard = () => {
   }, [jwt]);
 
   const createAssignment = () => {
-    console.log("creating a request!");
     httpReqAsync("api/v1/assignments", "POST", jwt).then((assignment) => {
       window.location.href = `/assignments/${assignment.id}`;
     });
@@ -24,7 +23,7 @@ const Dashboard = () => {
   console.log("byebye from Dashboard!");
 
   return (
-    <div style={{ margin: "2em" }}>
+    <div style={{ margin: "2em" }} className="rel">
       Welcome to my dahsboard!
       {assignments ? (
         assignments.map((assignment) => (
