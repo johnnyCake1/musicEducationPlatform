@@ -1,0 +1,108 @@
+@import "./variables";
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
+.bootstrap-isolated {
+  @import "~bootstrap/scss/bootstrap.scss";
+  .row > *{
+    margin: auto;
+  }
+}
+
+.auth-btn {
+  &:focus,
+  &:active {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.auth-link {
+  &:focus,
+  &:active {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.auth {
+  .auth-background-holder {
+    height: 100vh;
+    min-height: 100%;
+  }
+}
+
+.auth-main-col,
+.auth-background-col {
+  position: relative;
+}
+
+.auth-main-col {
+  margin: auto;
+}
+
+.auth-background-col {
+  background: rgba($theme-text-color-primary, 0.6);
+}
+
+.auth-background-mask {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  background: linear-gradient(
+    225deg,
+    var(--purple) 45%,
+    var(--dark-color) 85%
+  );
+
+  .auth-back-text-container{
+    position: relative;
+    height: 50%;
+    width: 100%;
+  }
+  
+  .auth-back-text {
+    font-family:'sans-serif';
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .auth-back-logo-container{
+    height: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+}
+
+.auth-wrapper {
+  background: white;
+  height: 100vh;
+
+  .auth-body {
+    width: 360px;
+  }
+
+  .auth-heading {
+    font-size: 1.5rem;
+  }
+
+  input:focus {
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .auth-background-col {
+    display: none;
+  }
+}

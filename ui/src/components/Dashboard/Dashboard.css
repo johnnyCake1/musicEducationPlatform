@@ -1,0 +1,109 @@
+.dashboard-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+
+.chats-section {
+  flex-basis: 20%;
+}
+
+.chat-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-item {
+  align-items: center;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  padding: 10px;
+  width: 100%;
+}
+
+.chat-item img {
+  border-radius: 50%;
+  height: 50px;
+  margin-right: 10px;
+  width: 50px;
+}
+
+.chat-info {
+  flex-grow: 1;
+}
+
+.chat-username {
+  font-weight: bold;
+}
+
+
+
+@media (max-width: 800px) {
+  .dashboard-container {
+    justify-content: center;
+  }
+}
+
+.learnings-section {
+  flex-basis: calc(50% - 10px);
+  margin-right: 20px;
+}
+
+@media (max-width: 800px) {
+  .learnings-section {
+    margin-right: 0;
+    margin-bottom: 20px;
+    flex-basis: 100%;
+  }
+}
+
+.saved-section {
+  flex-basis: calc(50% - 10px);
+}
+
+@media (max-width: 800px) {
+  .saved-section {
+    flex-basis: 100%;
+  }
+}
+
+.chats-section {
+  flex-basis: 100%;
+  margin-bottom: 20px;
+}
+
+.recommended-section {
+  flex-basis: 100%;
+}
+
+.learning-cards,
+.saved-items,
+.recommended-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.learning-card,
+.saved-item,
+.recommended-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  text-align: center;
+}
+
+.learning-card img,
+.saved-item img,
+.recommended-card img {
+  border-radius: 5px;
+  height: 150px;
+  margin-bottom: 10px;
+  width: 100%;
+}

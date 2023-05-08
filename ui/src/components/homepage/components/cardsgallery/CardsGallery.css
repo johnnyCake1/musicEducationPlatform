@@ -1,0 +1,28 @@
+section#cards-gallery {
+  background: url(../../assets/cards-gallery-bg.png);
+  text-align: center;
+  color: #fff;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.cards-gallery h2 {
+  font-size: 3rem;
+  font-weight: 200;
+  line-height: 1.4;
+  text-transform: uppercase;
+  margin: 1.5rem 0;
+  padding-bottom: 1rem;
+}
+
+.search-form > * {
+  width: 100%;
+  max-width: 50rem;
+  margin: 3rem auto;
+}
+
+@media screen and (max-width: 600px) {
+  form input {
+    width: 60%;
+  }
+}

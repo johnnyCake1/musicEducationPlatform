@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import httpReqAsync from "../services/httpReqAsync";
-import useLocalStorageState from "../util/useLocalStorageState";
+import httpReqAsync from "../../services/httpReqAsync";
+import useLocalStorageState from "../../util/useLocalStorageState";
 
 const PrivateRoute = ({ children }) => {
   const [jwt] = useLocalStorageState("", "jwt");

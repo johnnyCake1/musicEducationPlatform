@@ -10,8 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +20,7 @@ public class User implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate startDate;
+    private Date startDate;
 
     private String username;
 
@@ -33,7 +33,7 @@ public class User implements UserDetails {
 
     public User () {}
 
-    public User (String username, String password, LocalDate startDate, Set<Role> roles) {
+    public User (String username, String password, Date startDate, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.startDate = startDate;
@@ -47,11 +47,11 @@ public class User implements UserDetails {
         return id;
     }
 
-    public LocalDate getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 

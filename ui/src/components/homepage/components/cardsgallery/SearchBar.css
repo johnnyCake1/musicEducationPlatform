@@ -1,0 +1,20 @@
+.form-input {
+  padding: 1rem;
+  background: transparent;
+  border: 1px solid #777;
+  border-radius: 5px 0 0 5px;
+  color: #fff;
+  outline: none;
+  width: 80%;
+  font-size: 16px;
+}
+
+.form-button {
+  padding: 1rem;
+  background: var(--form-button);
+  border: 1px solid var(--form-button);
+  border-radius: 0 5px 5px 0;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+}
