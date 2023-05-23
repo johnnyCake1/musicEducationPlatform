@@ -24,11 +24,7 @@ public class CourseDTO {
     private List<Review> reviews;
 
     public CourseDTO() {
-        this.enrolledStudentsId = new ArrayList<>();
-        this.curriculum = new ArrayList<>();
-        this.requirements = new ArrayList<>();
-        this.whatYouWillLearn = new ArrayList<>();
-        this.reviews = new ArrayList<>();
+
     }
 
     public void setId(Long id) {

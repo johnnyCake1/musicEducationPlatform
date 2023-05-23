@@ -18,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ public class User implements UserDetails {
     private String lastName;
     private String aboutMe;
     @ElementCollection
-    private List<String> tags;
+    private List<String> tags = new ArrayList<>();
     @ManyToMany
     @JoinTable(
             name = "user_followers",
@@ -45,10 +46,10 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "follower_id")
     )
     @JsonIdentityReference(alwaysAsId = true)
-    private List<User> followers;
+    private List<User> followers = new ArrayList<>();
     @ManyToMany(mappedBy = "followers")
     @JsonIdentityReference(alwaysAsId = true)
-    private List<User> followings;
+    private List<User> followings = new ArrayList<>();
     @ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity profilePic;
@@ -56,18 +57,18 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "author")
     @JsonIdentityReference(alwaysAsId = true)
-    private List<Course> publishedCourses;
+    private List<Course> publishedCourses = new ArrayList<>();
 
     @ManyToMany(mappedBy = "enrolledStudents")
     @JsonIdentityReference(alwaysAsId = true)
-    private List<Course> takenCourses;
+    private List<Course> takenCourses = new ArrayList<>();
 
     @OneToMany
     @JsonIdentityReference(alwaysAsId = true)
-    private List<Course> savedCourses;
+    private List<Course> savedCourses = new ArrayList<>();
 
     @OneToMany
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     @JsonIgnore

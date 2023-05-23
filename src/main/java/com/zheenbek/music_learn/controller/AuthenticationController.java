@@ -74,7 +74,7 @@ public class AuthenticationController {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         newUser.setPassword(encoder.encode(request.getPassword()));
         newUser = userService.save(newUser);
-        roleService.saveRole(newUser, new Role("ROLE_STUDENT"));
+        roleService.saveRole(newUser, new Role("ROLE_USER"));
         return authenticate(request);
     }
 

@@ -1,6 +1,5 @@
 package com.zheenbek.music_learn.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 
 import javax.persistence.CascadeType;
@@ -34,10 +33,10 @@ public class Course {
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     @JsonIdentityReference(alwaysAsId = true)
-    private List<User> enrolledStudents;
+    private List<User> enrolledStudents = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "course_id")
-    private List<CourseModule> curriculum;
+    private List<CourseModule> curriculum = new ArrayList<>();
     private float price;
     private String courseName;
     private String courseShortDescription;
@@ -49,21 +48,17 @@ public class Course {
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity previewImage;
     @ElementCollection
-    private List<String> requirements;
+    private List<String> requirements = new ArrayList<>();
     @ElementCollection
-    private List<String> whatYouWillLearn;
+    private List<String> whatYouWillLearn = new ArrayList<>();
     @ElementCollection
-    private List<String> tags;
+    private List<String> tags = new ArrayList<>();
     @OneToMany
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
     private Date creationDate;
     private Date lastUpdatedDate;
     public Course (){
-        this.enrolledStudents = new ArrayList<>();
-        this.curriculum = new ArrayList<>();
-        this.requirements = new ArrayList<>();
-        this.whatYouWillLearn = new ArrayList<>();
-        this.reviews = new ArrayList<>();
+
     }
 
     public void setId(Long id) {

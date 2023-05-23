@@ -21,14 +21,13 @@ public class Conversation {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIdentityReference(alwaysAsId = true)
-    private List<User> participants;
+    private List<User> participants = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "conversation")
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
 
     public Conversation() {
-        this.messages = new ArrayList<>();
-        this.participants = new ArrayList<>();
+
     }
 
     public Long getId() {

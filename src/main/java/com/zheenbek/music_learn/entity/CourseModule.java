@@ -20,10 +20,10 @@ public class CourseModule {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "course_module_id")
-    private List<CourseTopic> courseTopics;
+    private List<CourseTopic> courseTopics = new ArrayList<>();
 
     public CourseModule() {
-        this.courseTopics = new ArrayList<>();
+
     }
 
     public Long getId() {
