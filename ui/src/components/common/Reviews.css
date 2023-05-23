@@ -1,0 +1,13 @@
+.reviews {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+.reviews__show-more-button {
+  border: none;
+  background-color: transparent;
+  color: #0077cc;
+  cursor: pointer;
+  margin-top: 16px;
+}

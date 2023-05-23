@@ -1,0 +1,111 @@
+.profile-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  max-width: 800px;
+}
+
+.profile-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px;
+}
+
+.profile-name-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.profile-name {
+  font-size: 36px;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.profile-username {
+  font-size: 24px;
+  font-weight: 500;
+  color: #666;
+}
+
+.profile-tag {
+  background-color: #e8e8e8;
+  border-radius: 10px;
+  padding: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.profile-stats {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.profile-stats-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #e8e8e8;
+  border-radius: 10px;
+  padding: 10px;
+  margin-right: 20px;
+}
+
+.profile-stats-card:last-child {
+  margin-right: 0;
+}
+
+.profile-stats-number {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.profile-stats-label {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+}
+
+.profile-actions {
+  display: flex;
+}
+
+.profile-unfollow-button{
+  background-color: #e86c3f;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.profile-follow-button,
+.profile-message-button {
+  background-color: #2ecc71;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.profile-message-button {
+  background-color: #3498db;
+}

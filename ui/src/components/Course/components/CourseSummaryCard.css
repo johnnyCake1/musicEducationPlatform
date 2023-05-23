@@ -1,0 +1,68 @@
+.course-summary-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  background-color: #fff;
+}
+
+.course-summary-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.course-summary-card__name {
+  margin: 0;
+}
+
+.course-summary-card__rating {
+  display: flex;
+  align-items: center;
+}
+
+.course-summary-card__rating-stars {
+  font-size: 24px;
+  color: #ffbf00;
+}
+
+.course-summary-card__rating-count {
+  margin-left: 8px;
+  font-size: 16px;
+}
+
+.course-summary-card__description {
+  margin: 16px 0;
+}
+
+.course-summary-card__info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.course-summary-card__info-item {
+  margin: 0;
+  font-size: 14px;
+}
+
+.course-summary-card__price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0d6efd;
+}
+
+.course-summary-card__button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: var(--purple);
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.course-summary-card__button:hover {
+  background-color: var(--dark-color);
+}

@@ -1,0 +1,322 @@
+/* Header section */
+.headerSection {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.videoContainer {
+  flex: 1 1 50%;
+  margin-right: 40px;
+}
+
+.videoContainer iframe {
+  width: 100%;
+  height: 400px;
+}
+
+.courseInfo {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.courseInfo h1 {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.courseInfo p {
+  margin-bottom: 16px;
+}
+
+.ratingContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.rating {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.numRatings {
+  color: #999;
+}
+
+.numTimesTaken {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.author {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.lastUpdated {
+  font-size: 18px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2ecc71;
+}
+
+.about-course-content {
+  max-width: 800px;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* What you will learn section */
+.whatYouWillLearn {
+  margin-bottom: 40px;
+}
+
+.what-youll-learn {
+  margin-top: 32px;
+}
+
+.what-youll-learn__heading {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.what-youll-learn__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.what-youll-learn__item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.what-youll-learn__tick {
+  color: var(--purple);
+  margin-right: 8px;
+}
+
+/* Course curriculum section */
+.courseCurriculum {
+  margin-bottom: 40px;
+}
+
+.courseCurriculum h2 {
+  font-size: 30px;
+  margin-bottom: 16px;
+}
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.accordionPanel {
+  margin-bottom: 20px;
+}
+
+.accordionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accordionHeader:hover {
+  background-color: #f0f0f0;
+}
+
+.accordionContent {
+  display: none;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+}
+
+.accordionPanel.active .accordionHeader {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.accordionPanel.active .accordionContent {
+  display: block;
+}
+
+/* Course prerequisites section */
+.coursePrerequisites {
+  margin-bottom: 40px;
+}
+
+.coursePrerequisites h2 {
+  font-size: 30px;
+  margin-bottom: 16px;
+}
+
+.coursePrerequisites ul {
+  margin: 0;
+  padding: 0 0 0 20px;
+  list-style: none;
+}
+
+.coursePrerequisites li {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+/* Description section */
+.description {
+  margin-bottom: 40px;
+}
+
+.description h2 {
+  font-size: 30px;
+  margin-bottom: 16px;
+}
+
+.description p {
+  font-size: 18 px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* Reviews section */
+.reviews {
+  margin-bottom: 40px;
+}
+
+.reviews h2 {
+  font-size: 30px;
+  margin-bottom: 16px;
+}
+
+/* Responsive layout */
+@media screen and (max-width: 768px) {
+  .headerSection {
+    flex-direction: column;
+  }
+
+  .videoContainer,
+  .courseInfo {
+    flex-basis: 100%;
+    margin-right: 0;
+  }
+
+  .videoContainer iframe {
+    height: 200px;
+  }
+
+  .courseInfo {
+    margin-top: 40px;
+  }
+}
+.course-description-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.course-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* .course-header-left {
+  width: 60%;
+} */
+
+.course-video {
+  width: 100%;
+  height: 400px;
+}
+
+.course-header-right {
+  width: 100%;
+}
+
+.course-what-you-will-learn {
+  margin: 40px 0;
+}
+
+.course-what-you-will-learn h2 {
+  font-size: 32px;
+  margin: 0 0 20px;
+}
+
+.course-what-you-will-learn ul {
+  margin: 0;
+  padding: 0 0 0 20px;
+  list-style: none;
+}
+
+.course-what-you-will-learn li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.course-curriculum {
+  margin: 40px 0;
+}
+
+.course-curriculum h2 {
+  font-size: 32px;
+  margin: 0 0 20px;
+}
+
+.course-requirements {
+  margin: 40px 0;
+}
+
+.course-requirements h2 {
+  font-size: 32px;
+  margin: 0 0 20px;
+}
+
+.course-requirements ul {
+  margin: 0;
+  padding: 0 0 0 20px;
+  list-style: none;
+}
+
+.course-requirements li {
+  line-height: 1.5;
+}
+
+.course-description {
+  margin: 40px 0;
+}
+
+.course-description h2 {
+  font-size: 32px;
+  margin: 0 0 20px;
+}
+
+.course-reviews {
+  margin: 40px 0;
+}
+
+.course-reviews h2 {
+  font-size: 32px;
+  margin: 0 0 20px;
+}

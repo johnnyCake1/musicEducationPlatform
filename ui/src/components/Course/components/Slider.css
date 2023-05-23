@@ -1,0 +1,41 @@
+.my-card-slider {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.my-cards-container {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.my-card-container {
+    padding: 5px;
+  }
+
+.my-card-arrow {
+  position: absolute;
+  z-index: 1;
+  cursor: pointer;
+  font-size: 2em;
+  color: #333;
+  border-radius: 50%;
+  background-color: #fff;
+  outline: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease-in-out;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.my-card-arrow.left {
+  left: 15px;
+}
+.my-card-arrow.right {
+  right: 15px;
+}
