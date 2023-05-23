@@ -1,10 +1,10 @@
-import './About.css'
+import "./About.css";
 
-const About = () => {
+const About = ({ aboutMeText }) => {
   return (
     <div className="profile-about">
       <h2>About Me</h2>
-      <p>This is some example text for the about me section.</p>
+      <p>{aboutMeText ?? ""}</p>
     </div>
   );
 };

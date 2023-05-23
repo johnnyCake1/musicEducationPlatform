@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import "./Navigation.css";
 import Logo from "./Logo";
 import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useLocalStorageState from "../../util/useLocalStorageState";
 
 function Navigation() {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchBarContent, setSearchBarContent] = useState("");
+  const [currentUser] = useLocalStorageState(null, "currentUser");
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -17,14 +21,17 @@ function Navigation() {
         <Link to="/dashboard" className={linkClass}>
           Dashboard
         </Link>
-        <Link to="/courses" className={linkClass}>
+        <Link to="/my-learnings" className={linkClass}>
           My courses
+        </Link>
+        <Link to="/courses" className={linkClass}>
+          Explore
         </Link>
         <Link to="/chat" className={linkClass}>
           Chats
         </Link>
-        <Link to="/saved" className={linkClass}>
-          Saved
+        <Link to="/storage" className={linkClass}>
+          Storage
         </Link>
       </>
     );
@@ -35,7 +42,7 @@ function Navigation() {
       <>
         <ul>
           <li>
-            <Link to="/profile" className={linkClass}>
+            <Link to={`/${currentUser.id}/profile`} className={linkClass}>
               My profile
             </Link>
           </li>
@@ -54,7 +61,12 @@ function Navigation() {
     );
   };
 
-  const [searchBarContent, setSearchBarContent] = useState("");
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      navigate(`/search/${searchBarContent}`);
+    }
+  };
+
   return (
     <nav className="Navigation">
       <div className="Navigation-logo">
@@ -66,6 +78,7 @@ function Navigation() {
           type="text"
           placeholder="Search"
           onChange={(e) => setSearchBarContent(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <Link to={`/search/${searchBarContent}`}>
           <button className="search-btn">Search</button>
@@ -76,12 +89,18 @@ function Navigation() {
 
       <div className="Navigation-profile">
         <div className="Navigation-profile-picture">
-          <Link to="/profile">
-            <ProfilePicture size={50} onClick={() => {}} />
+          <Link to={`/${currentUser.id}/profile`}>
+            <ProfilePicture
+              userId={currentUser.id}
+              size={50}
+              onClick={() => {}}
+            />
           </Link>
         </div>
         <div className="Navigation-profile-dropdown">
-          <div className="Navigation-profile-username">Username</div>
+          <div className="Navigation-profile-username">
+            @{currentUser?.username}
+          </div>
           {getProfileLinks("nav-link")}
         </div>
       </div>
@@ -94,8 +113,15 @@ function Navigation() {
         <div className="Navigation-menu-panel">
           {getNavLinks("nav-link")}
           <div className="Navigation-profile-picture">
-            <Link to="/profile">
-              <ProfilePicture size={50} onClick={() => {}} />
+            <Link to={`/${currentUser.id}/profile`}>
+              <ProfilePicture
+                userId={currentUser.id}
+                size={50}
+                onClick={() => {}}
+              />
+              <div className="Navigation-profile-username">
+                @{currentUser?.username}
+              </div>
             </Link>
           </div>
           <div className="Navigation-profile-dropdown">

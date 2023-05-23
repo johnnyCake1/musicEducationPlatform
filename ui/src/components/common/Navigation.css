@@ -113,7 +113,7 @@
   color: #212529;
 }
 
-.Navigation-menu-panel .nav-link:hover {
+.nav-link:hover {
   background-color: #dfe3e8;
 }
 
@@ -153,8 +153,7 @@
   }
 }
 
-@media screen and (max-width: 768px) {
-
+@media screen and (max-width: 900px) {
   .Navigation-links {
     display: none;
   }

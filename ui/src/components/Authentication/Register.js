@@ -7,11 +7,12 @@ import useLocalStorageState from "../../util/useLocalStorageState";
 
 const Register = () => {
   const [username, setName] = useState("");
-  const [email, setEmail] = useState("");
+  // const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [, setJwt] = useLocalStorageState("", "jwt");
+  const [, setCurrentUser] = useLocalStorageState(null, 'currentUser');
 
   const validateRegister = () => {
     let isValid = true;
@@ -21,11 +22,11 @@ const Register = () => {
         value: username,
         isRequired: true,
       },
-      email: {
-        value: email,
-        isRequired: false,
-        isEmail: true,
-      },
+      // email: {
+      //   value: email,
+      //   isRequired: false,
+      //   isEmail: true,
+      // },
       password: {
         value: password,
         isRequired: true,
@@ -70,15 +71,21 @@ const Register = () => {
         console.log(res);
         if (res.status === 200) {
           setJwt(res.headers.get("authorization"));
-          window.location.href = "dashboard";
+          return res.json();
         } else {
           return Promise.reject("Invalid register attempt: ");
         }
+      })
+      .then(user => {
+        setCurrentUser(user);
+        console.log('setting to', user);
+        window.location.href = '/dashboard'
       })
       .catch((message) => {
         alert(message);
       });
   };
+
 
   const togglePassword = (e) => {
     if (showPassword) {
@@ -134,7 +141,7 @@ const Register = () => {
                     </div>
                   </div>
 
-                  <div className="email mb-3">
+                  {/* <div className="email mb-3">
                     <input
                       type="email"
                       className={`form-control ${
@@ -160,7 +167,7 @@ const Register = () => {
                         ? validate.validate.email[0]
                         : ""}
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="password mb-3">
                     <div className="input-group">

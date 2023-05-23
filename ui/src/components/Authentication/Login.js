@@ -11,7 +11,10 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+
   const [, setJwt] = useLocalStorageState("", "jwt");
+  const [, setCurrentUser] = useLocalStorageState(null, 'currentUser');
+
 
   const validateLogin = () => {
     let isValid = true;
@@ -53,13 +56,18 @@ const Login = () => {
       body: JSON.stringify(reqBody),
     })
       .then((res) => {
-        console.log(res);
         if (res.status === 200) {
+          console.log(res);
           setJwt(res.headers.get("authorization"));
-          window.location.href = "dashboard";
+          return res.json();
         } else {
           return Promise.reject("Invalid login attempt");
         }
+      })
+      .then(user => {
+        setCurrentUser(user);
+        console.log('setting to', user);
+        window.location.href = '/dashboard'
       })
       .catch((message) => {
         alert(message);

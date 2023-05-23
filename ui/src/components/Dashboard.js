@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import httpReqAsync from "../services/httpReqAsync";
+import {httpReqAsync} from "../services/httpReqAsync";
 import useLocalStorageState from "../util/useLocalStorageState";
 
 const Dashboard = () => {

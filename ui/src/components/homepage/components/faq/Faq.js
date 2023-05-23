@@ -21,11 +21,9 @@ const Faq = () => {
         </div>
         <div className="questions">
           {questions.map((question) => (
-            <Question
-              key={question.id}
-              title={question.title}
-              answer={question.answer}
-            />
+            <Question key={question.id} title={question.title}>
+              <p className="u-text-small">{question.answer}</p>
+            </Question>
           ))}
         </div>
       </div>

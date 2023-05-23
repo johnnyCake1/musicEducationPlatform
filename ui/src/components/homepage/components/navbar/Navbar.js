@@ -4,13 +4,28 @@ import { RiCloseLine } from "react-icons/ri";
 import Button from "../../../common/Button";
 import Logo from "../../../common/Logo";
 import "./Navbar.css";
+import useLocalStorageState from "../../../../util/useLocalStorageState";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const [jwt] = useLocalStorageState("", "jwt");
+  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setShowMenu(!showMenu);
   };
+
+  const handleGetStarted = () => {
+    console.log("zheee:", jwt, currentUser);
+    if (!jwt || !currentUser) {
+      navigate("/register");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
   return (
     <nav className="navbar container">
       <Logo />
@@ -32,7 +47,11 @@ const Navbar = () => {
             <a href="#testimonials">Feedbacks</a>
           </li>
           <li className="nav-btn">
-            <Button text={"Get Started"} btnClass={"my-btn-dark"} href={'/register'} />
+            <Button
+              text={"Get Started"}
+              btnClass={"my-btn-dark"}
+              onClick={handleGetStarted}
+            />
           </li>
         </ul>
       </menu>

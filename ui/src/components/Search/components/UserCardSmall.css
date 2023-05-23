@@ -1,0 +1,25 @@
+.user-small-card {
+  display: flex;
+  align-items: center;
+  margin: 5px;
+  width: 300px;
+}
+
+.user-small-card:hover{
+  background-color: #dfe3e8;
+  cursor: pointer;
+}
+
+.user-small-details {
+  margin-left: 10px;
+}
+
+.user-small-username {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.user-small-description {
+  font-size: 14px;
+  color: gray;
+}

@@ -1,0 +1,39 @@
+.my-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.tabbed-page {
+  margin: 20px auto;
+  max-width: 800px;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  border: none;
+  background: none;
+  color: #555;
+  font-size: 18px;
+  padding: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.tabs button.active {
+  color: #333;
+  border-bottom: 2px solid #333;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}

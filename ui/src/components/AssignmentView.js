@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import httpReqAsync from "../services/httpReqAsync";
+import {httpReqAsync} from "../services/httpReqAsync";
 import useLocalStorageState from "../util/useLocalStorageState";
 
 const AssignmentView = () => {
-  const { id } = useParams();
+  const { id } = {id: 1};
   const [assignment, setAssignment] = useState({
     branch: "",
     githubUrl: "",

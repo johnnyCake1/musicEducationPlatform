@@ -2,12 +2,17 @@ package com.zheenbek.music_learn.controller;
 
 import com.zheenbek.music_learn.config.JwtUtil;
 import com.zheenbek.music_learn.dto.AuthCredsRequest;
+import com.zheenbek.music_learn.dto.UserDTO;
+import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Role;
 import com.zheenbek.music_learn.entity.User;
+import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.service.RoleService;
 import com.zheenbek.music_learn.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,8 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
 import java.util.Date;
+
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 @Controller
 @RequestMapping("/api/v1/auth")
@@ -33,14 +39,21 @@ public class AuthenticationController {
     private final UserService userService;
     private final RoleService roleService;
 
+    private final FileRepository fileRepository;
+
     private final JwtUtil jwtUtil;
 
+    @Value("${default.profile-pic-name}")
+    private String defaultProfilePic;
+    @Value("${storage.profile-pictures}/${default.profile-pic-name}")
+    private String defaultProfilePicPath;
+
     public AuthenticationController(AuthenticationManager authenticationManager,
-                                    JwtUtil jwtUtil,
-                                    UserService userService,
-                                    RoleService roleService) {
+                                    JwtUtil jwtUtil, UserService userService,
+                                    RoleService roleService, FileRepository fileRepository) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
+        this.fileRepository = fileRepository;
         this.roleService = roleService;
         this.jwtUtil = jwtUtil;
     }
@@ -51,7 +64,11 @@ public class AuthenticationController {
             return ResponseEntity.badRequest()
                     .body("given username is already taken");
         }
+        //get the default profile pic
+        FileEntity profilePic = fileRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("File not found with ID: " + 1L));
         User newUser = new User();
+        newUser.setProfilePic(profilePic);
         newUser.setStartDate(new Date());
         newUser.setUsername(request.getUsername());
         PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -63,17 +80,17 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody AuthCredsRequest request) {
-        final User user;
+        final UserDTO user;
         try {
             Authentication authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
-            user = (User) authenticate.getPrincipal();
+            user = UserService.convertToUserDTO((User) authenticate.getPrincipal());
         } catch (AuthenticationException e) {
             return ResponseEntity.status(400).body("failed to authenticate given credentials");
         }
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtUtil.generateToken(user))
+                .header(HttpHeaders.AUTHORIZATION, jwtUtil.generateToken(user.getUsername(), user.getAuthorities()))
                 .body(user);
     }
 
