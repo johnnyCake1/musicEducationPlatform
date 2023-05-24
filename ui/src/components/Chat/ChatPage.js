@@ -20,19 +20,12 @@ const ChatPage = () => {
 
   useEffect(() => {
     httpReqAsync(
-      `api/v1/conversations?userId=${currentUser.id}`,
+      `/api/v1/conversations?userId=${currentUser.id}`,
       "GET",
       jwt
     ).then((convs) => {
       setIsLoading(false);
-
-      // convs = convs.map (conv => {
-      //   conv.name =
-      // })
-
-
       setConversations(convs);
-      // setSelectedConversation(convs[0]);
     });
   }, [jwt, toggleRefresh, currentUser.id]);
 
@@ -60,7 +53,7 @@ const ChatPage = () => {
           console.error("Error occurred during fetch requests:", error);
         });
     }
-  }, [selectedConversation]);
+  }, [selectedConversation, toggleRefresh]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -79,7 +72,7 @@ const ChatPage = () => {
         sender: { id: currentUser.id },
         message: message,
       };
-      httpReqAsync(`api/v1/messages`, "POST", jwt, newMessage).then(
+      httpReqAsync(`/api/v1/messages`, "POST", jwt, newMessage).then(
         (message) => {
           setToggleRefresh(!toggleRefresh);
           setMessage("");
@@ -166,33 +159,28 @@ const ChatPage = () => {
               onChange={handleSearch}
             />
           </div>
-          {/* {conversations && (
+          {conversations && (
             <Conversations
-              conversations={conversations.map((conversation) => {
-                if (conversation.participantsIds.length === 2){
-                  if(String(conversation.participantsIds[0]) === String(currentUser.id)){
-                    conversation.name =
-                  }
-                }
+              conversations={conversations.filter((conversation) => {
                 // Check if the conversation name matches the search term
-                const nameMatch = conversation.name
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase());
+                // const nameMatch = conversation.name
+                //   .toLowerCase()
+                //   .includes(searchTerm.toLowerCase());
 
-                // Check if any of the conversation's messages match the search term
-                const messageMatch = conversation.messages.some((message) =>
-                  message.message
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-                );
-                if (nameMatch || messageMatch) {
-                  return conversation;
-                }
+                // // Check if any of the conversation's messages match the search term
+                // const messageMatch = conversation.messages.some((message) =>
+                //   message.message
+                //     .toLowerCase()
+                //     .includes(searchTerm.toLowerCase())
+                // );
+
+                // return nameMatch || messageMatch;
+                return true;
               })}
               selectedConversation={selectedConversation}
-              onClick={setSelectedConversation}
+              setSelectedConversation={setSelectedConversation}
             />
-          )} */}
+          )}
         </div>
 
         {/* <div className="logo-background">

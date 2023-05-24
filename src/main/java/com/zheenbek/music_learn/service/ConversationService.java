@@ -46,7 +46,12 @@ public class ConversationService {
                 .collect(Collectors.toList());
     }
 
-    public List<ConversationDTO> getAllConversationsById(Long userId) {
+    public ConversationDTO getConversationById(Long conversationId) {
+        return mapConversationToDTO(conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new EntityNotFoundException("Conversation not found with ID: " + conversationId)));
+    }
+
+    public List<ConversationDTO> getAllConversationsByUserId(Long userId) {
         return conversationRepository
                 .findByParticipantsId(userId).stream()
                 .map(this::mapConversationToDTO)
@@ -54,11 +59,7 @@ public class ConversationService {
     }
 
     public Long createConversation(Long[] participantsIds) {
-        //get the default profile pic
-        FileEntity profilePic = fileRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("Default picture file not found with ID: " + 1L));
         Conversation conversation = new Conversation();
-        conversation.setProfilePic(profilePic);
         List<User> participants = new ArrayList<>();
         for (Long userId : participantsIds) {
             participants.add(userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId)));
@@ -87,16 +88,18 @@ public class ConversationService {
 
     private MessageDTO mapMessageToDTO(Message message) {
         MessageDTO messageDTO = new MessageDTO();
+        if (message.getFile() != null){
+            messageDTO.setFileId(message.getFile().getId());
+        }
         messageDTO.setId(message.getId());
         messageDTO.setConversationId(message.getConversation().getId());
-
         User sender = message.getSender();
         UserDTO senderDTO = new UserDTO();
         senderDTO.setId(sender.getId());
         senderDTO.setUsername(sender.getUsername());
         senderDTO.setStartDate(sender.getStartDate());
 
-        messageDTO.setSender(senderDTO);
+        messageDTO.setSenderId(senderDTO.getId());
         messageDTO.setMessage(message.getMessage());
         messageDTO.setTimestamp(formatTimestamp(message.getTimestamp()));
 

@@ -1,25 +1,65 @@
+import { useEffect, useState } from "react";
+import useLocalStorageState from "../../../util/useLocalStorageState";
 import ProfilePicture from "../../Profile/components/profile_card/ProfilePicture";
 import "./Conversations.css";
+import { httpReqAsync } from "../../../services/httpReqAsync";
 
-const Conversations = ({ conversations, selectedUser, onClick }) => {
-    return (
+const Conversation = ({
+  participantsIds,
+  currentUserId,
+  messages,
+  isSelected,
+  onClick
+}) => {
+  const [conversationName, setConversationName] = useState("");
+  const [jwt] = useLocalStorageState("", "jwt");
+  const idOfUserToDisplay = participantsIds.find(
+    (userId) => userId !== currentUserId
+  );
+  useEffect(() => {
+    httpReqAsync(
+      `/api/v1/users/${idOfUserToDisplay}/username`,
+      "GET",
+      jwt
+    ).then((username) => {
+      setConversationName(username);
+    });
+  });
+  return (
+    <div
+      className={`conversation-item ${isSelected ? "selected" : ""}`}
+      onClick={onClick}
+    >
+      <ProfilePicture userId={idOfUserToDisplay} />
+      <div className="">
+        <div className="username">{conversationName}</div>
+        <div className="message-preview">
+          {messages && messages.length > 0
+            ? messages[messages.length - 1].message
+            : ""}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Conversations = ({
+  conversations,
+  selectedConversation,
+  setSelectedConversation,
+}) => {
+  const [currentUser] = useLocalStorageState(null, "currentUser");
+  return (
     <div className="conversation-list">
       {conversations.map((conv) => (
-        <div
+        <Conversation
           key={conv.id}
-          className={`conversation-item ${
-            selectedUser?.id === conv.id ? "selected" : ""
-          }`}
-          onClick={() => onClick(conv)}
-        >
-          <ProfilePicture />
-          <div className="">
-            <div className="username">{conv.name}</div>
-            <div className="message-preview">
-              {conv.messages && conv.messages.length > 0 ? conv.messages[conv.messages.length - 1].message : ''}
-            </div>
-          </div>
-        </div>
+          participantsIds={conv.participantsIds}
+          currentUserId={currentUser.id}
+          messages={conv.messages}
+          isSelected={selectedConversation?.id === conv.id}
+          onClick={() => setSelectedConversation(conv)}
+        />
       ))}
     </div>
   );

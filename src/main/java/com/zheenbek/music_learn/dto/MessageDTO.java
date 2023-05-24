@@ -1,11 +1,10 @@
 package com.zheenbek.music_learn.dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public class MessageDTO {
     private Long id;
     private Long conversationId;
-    private UserDTO sender;
+    private Long senderId;
+    private Long fileId;
     private String message;
     private String timestamp;
 
@@ -25,12 +24,20 @@ public class MessageDTO {
         this.conversationId = conversationId;
     }
 
-    public UserDTO getSender() {
-        return sender;
+    public Long getSenderId() {
+        return senderId;
     }
 
-    public void setSender(UserDTO sender) {
-        this.sender = sender;
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+
+    public Long getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Long fileId) {
+        this.fileId = fileId;
     }
 
     public String getMessage() {

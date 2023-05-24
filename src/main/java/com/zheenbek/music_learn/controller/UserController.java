@@ -89,6 +89,12 @@ public class UserController {
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
+    @GetMapping("/{userId}/saved-courses")
+    public ResponseEntity<List<Course>> getAllSavedCourses(@PathVariable Long userId) {
+        List<Course> savedCourses = userService.getAllSavedCourses(userId);
+        return new ResponseEntity<>(savedCourses, HttpStatus.OK);
+    }
+
     @PostMapping("/{userId}/saved-courses/{courseId}")
     public ResponseEntity<UserDTO> addSavedCourse(@PathVariable Long userId, @PathVariable Long courseId) {
         UserDTO updatedUser = userService.addSavedCourse(userId, courseId);
@@ -105,12 +111,6 @@ public class UserController {
     public ResponseEntity<List<Course>> getAllTakenCourses(@PathVariable Long userId) {
         List<Course> takenCourses = userService.getAllTakenCourses(userId);
         return new ResponseEntity<>(takenCourses, HttpStatus.OK);
-    }
-
-    @GetMapping("/{userId}/saved-courses")
-    public ResponseEntity<List<Course>> getAllSavedCourses(@PathVariable Long userId) {
-        List<Course> savedCourses = userService.getAllSavedCourses(userId);
-        return new ResponseEntity<>(savedCourses, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/published-courses")
@@ -132,6 +132,12 @@ public class UserController {
     @PostMapping("/{userId}/reviews")
     public ResponseEntity<List<Review>> addReview(@PathVariable Long userId, @RequestBody Review review) {
         List<Review> updatedReviews = userService.addReviewToUser(userId, review);
+        return new ResponseEntity<>(updatedReviews, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{userId}/reviews/{reviewId}")
+    public ResponseEntity<List<Review>> removeReview( @PathVariable Long userId, @PathVariable Long reviewId) {
+        List<Review> updatedReviews = userService.removeReviewFromUser(userId, reviewId);
         return new ResponseEntity<>(updatedReviews, HttpStatus.OK);
     }
 

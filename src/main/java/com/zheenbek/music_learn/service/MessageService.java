@@ -36,7 +36,7 @@ public class MessageService {
                 .orElseThrow(() -> new RuntimeException("Conversation not found with ID: " + messageDTO.getConversationId()));
 
         User sender = new User();
-        sender.setId(messageDTO.getSender().getId());
+        sender.setId(messageDTO.getSenderId());
 
         Message message = new Message();
         message.setConversation(conversation);

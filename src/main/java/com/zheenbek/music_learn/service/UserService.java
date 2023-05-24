@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -184,6 +185,18 @@ public class UserService {
             userRepository.save(user);
         }
         return convertToUserDTO(user);
+    }
+
+    @Transactional
+    public List<Review> removeReviewFromUser(Long userId, Long reviewId) {
+        Review reviewToDelete = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NoSuchElementException("Review not found with ID: " + reviewId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
+        user.getReviews().remove(reviewToDelete);
+        List <Review> updatedReviews = userRepository.save(user).getReviews();
+        reviewRepository.delete(reviewToDelete);
+        return updatedReviews;
     }
 
     public static UserDTO convertToUserDTO(User user) {
