@@ -37,24 +37,11 @@ import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final RoleService roleService;
-
-    private final FileRepository fileRepository;
-
     private final JwtUtil jwtUtil;
 
-    @Value("${default.profile-pic-name}")
-    private String defaultProfilePic;
-    @Value("${storage.profile-pictures}/${default.profile-pic-name}")
-    private String defaultProfilePicPath;
-
-    public AuthenticationController(AuthenticationManager authenticationManager,
-                                    JwtUtil jwtUtil, UserService userService,
-                                    RoleService roleService, FileRepository fileRepository) {
+    public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-        this.fileRepository = fileRepository;
-        this.roleService = roleService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -64,17 +51,7 @@ public class AuthenticationController {
             return ResponseEntity.badRequest()
                     .body("given username is already taken");
         }
-        //get the default profile pic
-        FileEntity profilePic = fileRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("File not found with ID: " + 1L));
-        User newUser = new User();
-        newUser.setProfilePic(profilePic);
-        newUser.setStartDate(new Date());
-        newUser.setUsername(request.getUsername());
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        newUser.setPassword(encoder.encode(request.getPassword()));
-        newUser = userService.save(newUser);
-        roleService.saveRole(newUser, new Role("ROLE_USER"));
+        userService.createNewUser(request.getUsername(), request.getPassword());
         return authenticate(request);
     }
 

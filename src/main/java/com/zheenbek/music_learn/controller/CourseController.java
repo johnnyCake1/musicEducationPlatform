@@ -37,19 +37,17 @@ public class CourseController {
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Course> createCourseWithFile(@RequestParam("file") MultipartFile file, @RequestParam("picture") MultipartFile picture, @RequestParam("course") String courseJson) throws IOException {
+    public ResponseEntity<Course> createCourseWithFiles(@RequestParam("file") MultipartFile file, @RequestParam("picture") MultipartFile picture, @RequestParam("course") String courseJson) throws IOException {
         Course course = new ObjectMapper().readValue(courseJson, Course.class);
         Course createdCourse = courseService.createCourse(course, file, picture);
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/search/{keyword}")
-    public ResponseEntity<List<Course>> searchAllCoursesByKeyword(@PathVariable String keyword) {
-        return new ResponseEntity<>(courseService.findCoursesByKeyword(keyword), HttpStatus.OK);
-    }
-
     @GetMapping
-    public ResponseEntity<List<Course>> getAllCoursesByAuthorId(@RequestParam Long authorId) {
+    public ResponseEntity<List<Course>> getAllCourses(@RequestParam(required = false) Long authorId) {
+        if (authorId == null){
+            return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.OK);
+        }
         return new ResponseEntity<>(courseService.getAllCoursesByAuthorId(authorId), HttpStatus.OK);
     }
 
@@ -88,16 +86,27 @@ public class CourseController {
         return new ResponseEntity<>(updatedReviews, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}/reviews/{reviewId}")
+    public ResponseEntity<List<Review>> removeReview(@PathVariable Long id, @PathVariable Long reviewId) {
+        List<Review> updatedReviews = courseService.removeReviewFromCourse(id, reviewId);
+        return new ResponseEntity<>(updatedReviews, HttpStatus.OK);
+    }
+
     @PostMapping("/{id}/enroll")
-    public ResponseEntity<UserDTO> enrollUser(@PathVariable Long id, @RequestParam Long userId) {
-        UserDTO enrolledUser = courseService.enrollStudent(id, userId);
-        return new ResponseEntity<>(enrolledUser, HttpStatus.OK);
+    public ResponseEntity<Course> enrollUser(@PathVariable Long id, @RequestParam Long userId) {
+        Course updatedCourse = courseService.enrollStudent(id, userId);
+        return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
     }
 
     @PostMapping("/{id}/drop")
-    public ResponseEntity<UserDTO> dropUser(@PathVariable Long id, @RequestParam Long userId) {
-        UserDTO droppedUser = courseService.dropUser(id, userId);
-        return new ResponseEntity<>(droppedUser, HttpStatus.OK);
+    public ResponseEntity<Course> dropUser(@PathVariable Long id, @RequestParam Long userId) {
+        Course updatedCourse = courseService.dropUser(id, userId);
+        return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
+    }
+
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<List<Course>> searchAllCoursesByKeyword(@PathVariable String keyword) {
+        return new ResponseEntity<>(courseService.findCoursesByKeyword(keyword), HttpStatus.OK);
     }
 
     static ResponseEntity<FileSystemResource> getFileSystemResourceResponseEntity(File file) {

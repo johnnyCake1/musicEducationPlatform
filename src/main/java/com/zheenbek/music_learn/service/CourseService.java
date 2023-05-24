@@ -95,6 +95,10 @@ public class CourseService {
         return courseRepository.findById(courseId);
     }
 
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
     public List<Course> getAllCoursesByAuthorId(Long authorId) {
         return courseRepository.findAllByAuthorId(authorId);
     }
@@ -128,7 +132,7 @@ public class CourseService {
     }
 
     @Transactional
-    public UserDTO enrollStudent(Long courseId, Long userId) {
+    public Course enrollStudent(Long courseId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
         Course course = courseRepository.findById(courseId)
@@ -141,23 +145,19 @@ public class CourseService {
             course.getEnrolledStudents().add(user);
             courseRepository.save(course);
         }
-        return UserService.convertToUserDTO(user);
+        return course;
     }
 
-    public UserDTO dropUser(Long courseId, Long userId) {
+    public Course dropUser(Long courseId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NoSuchElementException("Course not found with ID: " + courseId));
-        if (user.getTakenCourses().contains(course)) {
-            user.getTakenCourses().remove(course);
-            userRepository.save(user);
-        }
-        if (course.getEnrolledStudents().contains(user)) {
-            course.getEnrolledStudents().remove(user);
-            courseRepository.save(course);
-        }
-        return UserService.convertToUserDTO(user);
+        user.getTakenCourses().remove(course);
+        userRepository.save(user);
+        course.getEnrolledStudents().remove(user);
+        courseRepository.save(course);
+        return course;
     }
 
     @Transactional
@@ -167,5 +167,17 @@ public class CourseService {
                 .orElseThrow(() -> new NoSuchElementException("Course not found with ID: " + courseId));
         course.getReviews().add(newReview);
         return courseRepository.save(course).getReviews();
+    }
+
+    @Transactional
+    public List<Review> removeReviewFromCourse(Long courseId, Long reviewId) {
+        Review reviewToDelete = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NoSuchElementException("Review not found with ID: " + reviewId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NoSuchElementException("Course not found with ID: " + courseId));
+        course.getReviews().remove(reviewToDelete);
+        List <Review> updatedReviews = courseRepository.save(course).getReviews();
+        reviewRepository.delete(reviewToDelete);
+        return updatedReviews;
     }
 }

@@ -17,7 +17,6 @@ export function httpReqAsync(url, reqMethod, jwt, reqBody) {
   }
 
   return fetch(url, fetchData).then((res) => {
-    console.log("this is result:", res);
     if (200 <= res.status && res.status < 300) {
       const contentType = res.headers.get("Content-Type");
       if (contentType && contentType.includes("application/json")) {
@@ -45,17 +44,6 @@ export function postFile(url, file, jwt) {
   });
 }
 
-// const s = () => {
-//   const file = new File();
-//   fetch(`storage/messageFile?conversationId=${selectedConversation.id}&userId=${currentUser.id}`, {
-//     headers: {
-//       Authorization: `Bearer ${jwt}`,
-//     },
-//     method: "POST",
-//     body: file,
-//   })
-// }
-
 export function getFile(url, jwt, reqBody) {
   const fetchData = {
     headers: {
@@ -68,7 +56,8 @@ export function getFile(url, jwt, reqBody) {
   }
 
   return fetch(url, fetchData).then((res) => {
+    if (res.status === 204) return "file does not exist";
     if (200 <= res.status && res.status < 300) return res.blob();
-    console.log("bad request!");
+    console.log("request failed!");
   });
 }

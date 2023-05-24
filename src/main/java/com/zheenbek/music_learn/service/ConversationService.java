@@ -11,7 +11,6 @@ import com.zheenbek.music_learn.repository.ConversationRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -30,8 +29,6 @@ public class ConversationService {
     private final ConversationRepository conversationRepository;
     private final FileRepository fileRepository;
     private final UserRepository userRepository;
-    @Value("${default.conversation-profile-pic-name}")
-    private String defaultProfilePic;
 
     @Autowired
     public ConversationService(ConversationRepository conversationRepository, FileRepository fileRepository,
@@ -54,17 +51,6 @@ public class ConversationService {
                 .findByParticipantsId(userId).stream()
                 .map(this::mapConversationToDTO)
                 .collect(Collectors.toList());
-    }
-
-    public ConversationDTO createConversation(ConversationDTO conversationDTO) {
-        Conversation conversation = new Conversation();
-        conversation.setName(conversationDTO.getName());
-//        conversation.setProfilePic(conversationDTO.getProfilePic());
-
-        Conversation savedConversation = conversationRepository.save(conversation);
-        conversationDTO.setId(savedConversation.getId());
-
-        return conversationDTO;
     }
 
     public Long createConversation(Long[] participantsIds) {

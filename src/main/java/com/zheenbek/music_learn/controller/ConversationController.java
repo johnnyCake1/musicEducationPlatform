@@ -28,19 +28,8 @@ public class ConversationController {
         return new ResponseEntity<>(createdId, HttpStatus.CREATED);
     }
 
-//    @PostMapping
-//    public ResponseEntity<ConversationDTO> createConversation(@RequestBody ConversationDTO conversation) {
-//        //set the defaults for the missing values
-//        if (conversation.getProfilePic() == null) {
-//            conversation.setProfilePic(defaultProfilePic);
-//        }
-//        ConversationDTO createdConversation = conversationService.createConversation(conversation);
-//        return new ResponseEntity<>(createdConversation, HttpStatus.CREATED);
-//    }
-
     @GetMapping
     public ResponseEntity<List<ConversationDTO>> getAllConversations(@RequestParam(required = false) Long userId) {
-        List<ConversationDTO> conversations;
         if (userId == null){
             return new ResponseEntity<>(conversationService.getAllConversations(), HttpStatus.OK);
         }

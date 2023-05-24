@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 
 import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEntityFromFile;
 
@@ -23,22 +25,14 @@ import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEnti
 public class FileService {
 
     private final FileRepository fileRepository;
-
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
     private final ServerFileStorageService serverFileStorageService;
 
 
-//    @Value("${storage.profile-pictures}")
-//    private String PROFILES_DIRECTORY;
-//    @Value("${storage.message-attachments}")
-//    private String MESSAGES_DIRECTORY;
-
     @Autowired
-    public FileService(FileRepository fileRepository, MessageRepository messageRepository,
-                       UserRepository userRepository, ConversationRepository conversationRepository,
-                       ServerFileStorageService serverFileStorageService) {
+    public FileService(FileRepository fileRepository, MessageRepository messageRepository, UserRepository userRepository, ConversationRepository conversationRepository, ServerFileStorageService serverFileStorageService) {
         this.fileRepository = fileRepository;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
@@ -52,9 +46,8 @@ public class FileService {
         // store in the database
         FileEntity fileEntity = fileRepository.save(fileEntityFromFile(file, contentType));
         //update corresponding user's profile picture
-        //TODO: implement update query in UserRepository instead of manual update
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));;
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        ;
         user.setProfilePic(fileEntity);
         userRepository.save(user);
     }
@@ -67,30 +60,23 @@ public class FileService {
         //save as a separate message
         Message message = new Message();
         message.setFile(fileEntity);
-        Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new RuntimeException("Conversation not found with ID: " + conversationId));
+        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new EntityNotFoundException("Conversation not found with ID: " + conversationId));
         message.setConversation(conversation);
-        User sender = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        User sender = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         message.setSender(sender);
         message.setTimestamp(new Date());
 
         messageRepository.save(message);
     }
 
-    public File getProfilePictureByUserId(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));;
-        return new File(user.getProfilePic().getFilePath());
+    public Optional<File> getProfilePictureByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        ;
+        if (user.getProfilePic() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new File(user.getProfilePic().getFilePath()));
     }
-
-//    public void deleteById (Long fileId) {
-//        fileRepository.deleteById(fileId);
-//    }
-//
-//    public void deleteFile (FileEntity fileEntity) {
-//        fileRepository.deleteById(fileId);
-//    }
 
     /**
      * Queries a message object that contains a file and returns it as a File object along with its media type.
@@ -99,9 +85,8 @@ public class FileService {
      * @return a pair where first value is the file and second is its media type.
      */
     public Pair<File, String> getMessageFile(Long messageId) {
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Message not found with ID: " + messageId));
-        if (message.getFile() == null){
+        Message message = messageRepository.findById(messageId).orElseThrow(() -> new EntityNotFoundException("Message not found with ID: " + messageId));
+        if (message.getFile() == null) {
             throw new RuntimeException("Message with ID " + messageId + " does not contain a file");
         }
         File file = new File(message.getFile().getFilePath());

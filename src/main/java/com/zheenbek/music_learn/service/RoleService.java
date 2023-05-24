@@ -15,12 +15,11 @@ public class RoleService {
         this.roleRepository = userRepository;
     }
 
-    public Role saveRole (User user, Role role) {
-        role.setUser(user);
-        return roleRepository.save(role);
+    public Set<Role> getUserRole(User user){
+        return roleRepository.findByUser(user);
     }
 
-    public Set<Role> findByUser(User user){
-        return roleRepository.findByUser(user);
+    public Set<Role> getUserRole(Long userId){
+        return roleRepository.findByUserId(userId);
     }
 }

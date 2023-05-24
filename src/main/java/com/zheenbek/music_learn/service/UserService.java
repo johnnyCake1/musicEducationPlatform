@@ -4,23 +4,34 @@ import com.zheenbek.music_learn.dto.UserDTO;
 import com.zheenbek.music_learn.entity.Course;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Review;
+import com.zheenbek.music_learn.entity.Role;
 import com.zheenbek.music_learn.entity.User;
 import com.zheenbek.music_learn.repository.CourseRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.repository.ReviewRepository;
+import com.zheenbek.music_learn.repository.RoleRepository;
 import com.zheenbek.music_learn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEntityFromFile;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final CourseRepository courseRepository;
     private final FileRepository fileRepository;
     private final ReviewRepository reviewRepository;
@@ -28,16 +39,31 @@ public class UserService {
     private final ServerFileStorageService serverFileStorageService;
 
     @Autowired
-    public UserService(UserRepository userRepository, FileRepository fileRepository, ServerFileStorageService serverFileStorageService, CourseRepository courseRepository, ReviewRepository reviewRepository) {
+    public UserService(UserRepository userRepository, FileRepository fileRepository, ServerFileStorageService serverFileStorageService, CourseRepository courseRepository, ReviewRepository reviewRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.fileRepository = fileRepository;
         this.serverFileStorageService = serverFileStorageService;
         this.courseRepository = courseRepository;
         this.reviewRepository = reviewRepository;
+        this.roleRepository = roleRepository;
     }
 
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserDTO createNewUser(String username, String password) {
+        User newUser = new User();
+        newUser.setUsername(username);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        newUser.setPassword(encoder.encode(password));
+        newUser.setStartDate(new Date());
+
+        User createdUser = userRepository.save(newUser);
+        Role userRole = new Role("ROLE_USER");
+        userRole.setUser(createdUser);
+        roleRepository.save(userRole);
+        return convertToUserDTO(createdUser);
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream().map(UserService::convertToUserDTO).collect(Collectors.toList());
     }
 
     public Optional<User> findByUsername(String username) {
@@ -46,6 +72,23 @@ public class UserService {
 
     public Optional<UserDTO> findById(Long userId) {
         return userRepository.findById(userId).map(UserService::convertToUserDTO);
+    }
+
+    @Transactional
+    public File updateUserProfilePicture(MultipartFile file, Long userId) throws IOException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        //save new file in the file system
+        File storedPicture = serverFileStorageService.storeCourseFile(file.getBytes(), file.getContentType(), user.getUsername());
+        //save new file in the database
+        FileEntity userProfilePictureEntity = fileRepository.save(fileEntityFromFile(storedPicture, file.getContentType()));
+        //update user
+        user.setProfilePic(userProfilePictureEntity);
+        userRepository.save(user);
+        //delete old profile picture from the file system
+        serverFileStorageService.deleteProfilePicture(user.getProfilePic().getFilePath());
+        //delete old profile picture from the database
+        fileRepository.delete(user.getProfilePic());
+        return storedPicture;
     }
 
     public void deleteUserProfilePic(Long userId) {

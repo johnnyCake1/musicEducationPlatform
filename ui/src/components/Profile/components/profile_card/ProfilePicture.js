@@ -25,11 +25,15 @@ const ProfilePicture = ({
     if (imageSrc) {
       setPicSrc(imageSrc);
     } else if (userId) {
-      getFile(`/api/v1/users/${userId}/profile-picture`, jwt).then(
-        (blobFile) => {
-          setPicSrc(URL.createObjectURL(blobFile));
-        }
-      );
+      getFile(`/api/v1/users/${userId}/profile-picture`, jwt)
+        .then((blobFile) => {
+          if (blobFile instanceof Blob) {
+            setPicSrc(URL.createObjectURL(blobFile));
+          }
+        })
+        .catch((err) => {
+          console.warn("couldn't get profile picture: ", err);
+        });
     } else {
       console.log("using a placeholder for a profile picture");
     }

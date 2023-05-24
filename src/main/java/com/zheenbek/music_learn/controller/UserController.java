@@ -12,14 +12,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,10 +43,32 @@ public class UserController {
         this.fileService = fileService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> allUsers = userService.getAllUsers();
+        return new ResponseEntity<>(allUsers, HttpStatus.OK);
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
         Optional<UserDTO> user = userService.findById(userId);
         return user.map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{userId}/profile-picture")
+    public ResponseEntity<FileSystemResource> getProfilePicture(@PathVariable Long userId) {
+        return fileService.getProfilePictureByUserId(userId).map(CourseController::getFileSystemResourceResponseEntity).orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    @PutMapping("/{userId}/profile-picture")
+    public ResponseEntity<FileSystemResource> uploadProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
+        File newProfilePicture;
+        try {
+            newProfilePicture = userService.updateUserProfilePicture(file, userId);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return getFileSystemResourceResponseEntity(newProfilePicture);
     }
 
     @PostMapping("/{userId}/follow")
@@ -58,28 +81,6 @@ public class UserController {
     public ResponseEntity<UserDTO> unfollowUserById(@PathVariable Long userId, @RequestParam Long userIdToUnfollow) {
         UserDTO updatedUser = userService.unfollowUser(userId, userIdToUnfollow);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    }
-
-    @GetMapping("/{userId}/profile-picture")
-    public ResponseEntity<FileSystemResource> getProfilePicture(@PathVariable Long userId) {
-        File file = fileService.getProfilePictureByUserId(userId);
-        return getFileSystemResourceResponseEntity(file);
-    }
-
-    @PostMapping("/{userId}/profile-picture")
-    public ResponseEntity<String> uploadProfilePicture(@RequestBody byte[] fileData, @RequestHeader("Content-Type") String contentType, @PathVariable Long userId) {
-        if (fileData == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("file is missing in file upload request");
-        }
-        if (!Objects.equals(contentType, MediaType.IMAGE_JPEG_VALUE) || !Objects.equals(contentType, MediaType.IMAGE_PNG_VALUE)) {
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("not supported file type for the profile picture");
-        }
-        try {
-            fileService.saveProfilePicture(userId, fileData, contentType);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("failed to save the profile picture.");
-        }
-        return ResponseEntity.ok("Profile picture is successfully uploaded");
     }
 
     @DeleteMapping("/{userId}/profile-picture")
