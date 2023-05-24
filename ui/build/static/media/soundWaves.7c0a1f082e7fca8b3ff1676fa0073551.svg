@@ -1,0 +1,29 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 65 32" width="65" height="32">
+	<title>image</title>
+	<style>
+		.s0 { opacity: .6;fill: #7a66cc;stroke: #1c1b21;stroke-width: .5 } 
+		.s1 { opacity: .3;fill: #7a66cc;stroke: #1c1b21;stroke-width: .5 } 
+		.s2 { opacity: .8;fill: #7a66cc;stroke: #1c1b21;stroke-width: .5 } 
+		.s3 { fill: #7a66cc;stroke: #1c1b21;stroke-width: .5 } 
+		.s4 { opacity: .9;fill: #7a66cc;stroke: #1c1b21;stroke-width: .5 } 
+		.s5 { opacity: .4;fill: #7a66cc;stroke: #1c1b21;stroke-width: .5 } 
+		.s6 { opacity: .5;fill: #7a66cc;stroke: #1c1b21;stroke-width: .5 } 
+		.s7 { opacity: .2;fill: #7a66cc;stroke: #1c1b21;stroke-width: .5 } 
+	</style>
+	<path id="Layer" class="s0" d="m0.8 9h3.5v22.5h-3.5z"/>
+	<path id="Layer" class="s1" d="m4.8 19h3.5v12.5h-3.5z"/>
+	<path id="Layer" class="s2" d="m8.8 6h3.5v25.5h-3.5z"/>
+	<path id="Layer" class="s0" d="m12.8 13h3.5v18.5h-3.5z"/>
+	<path id="Layer" class="s3" d="m16.8 1h3.5v30.5h-3.5z"/>
+	<path id="Layer" class="s4" d="m20.8 6h3.5v25.5h-3.5z"/>
+	<path id="Layer" class="s0" d="m24.8 11h3.5v20.5h-3.5z"/>
+	<path id="Layer" class="s2" d="m28.8 4h3.5v27.5h-3.5z"/>
+	<path id="Layer" class="s5" d="m32.8 18h3.5v13.5h-3.5z"/>
+	<path id="Layer" class="s6" d="m36.8 13h3.5v18.5h-3.5z"/>
+	<path id="Layer" class="s6" d="m40.8 9h3.5v22.5h-3.5z"/>
+	<path id="Layer" class="s0" d="m44.8 5h3.5v26.5h-3.5z"/>
+	<path id="Layer" class="s1" d="m48.8 20h3.5v11.5h-3.5z"/>
+	<path id="Layer" class="s7" d="m52.8 25h3.5v6.5h-3.5z"/>
+	<path id="Layer" class="s2" d="m56.8 3h3.5v28.5h-3.5z"/>
+	<path id="Layer" class="s2" d="m60.8 9h3.5v22.5h-3.5z"/>
+</svg>

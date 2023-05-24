@@ -1,0 +1,33 @@
+{
+  "files": {
+    "main.css": "/static/css/main.69533115.css",
+    "main.js": "/static/js/main.f2e8bb08.js",
+    "static/media/cards-gallery-bg.png": "/static/media/cards-gallery-bg.077f91255eda42415c12.png",
+    "static/media/violin_lesson.jpeg": "/static/media/violin_lesson.a7d7219dd63a5bf19cff.jpeg",
+    "static/media/fa-solid-900.svg": "/static/media/fa-solid-900.7a8b4f130182d19a2d7c.svg",
+    "static/media/fa-brands-400.svg": "/static/media/fa-brands-400.2f517e09eb2ca6650ff5.svg",
+    "static/media/fa-solid-900.eot": "/static/media/fa-solid-900.9bbb245e67a133f6e486.eot",
+    "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.be9ee23c0c6390141475.ttf",
+    "static/media/fa-regular-400.svg": "/static/media/fa-regular-400.4689f52cc96215721344.svg",
+    "static/media/guitar_player_background.png": "/static/media/guitar_player_background.194d0dcc7822ad60d22a.png",
+    "static/media/fa-brands-400.eot": "/static/media/fa-brands-400.23f19bb08961f37aaf69.eot",
+    "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.527940b104eb2ea366c8.ttf",
+    "static/media/fa-solid-900.woff": "/static/media/fa-solid-900.eeccf4f66002c6f2ba24.woff",
+    "static/media/fa-brands-400.woff": "/static/media/fa-brands-400.2285773e6b4b172f07d9.woff",
+    "static/media/fa-solid-900.woff2": "/static/media/fa-solid-900.1551f4f60c37af51121f.woff2",
+    "static/media/fa-brands-400.woff2": "/static/media/fa-brands-400.d878b0a6a1144760244f.woff2",
+    "static/media/fa-regular-400.eot": "/static/media/fa-regular-400.77206a6bb316fa0aded5.eot",
+    "static/media/fa-regular-400.ttf": "/static/media/fa-regular-400.491974d108fe4002b2aa.ttf",
+    "static/media/fa-regular-400.woff": "/static/media/fa-regular-400.bb58e57c48a3e911f15f.woff",
+    "static/media/MelodiousLogo.svg": "/static/media/MelodiousLogo.2ec142dba45443725d0e8425f98d5666.svg",
+    "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.7a3337626410ca2f4071.woff2",
+    "static/media/soundWaves.svg": "/static/media/soundWaves.7c0a1f082e7fca8b3ff1676fa0073551.svg",
+    "index.html": "/index.html",
+    "main.69533115.css.map": "/static/css/main.69533115.css.map",
+    "main.f2e8bb08.js.map": "/static/js/main.f2e8bb08.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.69533115.css",
+    "static/js/main.f2e8bb08.js"
+  ]
+}
