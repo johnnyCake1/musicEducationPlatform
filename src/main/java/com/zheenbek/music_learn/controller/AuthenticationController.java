@@ -12,6 +12,7 @@ import com.zheenbek.music_learn.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,6 +44,10 @@ public class AuthenticationController {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtUtil = jwtUtil;
+    }
+
+    @GetMapping ResponseEntity<String> helloWorld(){
+        return new ResponseEntity<>("Hello World!", HttpStatus.OK);
     }
 
     @PostMapping("/register")
