@@ -74,32 +74,38 @@ public class UserService {
         return userRepository.findById(userId).map(UserService::convertToUserDTO);
     }
 
-    @Transactional
     public File updateUserProfilePicture(MultipartFile file, Long userId) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        FileEntity oldProfilePic = user.getProfilePic();
         //save new file in the file system
-        File storedPicture = serverFileStorageService.storeCourseFile(file.getBytes(), file.getContentType(), user.getUsername());
+        File storedPicture = serverFileStorageService.storeProfilePicture(file.getBytes(), file.getContentType(), user.getUsername());
         //save new file in the database
-        FileEntity userProfilePictureEntity = fileRepository.save(fileEntityFromFile(storedPicture, file.getContentType()));
+        FileEntity newProfilePic = fileRepository.save(fileEntityFromFile(storedPicture, file.getContentType()));
         //update user
-        user.setProfilePic(userProfilePictureEntity);
+        user.setProfilePic(newProfilePic);
         userRepository.save(user);
-        //delete old profile picture from the file system
-        serverFileStorageService.deleteProfilePicture(user.getProfilePic().getFilePath());
-        //delete old profile picture from the database
-        fileRepository.delete(user.getProfilePic());
+        if (oldProfilePic != null) {
+            //delete old profile picture from the file system
+            serverFileStorageService.deleteProfilePicture(oldProfilePic.getFileName());
+            //delete old profile picture from the database
+            fileRepository.delete(oldProfilePic);
+        }
         return storedPicture;
     }
 
     public void deleteUserProfilePic(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-        FileEntity file = user.getProfilePic();
-
-        if (file == null) {
-            throw new RuntimeException("Profile picture not found for user with ID " + userId);
+        if (user.getProfilePic() == null){
+            return;
         }
-        serverFileStorageService.deleteProfilePicture(file.getFileName());
-        fileRepository.delete(file);
+        FileEntity oldProfilePic = user.getProfilePic();
+        //update user
+        user.setProfilePic(null);
+        userRepository.save(user);
+        //delete old profile picture from the file system
+        serverFileStorageService.deleteProfilePicture(oldProfilePic.getFileName());
+        //delete old profile picture from the database
+        fileRepository.delete(oldProfilePic);
     }
 
     @Transactional

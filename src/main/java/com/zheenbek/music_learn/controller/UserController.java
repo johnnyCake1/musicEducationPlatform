@@ -71,6 +71,12 @@ public class UserController {
         return getFileSystemResourceResponseEntity(newProfilePicture);
     }
 
+    @DeleteMapping("/{userId}/profile-picture")
+    public ResponseEntity<String> deleteProfilePic(@PathVariable Long userId) {
+        userService.deleteUserProfilePic(userId);
+        return ResponseEntity.ok().body("deleted successfully");
+    }
+
     @PostMapping("/{userId}/follow")
     public ResponseEntity<UserDTO> followUserById(@PathVariable Long userId, @RequestParam Long userIdToFollow) {
         UserDTO updatedUser = userService.followUser(userId, userIdToFollow);
@@ -81,12 +87,6 @@ public class UserController {
     public ResponseEntity<UserDTO> unfollowUserById(@PathVariable Long userId, @RequestParam Long userIdToUnfollow) {
         UserDTO updatedUser = userService.unfollowUser(userId, userIdToUnfollow);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{userId}/profile-picture")
-    public ResponseEntity<String> deleteProfilePic(@PathVariable Long userId) {
-        userService.deleteUserProfilePic(userId);
-        return ResponseEntity.ok().body("deleted successfully");
     }
 
     @PostMapping("/{userId}/saved-courses/{courseId}")
