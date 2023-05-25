@@ -9,6 +9,7 @@ import java.util.List;
 
 public class UserDTO {
     private Long id;
+    private String accessToken;
     private Date startDate;
     private String username;
     private String firstName;
@@ -29,6 +30,11 @@ public class UserDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public UserDTO withAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+        return this;
     }
 
     public Date getStartDate() {
@@ -125,6 +131,14 @@ public class UserDTO {
 
     public void setStoredFilesIds(List<Long> storedFilesIds) {
         this.storedFilesIds = storedFilesIds;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
