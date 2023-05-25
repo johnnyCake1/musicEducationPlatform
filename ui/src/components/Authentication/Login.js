@@ -47,7 +47,7 @@ const Login = () => {
       password: password,
     };
 
-    fetch("/api/v1/auth/login", {
+    fetch("https://v1910509.hosted-by-vdsina.ru/api/v1/auth/login", {
       headers: {
         "Content-Type": "application/json",
       },

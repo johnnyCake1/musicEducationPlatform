@@ -4,6 +4,7 @@ import Conversations from "./components/Conversations";
 import { httpReqAsync, postFile } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
+import { API_URL } from '../../constants';
 
 const ChatPage = () => {
   const [currentUser] = useLocalStorageState(null, "currentUser");
@@ -36,7 +37,7 @@ const ChatPage = () => {
 
       for (const m of selectedConversation.messages) {
         if (!m.message) {
-          const promise = fetch(`/storage/messageFile?messageId=${m.id}`)
+          const promise = fetch(API_URL +`/storage/messageFile?messageId=${m.id}`)
             .then((resp) => resp.blob())
             .then((blob) => {
               blobs[m.id] = blob;

@@ -1,3 +1,5 @@
+import { API_URL } from '../constants';
+
 export function httpReqAsync(url, reqMethod, jwt, reqBody) {
   const fetchData = {
     headers: {
@@ -16,7 +18,7 @@ export function httpReqAsync(url, reqMethod, jwt, reqBody) {
     }
   }
 
-  return fetch(url, fetchData).then((res) => {
+  return fetch(API_URL + url, fetchData).then((res) => {
     if (200 <= res.status && res.status < 300) {
       const contentType = res.headers.get("Content-Type");
       if (contentType && contentType.includes("application/json")) {
@@ -38,7 +40,7 @@ export function postFile(url, file, jwt) {
     body: file,
   };
 
-  return fetch(url, fetchData).then((res) => {
+  return fetch(API_URL + url, fetchData).then((res) => {
     if (200 <= res.status && res.status < 300) return res;
     console.log("bad request!");
   });
@@ -55,7 +57,7 @@ export function getFile(url, jwt, reqBody) {
     fetchData.body = JSON.stringify(reqBody);
   }
 
-  return fetch(url, fetchData).then((res) => {
+  return fetch(API_URL + url, fetchData).then((res) => {
     if (res.status === 204) return "file does not exist";
     if (200 <= res.status && res.status < 300) return res.blob();
     console.log("request failed!");

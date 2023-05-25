@@ -4,6 +4,7 @@ import Form from "./components/Forms";
 import Background from "./components/Background";
 import "./scss/auth.scss";
 import useLocalStorageState from "../../util/useLocalStorageState";
+import { API_URL } from '../../constants';
 
 const Register = () => {
   const [username, setName] = useState("");
@@ -60,7 +61,7 @@ const Register = () => {
       password: password,
     };
 
-    fetch("/api/v1/auth/register", {
+    fetch(API_URL +"/api/v1/auth/register", {
       headers: {
         "Content-Type": "application/json",
       },

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./CourseCreationPage.css";
 import { FaBook, FaCheck } from "react-icons/fa";
 import useLocalStorageState from "../../util/useLocalStorageState";
+import { API_URL } from '../../constants';
 
 const CourseCreationPage = () => {
   const [currentUser] = useLocalStorageState(null, "currentUser");
@@ -173,7 +174,7 @@ const CourseCreationPage = () => {
     }
     // Send the request
     try {
-      const response = await fetch("/api/v1/courses", {
+      const response = await fetch(API_URL +"/api/v1/courses", {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },

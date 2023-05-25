@@ -4,6 +4,7 @@ import { FaCamera, FaLock, FaUser } from "react-icons/fa";
 import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import { httpReqAsync } from "../../services/httpReqAsync";
+import { API_URL } from '../../constants';
 
 const Settings = () => {
   const [currentUser] = useLocalStorageState(null, "currentUser");
@@ -62,7 +63,7 @@ const Settings = () => {
       const formData = new FormData();
       formData.append("file", newProfilePicFile);
 
-      fetch(`/api/v1/users/${currentUser.id}/profile-picture`, {
+      fetch(API_URL +`/api/v1/users/${currentUser.id}/profile-picture`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${jwt}`,
