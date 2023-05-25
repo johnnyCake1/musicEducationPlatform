@@ -55,7 +55,7 @@ public class CourseController {
 //        return ResponseEntity.ok("Course created successfully.");
 //    }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<String> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
                                                @RequestParam("previewPicture") MultipartFile previewPicture,
                                                @RequestPart("contentDataFiles") MultipartFile[] topicContentFiles,
@@ -64,23 +64,13 @@ public class CourseController {
 
         Course createdCourse;
         try {
-            createdCourse = courseService.createCourse2 (course, promoVideo, previewPicture, topicContentFiles);
+            createdCourse = courseService.createCourse (course, promoVideo, previewPicture, topicContentFiles);
         } catch (IOException e) {
             return ResponseEntity.badRequest().build();
         }
 
 //        return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
         return new ResponseEntity<>("Course is created successfully", HttpStatus.CREATED);
-    }
-
-
-
-
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Course> createCourseWithFiles(@RequestParam("file") MultipartFile file, @RequestParam("picture") MultipartFile picture, @RequestParam("course") String courseJson) throws IOException {
-        Course course = new ObjectMapper().readValue(courseJson, Course.class);
-        Course createdCourse = courseService.createCourse(course, file, picture);
-        return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
 
     @GetMapping

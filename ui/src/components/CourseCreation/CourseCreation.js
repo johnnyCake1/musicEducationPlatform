@@ -171,7 +171,7 @@ const CourseCreationPage = () => {
     }
     // Send the request
     try {
-      const response = await fetch("/api/v1/courses/create", {
+      const response = await fetch("/api/v1/courses", {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },

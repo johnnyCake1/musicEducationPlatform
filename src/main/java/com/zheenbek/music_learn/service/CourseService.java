@@ -65,80 +65,7 @@ public class CourseService {
     }
 
     @Transactional
-    public Course createCourse(Course course, MultipartFile courseVideo, MultipartFile coursePicture) throws IOException {
-        List<CourseModule> courseModules = new ArrayList<>();
-        if (course.getCurriculum() != null) {
-            for (CourseModule module : course.getCurriculum()) {
-                List<CourseTopic> courseTopics = new ArrayList<>();
-                if (module.getCourseTopics() != null) {
-                    for (CourseTopic topic : module.getCourseTopics()) {
-                        //create a topic and it to courseTopics list
-                        courseTopics.add(courseTopicRepository.save(topic));
-                    }
-                }
-                //attach created topics list to the module
-                module.setCourseTopics(courseTopics);
-                courseModules.add(courseModuleRepository.save(module));
-            }
-        }
-        //attach created modules to the course
-        course.setCurriculum(courseModules);
-        //set date fields
-        course.setCreationDate(new Date());
-        course.setLastUpdatedDate(new Date());
-        //save course's video courseVideo & coursePicture in the courseVideo system
-        File storedVideoFile = serverFileStorageService.storeCourseFile(courseVideo.getBytes(), courseVideo.getContentType(), course.getCourseName());
-        File storedPictureFile = serverFileStorageService.storeCourseFile(coursePicture.getBytes(), coursePicture.getContentType(), course.getCourseName());
-        //save course's video courseVideo & coursePicture in the database
-        FileEntity courseVideoEntity = fileRepository.save(fileEntityFromFile(storedVideoFile, courseVideo.getContentType()));
-        FileEntity coursePictureEntity = fileRepository.save(fileEntityFromFile(storedPictureFile, coursePicture.getContentType()));
-        //attach the course's attached video & picture to the course itself
-        course.setPromoVideo(courseVideoEntity);
-        course.setPreviewImage(coursePictureEntity);
-        //finally save the course
-        return courseRepository.save(course);
-    }
-
-    private Course mapDtoToCourse(CourseDTO courseDTO) {
-        Course course = new Course();
-        course.setCourseName(courseDTO.getCourseName());
-        course.setCourseLongDescription(courseDTO.getCourseLongDescription());
-        course.setCourseShortDescription(courseDTO.getCourseShortDescription());
-        course.setPrice(courseDTO.getPrice());
-        course.setRequirements(courseDTO.getRequirements());
-        course.setWhatYouWillLearn(courseDTO.getWhatYouWillLearn());
-        course.setTags(courseDTO.getTags());
-        course.setReviews(courseDTO.getReviews());
-        course.setCreationDate(courseDTO.getCreationDate());
-        course.setLastUpdatedDate(courseDTO.getLastUpdatedDate());
-        course.setAuthor(userRepository.findById(courseDTO.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("Course author not found with ID: " + courseDTO.getAuthorId())));
-        course.setEnrolledStudents(courseDTO.getEnrolledStudentsIds().stream().map(id -> userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Course student not found with ID: " + id))).collect(Collectors.toList()));
-        course.setCurriculum(courseDTO.getCurriculum().stream().map(this::mapDtoToCourseModule).collect(Collectors.toList()));
-        return course;
-    }
-
-    private CourseModule mapDtoToCourseModule(CourseModuleDTO courseModuleDTO) {
-        CourseModule courseModule = new CourseModule();
-        courseModule.setModuleName(courseModuleDTO.getModuleName());
-        courseModule.setCourseTopics(courseModuleDTO.getCourseTopics().stream().map(this::mapDtoToCourseTopic).collect(Collectors.toList()));
-        return courseModule;
-    }
-
-    private CourseTopic mapDtoToCourseTopic(CourseTopicDTO courseTopicDTO) {
-        CourseTopic courseTopic = new CourseTopic();
-        courseTopic.setTopicName(courseTopicDTO.getTopicName());
-        courseTopic.setContentData(mapDtoToCourseData(courseTopicDTO.getContentData()));
-        return courseTopic;
-    }
-
-    private ContentData mapDtoToCourseData(ContentDataDTO contentDataDTO) {
-        ContentData contentData = new ContentData();
-        contentData.setContentType(contentDataDTO.getContentType());
-        return contentData;
-    }
-
-    @Transactional
-    public Course createCourse2(CourseDTO courseDTO, MultipartFile promoVideo, MultipartFile previewPicture, MultipartFile[] orderedTopicContentFiles) throws IOException {
+    public Course createCourse(CourseDTO courseDTO, MultipartFile promoVideo, MultipartFile previewPicture, MultipartFile[] orderedTopicContentFiles) throws IOException {
         //convert CourseDTO to Course entity
         Course course = mapDtoToCourse(courseDTO);
         //create the files in the system and database and append to the entity
@@ -269,5 +196,43 @@ public class CourseService {
         List<Review> updatedReviews = courseRepository.save(course).getReviews();
         reviewRepository.delete(reviewToDelete);
         return updatedReviews;
+    }
+
+    private Course mapDtoToCourse(CourseDTO courseDTO) {
+        Course course = new Course();
+        course.setCourseName(courseDTO.getCourseName());
+        course.setCourseLongDescription(courseDTO.getCourseLongDescription());
+        course.setCourseShortDescription(courseDTO.getCourseShortDescription());
+        course.setPrice(courseDTO.getPrice());
+        course.setRequirements(courseDTO.getRequirements());
+        course.setWhatYouWillLearn(courseDTO.getWhatYouWillLearn());
+        course.setTags(courseDTO.getTags());
+        course.setReviews(courseDTO.getReviews());
+        course.setCreationDate(courseDTO.getCreationDate());
+        course.setLastUpdatedDate(courseDTO.getLastUpdatedDate());
+        course.setAuthor(userRepository.findById(courseDTO.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("Course author not found with ID: " + courseDTO.getAuthorId())));
+        course.setEnrolledStudents(courseDTO.getEnrolledStudentsIds().stream().map(id -> userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Course student not found with ID: " + id))).collect(Collectors.toList()));
+        course.setCurriculum(courseDTO.getCurriculum().stream().map(this::mapDtoToCourseModule).collect(Collectors.toList()));
+        return course;
+    }
+
+    private CourseModule mapDtoToCourseModule(CourseModuleDTO courseModuleDTO) {
+        CourseModule courseModule = new CourseModule();
+        courseModule.setModuleName(courseModuleDTO.getModuleName());
+        courseModule.setCourseTopics(courseModuleDTO.getCourseTopics().stream().map(this::mapDtoToCourseTopic).collect(Collectors.toList()));
+        return courseModule;
+    }
+
+    private CourseTopic mapDtoToCourseTopic(CourseTopicDTO courseTopicDTO) {
+        CourseTopic courseTopic = new CourseTopic();
+        courseTopic.setTopicName(courseTopicDTO.getTopicName());
+        courseTopic.setContentData(mapDtoToCourseData(courseTopicDTO.getContentData()));
+        return courseTopic;
+    }
+
+    private ContentData mapDtoToCourseData(ContentDataDTO contentDataDTO) {
+        ContentData contentData = new ContentData();
+        contentData.setContentType(contentDataDTO.getContentType());
+        return contentData;
     }
 }
