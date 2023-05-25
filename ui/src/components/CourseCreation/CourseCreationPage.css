@@ -1,0 +1,84 @@
+.course-creation-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.course-creation-page h1 {
+  margin-top: 0;
+  font-size: 28px;
+  text-align: center;
+}
+
+.course-creation-page form {
+  margin-top: 24px;
+}
+
+.course-creation-page label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.course-creation-page input[type="text"],
+.course-creation-page input[type="file"],
+.course-creation-page textarea,
+.course-creation-page select {
+  width: 70%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  display: inline;
+}
+
+.course-creation-page textarea {
+  height: 120px;
+}
+
+.course-creation-page select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-color: #fff;
+  background-size: 16px;
+  padding-right: 30px;
+}
+
+.course-creation-page button[type="submit"],
+.course-creation-page button[type="button"] {
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.course-creation-page button[type="submit"] {
+  margin-top: 16px;
+  background-color: #28a745;
+}
+
+.course-creation-page button[type="button"] {
+  margin-left: 8px;
+  background-color: #dc3545;
+}
+
+.topic-item{
+  padding-left: 50px;
+}
+
+.module-item{
+  margin-top: 15px;
+  margin-bottom: 15px;
+}

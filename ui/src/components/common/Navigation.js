@@ -21,7 +21,7 @@ function Navigation() {
         <Link to="/dashboard" className={linkClass}>
           Dashboard
         </Link>
-        <Link to="/my-learnings" className={linkClass}>
+        <Link to="/my-courses" className={linkClass}>
           My courses
         </Link>
         <Link to="/courses" className={linkClass}>

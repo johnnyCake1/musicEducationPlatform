@@ -1,0 +1,7 @@
+.create-course-link {
+  display: block;
+  margin: 16px;
+  font-size: 14px;
+  color: #555;
+  text-decoration: underline;
+}

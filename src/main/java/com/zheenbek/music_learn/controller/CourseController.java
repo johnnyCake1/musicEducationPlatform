@@ -1,6 +1,10 @@
 package com.zheenbek.music_learn.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zheenbek.music_learn.dto.CourseDTO;
+import com.zheenbek.music_learn.dto.CourseModuleDTO;
+import com.zheenbek.music_learn.dto.CourseTopicDTO;
 import com.zheenbek.music_learn.dto.UserDTO;
 import com.zheenbek.music_learn.entity.Course;
 import com.zheenbek.music_learn.entity.Review;
@@ -13,11 +17,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +41,40 @@ public class CourseController {
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
     }
+
+//    @PostMapping("/create")
+//    public ResponseEntity<String> createCourse(@RequestBody CourseDTO courseDTO) {
+//        // Access the file data
+//        // - promoVideo: MultipartFile
+//        // - previewImage: MultipartFile
+//
+//        // Process the file data as needed
+//
+//        // Save the course and return a response
+//
+//        return ResponseEntity.ok("Course created successfully.");
+//    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
+                                               @RequestParam("previewPicture") MultipartFile previewPicture,
+                                               @RequestPart("contentDataFiles") MultipartFile[] topicContentFiles,
+                                               @RequestParam String courseDataJson) throws JsonProcessingException {
+        CourseDTO course = new ObjectMapper().readValue(courseDataJson, CourseDTO.class);
+
+        Course createdCourse;
+        try {
+            createdCourse = courseService.createCourse2 (course, promoVideo, previewPicture, topicContentFiles);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+//        return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
+        return new ResponseEntity<>("Course is created successfully", HttpStatus.CREATED);
+    }
+
+
+
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Course> createCourseWithFiles(@RequestParam("file") MultipartFile file, @RequestParam("picture") MultipartFile picture, @RequestParam("course") String courseJson) throws IOException {

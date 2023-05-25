@@ -141,7 +141,7 @@ const Dashboard = () => {
             />
           ))}
         </div>
-        <Link to="/my-learnings" className="see-all-link">
+        <Link to="/my-courses" className="see-all-link">
           See all of my courses
         </Link>
       </div>

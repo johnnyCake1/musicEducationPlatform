@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./MyCourses.css";
 import CoursePreviewCard from "../Course/components/CoursePreviewCard";
 import TabbedPage from "../common/TabbedPage";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { httpReqAsync } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
 
@@ -13,6 +13,7 @@ const MyCourses = () => {
   const [jwt] = useLocalStorageState("", "jwt");
   const [currentUser] = useLocalStorageState(null, "currentUser");
   const [takenCourses, setTakenCourses] = useState(null);
+  const [publishedCourses, setPublishedCourses] = useState(null);
   const [savedCourses, setSavedCourses] = useState(null);
   useEffect(() => {
     //get taken courses
@@ -22,6 +23,14 @@ const MyCourses = () => {
       jwt
     ).then((result) => {
       setTakenCourses(result);
+    });
+    //get published courses
+    httpReqAsync(
+      `/api/v1/users/${currentUser.id}/published-courses`,
+      "GET",
+      jwt
+    ).then((result) => {
+      setPublishedCourses(result);
     });
     //get saved courses
     httpReqAsync(
@@ -61,7 +70,6 @@ const MyCourses = () => {
                 tags={course.tags}
                 onClick={() => navigate(`/courses/${course.id}/description`)}
               />
-              // <CoursePreviewCard key={course.id} {...course} />
             ))}
           </div>
         ) : (
@@ -69,6 +77,46 @@ const MyCourses = () => {
         )
       ) : (
         <div>Loading ...</div>
+      ),
+    },
+    {
+      name: "publishedCourses",
+      label: "Published courses",
+      content: (
+        <>
+          {publishedCourses ? (
+            publishedCourses.length > 0 ? (
+              <div className="my-cards-grid">
+                {publishedCourses.map((course) => (
+                  <CoursePreviewCard
+                    key={course.id}
+                    courseId={course.id}
+                    authorId={course.author}
+                    title={course.courseName}
+                    takenCount={course?.enrolledStudents?.length}
+                    formattedCreationDate={new Date(
+                      course.creationDate
+                    ).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                    price={course.price}
+                    tags={course.tags}
+                    onClick={() =>
+                      navigate(`/courses/${course.id}/description`)
+                    }
+                  />
+                ))}
+              </div>
+            ) : (
+              <div>{"Nothing in your taken courses yet :("}</div>
+            )
+          ) : (
+            <div>Loading ...</div>
+          )}
+          <Link to='/courses/create' className="create-course-link">Click here to publish a new course</Link>
+        </>
       ),
     },
     {

@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-fileEntities/ for more about ignoring fileEntities.
-
 # dependencies
 /node_modules
 /.pnp

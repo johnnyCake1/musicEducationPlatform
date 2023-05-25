@@ -1,10 +1,6 @@
 package com.zheenbek.music_learn.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,16 +12,8 @@ public class CourseTopic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String topicName;
-    public enum DisplayableContentType {
-        FILE,
-        QUIZ,
-        UNKNOWN
-    }
-    @Enumerated(EnumType.STRING)
-    private DisplayableContentType contentType;
     @OneToOne
-    @JsonIdentityReference(alwaysAsId = true)
-    private FileEntity displayableFile;
+    private ContentData contentData;
 
     public Long getId() {
         return id;
@@ -43,21 +31,29 @@ public class CourseTopic {
         this.topicName = topicName;
     }
 
-    public FileEntity getDisplayableFile() {
-        return displayableFile;
+    public ContentData getContentData() {
+        return contentData;
     }
 
-    public DisplayableContentType getContentType() {
-        return contentType;
+    public void setContentData(ContentData contentData) {
+        this.contentData = contentData;
     }
 
-    public void setContentType(DisplayableContentType contentType) {
-        this.contentType = contentType;
-    }
-
-    public void setDisplayableFile(FileEntity displayableFile) {
-        this.displayableFile = displayableFile;
-    }
+    //    public FileEntity getDisplayableFile() {
+//        return displayableFile;
+//    }
+//
+//    public DisplayableContentType getContentType() {
+//        return contentType;
+//    }
+//
+//    public void setContentType(DisplayableContentType contentType) {
+//        this.contentType = contentType;
+//    }
+//
+//    public void setDisplayableFile(FileEntity displayableFile) {
+//        this.displayableFile = displayableFile;
+//    }
 
 }
 

@@ -16,6 +16,7 @@ import Storage from "./components/Saved/Storage";
 import CourseContentPage from "./components/Course/CourseContentPage";
 import Logout from "./components/Authentication/Logout";
 import Settings from "./components/Settings/Settings";
+import CourseCreationPage from "./components/CourseCreation/CourseCreation";
 
 function App() {
   console.log("Hello from App!");
@@ -50,7 +51,7 @@ function App() {
             path="/search/:keyword"
             element={withSidebarAndAuth(SearchResult)}
           />
-          <Route path="/my-learnings" element={withSidebarAndAuth(MyCourses)} />
+          <Route path="/my-courses" element={withSidebarAndAuth(MyCourses)} />
           <Route path="/storage" element={withSidebarAndAuth(Storage)} />
           <Route
             path="/courses/:courseId/description"
@@ -63,6 +64,10 @@ function App() {
           <Route
             path="/courses"
             element={withSidebarAndAuth(CourseDescription)}
+          />
+          <Route
+            path="/courses/create"
+            element={withSidebarAndAuth(CourseCreationPage)}
           />
           <Route
             path="/assignments/:id"
