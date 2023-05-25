@@ -71,9 +71,8 @@ public class AuthenticationController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(400).body("failed to authenticate given credentials");
         }
-        return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtUtil.generateToken(user.getUsername(), user.getAuthorities()))
-                .body(user);
+        String jwtToken = jwtUtil.generateToken(user.getUsername(), user.getAuthorities());
+        return new ResponseEntity<>(user.withAccessToken(jwtToken), HttpStatus.OK);
     }
 
     @GetMapping("/validate")

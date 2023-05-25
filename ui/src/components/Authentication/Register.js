@@ -12,7 +12,7 @@ const Register = () => {
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [, setJwt] = useLocalStorageState("", "jwt");
-  const [, setCurrentUser] = useLocalStorageState(null, 'currentUser');
+  const [, setCurrentUser] = useLocalStorageState(null, "currentUser");
 
   const validateRegister = () => {
     let isValid = true;
@@ -70,22 +70,20 @@ const Register = () => {
       .then((res) => {
         console.log(res);
         if (res.status === 200) {
-          setJwt(res.headers.get("authorization"));
           return res.json();
-        } else {
-          return Promise.reject("Invalid register attempt: ");
         }
+        return Promise.reject("Invalid register attempt: ");
       })
-      .then(user => {
+      .then((user) => {
         setCurrentUser(user);
-        console.log('setting to', user);
-        window.location.href = '/dashboard'
+        setJwt(user.accessToken);
+        console.log("setting to", user);
+        window.location.href = "/dashboard";
       })
       .catch((message) => {
         alert(message);
       });
   };
-
 
   const togglePassword = (e) => {
     if (showPassword) {
