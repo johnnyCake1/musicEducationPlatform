@@ -20,6 +20,7 @@ public class UserDTO {
     private List<Long> publishedCoursesIds;
     private List<Long> takenCoursesIds;
     private List<Long> savedCoursesIds;
+    private List<Long> storedFilesIds;
     Collection<? extends GrantedAuthority> authorities = new HashSet<>();
 
     public Long getId() {
@@ -116,6 +117,14 @@ public class UserDTO {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public List<Long> getStoredFilesIds() {
+        return storedFilesIds;
+    }
+
+    public void setStoredFilesIds(List<Long> storedFilesIds) {
+        this.storedFilesIds = storedFilesIds;
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {

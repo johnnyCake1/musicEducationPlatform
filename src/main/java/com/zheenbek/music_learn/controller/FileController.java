@@ -32,7 +32,7 @@ public class FileController {
     }
 
 
-
+    @Deprecated
     @PostMapping("/messageFile")
     public ResponseEntity<String> sendMessageFile(@RequestBody byte[] fileData, @RequestHeader("Content-Type") String contentType, @RequestParam Long conversationId, @RequestParam Long userId) {
         if (fileData == null) {
@@ -46,7 +46,7 @@ public class FileController {
         }
         return ResponseEntity.ok("Profile picture is successfully uploaded");
     }
-
+    @Deprecated
     @GetMapping("/messageFile")
     public ResponseEntity<FileSystemResource> getMessageFile(@RequestParam Long messageId) {
         Pair <File, String> result = fileService.getMessageFile(messageId);

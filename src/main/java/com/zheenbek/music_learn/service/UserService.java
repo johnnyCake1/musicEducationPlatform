@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -92,6 +93,14 @@ public class UserService {
         return userRepository.findById(userId).map(UserService::convertToUserDTO);
     }
 
+    public Optional<File> getProfilePictureByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        if (user.getProfilePic() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new File(user.getProfilePic().getFilePath()));
+    }
+
     public File updateUserProfilePicture(MultipartFile file, Long userId) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         FileEntity oldProfilePic = user.getProfilePic();
@@ -124,6 +133,55 @@ public class UserService {
         serverFileStorageService.deleteProfilePicture(oldProfilePic.getFileName());
         //delete old profile picture from the database
         fileRepository.delete(oldProfilePic);
+    }
+
+    public File addStoredFile(MultipartFile file, Long userId) throws IOException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        //save new file in the file system
+        File storedPicture = serverFileStorageService.storeProfilePicture(file.getBytes(), file.getContentType(), user.getUsername());
+        //save new file in the database
+        FileEntity savedFile = fileRepository.save(fileEntityFromFile(storedPicture, file.getContentType()));
+        //update user
+        user.getStoredFiles().add(savedFile);
+        userRepository.save(user);
+        return storedPicture;
+    }
+
+    @Transactional
+    public Optional<File> getUserStoredFile(Long userId, Long fileId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        FileEntity fileEntity = user.getStoredFiles()
+                .stream()
+                .filter(file -> Objects.equals(file.getId(), fileId))
+                .findFirst()
+                .orElse(null);
+
+        if (fileEntity == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new File(fileEntity.getFilePath()));
+    }
+
+    @Transactional
+    public UserDTO deleteUserStoredFile(Long userId, Long fileId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        FileEntity fileEntityToDelete = user.getStoredFiles()
+                .stream()
+                .filter(file -> Objects.equals(file.getId(), fileId))
+                .findFirst()
+                .orElse(null);
+        FileEntity oldProfilePic = user.getProfilePic();
+        if (fileEntityToDelete == null){
+            return convertToUserDTO(user);
+        }
+        //update user
+        user.getStoredFiles().remove(fileEntityToDelete);
+        userRepository.save(user);
+        //delete file from the file system
+        serverFileStorageService.deleteProfilePicture(fileEntityToDelete.getFileName());
+        //delete file from the database
+        fileRepository.delete(fileEntityToDelete);
+        return convertToUserDTO(user);
     }
 
     @Transactional

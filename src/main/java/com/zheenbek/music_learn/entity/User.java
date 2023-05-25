@@ -68,6 +68,10 @@ public class User implements UserDetails {
     private List<Course> savedCourses = new ArrayList<>();
 
     @OneToMany
+    @JsonIdentityReference(alwaysAsId = true)
+    private List<FileEntity> storedFiles = new ArrayList<>();
+
+    @OneToMany
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
@@ -221,6 +225,14 @@ public class User implements UserDetails {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public List<FileEntity> getStoredFiles() {
+        return storedFiles;
+    }
+
+    public void setStoredFiles(List<FileEntity> storedFiles) {
+        this.storedFiles = storedFiles;
     }
 
     public void setSavedCourses(List<Course> savedCourses) {

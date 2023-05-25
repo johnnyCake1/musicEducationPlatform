@@ -56,4 +56,16 @@ public class ConversationController {
         return ResponseEntity.noContent().build();
     }
 
+//    @GetMapping("/{conversationId}/messages/{messageId/")
+//    public ResponseEntity<FileSystemResource> getMessage(@PathVariable String conversationId) {
+//        MessageDTO message;
+//        try {
+//            message = new ObjectMapper().readValue(messageJson, MessageDTO.class);
+//        } catch (JsonProcessingException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        return ResponseEntity.noContent().build();
+//    }
+
 }

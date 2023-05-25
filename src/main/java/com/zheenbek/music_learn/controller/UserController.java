@@ -8,7 +8,6 @@ import com.zheenbek.music_learn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,17 +15,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.zheenbek.music_learn.controller.CourseController.getFileSystemResourceResponseEntity;
@@ -64,7 +60,7 @@ public class UserController {
 
     @GetMapping("/{userId}/profile-picture")
     public ResponseEntity<FileSystemResource> getProfilePicture(@PathVariable Long userId) {
-        return fileService.getProfilePictureByUserId(userId).map(CourseController::getFileSystemResourceResponseEntity).orElseGet(() -> ResponseEntity.noContent().build());
+        return userService.getProfilePictureByUserId(userId).map(CourseController::getFileSystemResourceResponseEntity).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @PutMapping("/{userId}/profile-picture")
@@ -124,6 +120,28 @@ public class UserController {
     public ResponseEntity<List<Course>> getAllPublishedCourses(@PathVariable Long userId) {
         List<Course> savedCourses = userService.getAllPublishedCourses(userId);
         return new ResponseEntity<>(savedCourses, HttpStatus.OK);
+    }
+
+    @PostMapping("/{userId}/saved-files")
+    public ResponseEntity<FileSystemResource> addToStoredFiles(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
+        File newProfilePicture;
+        try {
+            newProfilePicture = userService.addStoredFile(file, userId);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return getFileSystemResourceResponseEntity(newProfilePicture);
+    }
+
+    @GetMapping("/{userId}/saved-files/{fileId}")
+    public ResponseEntity<FileSystemResource> getStoredFile(@PathVariable Long userId, @PathVariable Long fileId) {
+        return userService.getUserStoredFile(userId, fileId).map(CourseController::getFileSystemResourceResponseEntity).orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    @DeleteMapping("/{userId}/saved-files/{fileId}")
+    public ResponseEntity<UserDTO> deleteUserStoredFile(@PathVariable Long userId, @PathVariable Long fileId) {
+        UserDTO updatedUser = userService.deleteUserStoredFile(userId, fileId);
+        return new ResponseEntity<>(updatedUser, HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/{userId}/username")
