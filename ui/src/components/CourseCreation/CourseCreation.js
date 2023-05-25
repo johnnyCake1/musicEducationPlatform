@@ -9,6 +9,7 @@ const CourseCreationPage = () => {
   const [courseData, setCourseData] = useState({
     authorId: currentUser.id,
     courseName: "",
+    price: 0,
     courseShortDescription: "",
     courseLongDescription: "",
     requirements: [],
@@ -20,7 +21,18 @@ const CourseCreationPage = () => {
   });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    console.log("sas", name, value);
+
+    if (name === "price") {
+      // Remove non-digit characters
+      value = value.replace(/[^0-9.]/g, "");
+
+      // Add decimal places
+      value = parseFloat(value).toFixed(2);
+      console.log("sas2", name, value);
+
+    }
     setCourseData((prevState) => ({ ...prevState, [name]: value }));
   };
 
@@ -69,15 +81,6 @@ const CourseCreationPage = () => {
       return { ...prevState, curriculum };
     });
   };
-
-  // const handleWhatYouWillLearnChange = (e, index) => {
-  //   const { value } = e.target;
-  //   setCourseData((prevState) => {
-  //     const whatYouWillLearn = [...prevState.whatYouWillLearn];
-  //     whatYouWillLearn[index] = value;
-  //     return { ...prevState, whatYouWillLearn };
-  //   });
-  // };
 
   const handleTagChange = (e, index) => {
     const { value } = e.target;
@@ -154,7 +157,6 @@ const CourseCreationPage = () => {
     formData.append("promoVideo", promoVideoFile);
     // Append the course data JSON string to the FormData object
     formData.append("courseDataJson", JSON.stringify(courseData));
-    // formData.append("courseDataJson", courseDataJson);
 
     // Append the contentDataFiles individually
     const contentDataFiles = [];
@@ -178,8 +180,6 @@ const CourseCreationPage = () => {
         method: "POST",
         body: formData,
       });
-
-      // Handle the response as needed
       if (response.ok) {
         console.log("Course created successfully.");
       } else {
@@ -208,6 +208,19 @@ const CourseCreationPage = () => {
             id="courseName"
             name="courseName"
             value={courseData.courseName}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="price">Course price ($):</label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            value={courseData.price}
+            step="0.1"
+            min="0"
             onChange={handleInputChange}
           />
         </div>
@@ -447,17 +460,6 @@ const CourseCreationPage = () => {
           </button>
         )}
         <hr />
-        {/* <div>
-          <label htmlFor="tags">Tags:</label>
-          <input
-            type="text"
-            id="tags"
-            name="tags"
-            value={courseData.tags.join(", ")}
-            onChange={handleTagChange}
-          />
-        </div> */}
-
         <div>
           <label htmlFor="previewPicture">Preview Picture (Mandatory):</label>
           <input
@@ -469,7 +471,6 @@ const CourseCreationPage = () => {
             required
           />
         </div>
-
         <div>
           <label htmlFor="promoVideo">Promo Video (Mandatory):</label>
           <input

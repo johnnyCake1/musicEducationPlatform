@@ -78,6 +78,9 @@ public class CourseService {
         //append:
         course.setPromoVideo(courseVideoEntity);
         course.setPreviewImage(coursePictureEntity);
+        //record the dates
+        course.setCreationDate(new Date());
+        course.setLastUpdatedDate(new Date());
 
         int topicFileIndex = 0;
         for (CourseModule module : course.getCurriculum()) {

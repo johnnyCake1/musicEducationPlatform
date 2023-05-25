@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,13 +56,19 @@ public class UserController {
         return user.map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateUserInfo(@PathVariable Long userId, @RequestBody UserDTO userInfo) {
+        UserDTO user = userService.updateUserInfo(userId, userInfo);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     @GetMapping("/{userId}/profile-picture")
     public ResponseEntity<FileSystemResource> getProfilePicture(@PathVariable Long userId) {
         return fileService.getProfilePictureByUserId(userId).map(CourseController::getFileSystemResourceResponseEntity).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @PutMapping("/{userId}/profile-picture")
-    public ResponseEntity<FileSystemResource> uploadProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
+    public ResponseEntity<FileSystemResource> updateProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
         File newProfilePicture;
         try {
             newProfilePicture = userService.updateUserProfilePicture(file, userId);
@@ -136,7 +143,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}/reviews/{reviewId}")
-    public ResponseEntity<List<Review>> removeReview( @PathVariable Long userId, @PathVariable Long reviewId) {
+    public ResponseEntity<List<Review>> removeReview(@PathVariable Long userId, @PathVariable Long reviewId) {
         List<Review> updatedReviews = userService.removeReviewFromUser(userId, reviewId);
         return new ResponseEntity<>(updatedReviews, HttpStatus.OK);
     }

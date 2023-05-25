@@ -63,6 +63,23 @@ public class UserService {
         return convertToUserDTO(createdUser);
     }
 
+    public UserDTO updateUserInfo(Long userId, UserDTO userInfo) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        if (userInfo.getAboutMe() != null) {
+            user.setAboutMe(userInfo.getAboutMe());
+        }
+        if (userInfo.getFirstName() != null) {
+            user.setFirstName(userInfo.getFirstName());
+        }
+        if (userInfo.getLastName() != null) {
+            user.setLastName(userInfo.getLastName());
+        }
+        if (userInfo.getTags() != null) {
+            user.setTags(user.getTags());
+        }
+        return convertToUserDTO(userRepository.save(user));
+    }
+
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream().map(UserService::convertToUserDTO).collect(Collectors.toList());
     }
@@ -96,7 +113,7 @@ public class UserService {
 
     public void deleteUserProfilePic(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-        if (user.getProfilePic() == null){
+        if (user.getProfilePic() == null) {
             return;
         }
         FileEntity oldProfilePic = user.getProfilePic();
@@ -194,7 +211,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
         user.getReviews().remove(reviewToDelete);
-        List <Review> updatedReviews = userRepository.save(user).getReviews();
+        List<Review> updatedReviews = userRepository.save(user).getReviews();
         reviewRepository.delete(reviewToDelete);
         return updatedReviews;
     }

@@ -38,7 +38,6 @@ const MyCourses = () => {
       "GET",
       jwt
     ).then((result) => {
-      console.log("saved", result);
       setSavedCourses(result);
     });
   }, [jwt, currentUser]);
@@ -110,12 +109,14 @@ const MyCourses = () => {
                 ))}
               </div>
             ) : (
-              <div>{"Nothing in your taken courses yet :("}</div>
+              <div>{"Nothing in your published courses yet :("}</div>
             )
           ) : (
             <div>Loading ...</div>
           )}
-          <Link to='/courses/create' className="create-course-link">Click here to publish a new course</Link>
+          <Link to="/courses/create" className="create-course-link">
+            Click here to publish a new course
+          </Link>
         </>
       ),
     },

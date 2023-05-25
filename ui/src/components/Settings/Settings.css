@@ -1,0 +1,69 @@
+.settings-container {
+  width: 400px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.settings-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.settings-container .form-group {
+  margin-bottom: 20px;
+}
+
+.settings-container label {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  color: #333;
+}
+
+.settings-container .icon {
+  margin-right: 10px;
+}
+
+.settings-container input[type="text"],
+.settings-container input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.settings-container input[type="text"]:focus,
+.settings-container input[type="password"]:focus {
+  outline: none;
+  border-color: #888;
+}
+
+.settings-container .submit-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.settings-container .submit-button:hover {
+  background-color: #45a049;
+}
+
+.profile-picture-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.settings-about-me{
+    height: 5rem;
+}

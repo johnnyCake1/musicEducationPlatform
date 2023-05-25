@@ -6,61 +6,6 @@ import Conversations from "../Chat/components/Conversations";
 import { Link, useNavigate } from "react-router-dom";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import { httpReqAsync } from "../../services/httpReqAsync";
-
-const courses = [
-  {
-    id: 1,
-    imageSrc: "https://via.placeholder.com/320x140.png?text=Course+1",
-    userImageSrc: "https://via.placeholder.com/40.png?text=User+1",
-    title: "Course 1",
-    username: "User 1",
-    takenCount: 500,
-    createdAt: "May 1, 2023",
-    tags: ["Guitar", "Advanced", "Jazz"],
-    price: 25,
-    progress: 50,
-  },
-  {
-    id: 2,
-    imageSrc: "https://via.placeholder.com/320x140.png?text=Course+2",
-    userImageSrc: "https://via.placeholder.com/40.png?text=User+2",
-    title: "Course 2",
-    username: "User 2",
-    takenCount: 1000,
-    createdAt: "April 15, 2023",
-    tags: ["Piano", "Beginner", "Classical"],
-    price: 0,
-    progress: 10,
-  },
-  // Add more courses here
-];
-
-const recommendedCourses = [
-  {
-    id: 1,
-    imageSrc: "https://via.placeholder.com/320x140.png?text=Course+3",
-    userImageSrc: "https://via.placeholder.com/40.png?text=User+3",
-    title: "Course 3",
-    username: "User 3",
-    takenCount: 250,
-    createdAt: "May 5, 2023",
-    tags: ["Drums", "Intermediate", "Rock"],
-    price: 20,
-  },
-  {
-    id: 2,
-    imageSrc: "https://via.placeholder.com/320x140.png?text=Course+4",
-    userImageSrc: "https://via.placeholder.com/40.png?text=User+4",
-    title: "Course 4",
-    username: "User 4",
-    takenCount: 750,
-    createdAt: "April 20, 2023",
-    tags: ["Singing", "Advanced", "Pop"],
-    price: 50,
-  },
-  // Add more courses here
-];
-
 const documents = [
   {
     id: 1,
@@ -89,17 +34,17 @@ const documents = [
 ];
 
 const Dashboard = () => {
+  const [courses, setCourses] = useState(null);
+  const [recommendedCourses, setRecommendedCourses] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [jwt] = useLocalStorageState("", "jwt");
   const [currentUser] = useLocalStorageState(null, "currentUser");
   useEffect(() => {
     httpReqAsync(`api/v1/conversations`, "GET", jwt).then((convs) => {
       setConversations(convs);
-      console.log("tge convs:", convs);
     });
   }, [jwt]);
 
-  const [courses, setCourses] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     httpReqAsync(
@@ -107,39 +52,35 @@ const Dashboard = () => {
       "GET",
       jwt
     ).then((result) => {
-      console.log("result:", result);
       setCourses(result);
     });
   }, [jwt, currentUser]);
-
-  if (!courses) {
-    return <></>;
-  }
 
   return (
     <div className="dashboard-container">
       <div className="section-container my-learnings">
         <h2>My Learnings</h2>
         <div className="cards-container">
-          {courses.map((course) => (
-            <CoursePreviewCard
-              key={course.id}
-              courseId={course.id}
-              authorId={course.author}
-              title={course.courseName}
-              takenCount={course?.enrolledStudents?.length}
-              formattedCreationDate={new Date(
-                course.creationDate
-              ).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-              price={course.price}
-              tags={course.tags}
-              onClick={() => navigate(`/courses/${course.id}/description`)}
-            />
-          ))}
+          {courses &&
+            courses.map((course) => (
+              <CoursePreviewCard
+                key={course.id}
+                courseId={course.id}
+                authorId={course.author}
+                title={course.courseName}
+                takenCount={course?.enrolledStudents?.length}
+                formattedCreationDate={new Date(
+                  course.creationDate
+                ).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+                price={course.price}
+                tags={course.tags}
+                onClick={() => navigate(`/courses/${course.id}/description`)}
+              />
+            ))}
         </div>
         <Link to="/my-courses" className="see-all-link">
           See all of my courses
@@ -176,9 +117,26 @@ const Dashboard = () => {
       <div className="section-container recommended-courses">
         <h2>Recommended Courses</h2>
         <div className="cards-container">
-          {recommendedCourses.map((course) => (
-            <CoursePreviewCard key={course.id} {...course} />
-          ))}
+          {recommendedCourses &&
+            recommendedCourses.map((course) => (
+              <CoursePreviewCard
+                key={course.id}
+                courseId={course.id}
+                authorId={course.author}
+                title={course.courseName}
+                takenCount={course?.enrolledStudents?.length}
+                formattedCreationDate={new Date(
+                  course.creationDate
+                ).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+                price={course.price}
+                tags={course.tags}
+                onClick={() => navigate(`/courses/${course.id}/description`)}
+              />
+            ))}
         </div>
         <Link to="/courses" className="see-all-link">
           See all recommended courses
