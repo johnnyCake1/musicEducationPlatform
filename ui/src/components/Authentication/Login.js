@@ -4,6 +4,7 @@ import Form from "./components/Forms";
 import Background from "./components/Background";
 import "./scss/auth.scss";
 import useLocalStorageState from "../../util/useLocalStorageState";
+import { API_URL } from '../../constants';
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -47,7 +48,7 @@ const Login = () => {
       password: password,
     };
 
-    fetch("https://v1910509.hosted-by-vdsina.ru/api/v1/auth/login", {
+    fetch(API_URL+"/api/v1/auth/login", {
       headers: {
         "Content-Type": "application/json",
       },
