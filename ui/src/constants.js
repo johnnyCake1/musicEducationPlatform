@@ -1,1 +1,1 @@
-export const API_URL = 'http://212.118.52.67';
+export const API_URL = 'https://v1910509.hosted-by-vdsina.ru';
