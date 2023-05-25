@@ -60,7 +60,7 @@ const Register = () => {
       password: password,
     };
 
-    fetch("api/v1/auth/register", {
+    fetch("/api/v1/auth/register", {
       headers: {
         "Content-Type": "application/json",
       },

@@ -48,7 +48,7 @@ const Login = () => {
       password: password,
     };
 
-    fetch("api/v1/auth/login", {
+    fetch("/api/v1/auth/login", {
       headers: {
         "Content-Type": "application/json",
       },

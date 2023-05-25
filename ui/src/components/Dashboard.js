@@ -10,13 +10,13 @@ const Dashboard = () => {
   const [assignments, setAssignments] = useState(null);
 
   useEffect(() => {
-    httpReqAsync("api/v1/assignments", "GET", jwt).then((assignmentData) => {
+    httpReqAsync("/api/v1/assignments", "GET", jwt).then((assignmentData) => {
       setAssignments(assignmentData);
     });
   }, [jwt]);
 
   const createAssignment = () => {
-    httpReqAsync("api/v1/assignments", "POST", jwt).then((assignment) => {
+    httpReqAsync("/api/v1/assignments", "POST", jwt).then((assignment) => {
       window.location.href = `/assignments/${assignment.id}`;
     });
   };
