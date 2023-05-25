@@ -29,4 +29,4 @@ hs_err_pid*
 
 /src/main/resources/application.properties
 
-/src/main/storage/
+/src/main/storage/*
