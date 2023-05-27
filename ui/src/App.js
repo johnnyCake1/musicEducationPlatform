@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
 import PrivateRoute from "./components/common/PrivateRoute";
-import AssignmentView from "./components/AssignmentView";
 import Homepage from "./components/Homepage/Homepage";
 import Login from "./components/Authentication/Login";
 import Forgot from "./components/Authentication/Forgot";
@@ -52,6 +51,10 @@ function App() {
             element={withSidebarAndAuth(SearchResult)}
           />
           <Route path="/my-courses" element={withSidebarAndAuth(MyCourses)} />
+          <Route
+            path="/my-courses/drafts/:courseId"
+            element={withSidebarAndAuth(CourseCreationPage)}
+          />
           <Route path="/storage" element={withSidebarAndAuth(Storage)} />
           <Route
             path="/courses/:courseId/description"
@@ -65,16 +68,7 @@ function App() {
             path="/courses"
             element={withSidebarAndAuth(CourseDescription)}
           />
-          <Route
-            path="/courses/create"
-            element={withSidebarAndAuth(CourseCreationPage)}
-          />
-          <Route
-            path="/assignments/:id"
-            element={withSidebarAndAuth(AssignmentView)}
-          />
           <Route path="/chat" element={withSidebarAndAuth(ChatPage)} />
-          <Route path="/ass" element={withSidebarAndAuth(AssignmentView)} />
         </Routes>
       </div>
     </div>

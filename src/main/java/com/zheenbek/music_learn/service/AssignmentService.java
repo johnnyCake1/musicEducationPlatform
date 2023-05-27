@@ -1,7 +1,7 @@
 package com.zheenbek.music_learn.service;
 
 import com.zheenbek.music_learn.entity.Assignment;
-import com.zheenbek.music_learn.entity.User;
+import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.repository.AssignmentRepository;
 import org.springframework.stereotype.Service;
 

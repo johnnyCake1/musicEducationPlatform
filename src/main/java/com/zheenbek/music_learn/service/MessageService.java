@@ -4,7 +4,7 @@ import com.zheenbek.music_learn.dto.MessageDTO;
 import com.zheenbek.music_learn.entity.Conversation;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Message;
-import com.zheenbek.music_learn.entity.User;
+import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.repository.ConversationRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.repository.MessageRepository;

@@ -1,7 +1,7 @@
 package com.zheenbek.music_learn.config;
 
 import com.zheenbek.music_learn.repository.UserRepository;
-import com.zheenbek.music_learn.entity.User;
+import com.zheenbek.music_learn.entity.user.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;

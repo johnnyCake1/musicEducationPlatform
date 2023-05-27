@@ -73,6 +73,9 @@ const Register = () => {
         if (res.status === 200) {
           return res.json();
         }
+        if (res.status === 503){
+          return Promise.reject("Server is not available");
+        }
         return Promise.reject("Invalid register attempt: ");
       })
       .then((user) => {

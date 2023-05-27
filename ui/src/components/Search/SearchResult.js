@@ -4,7 +4,7 @@ import CoursePreviewCard from "../Course/components/CoursePreviewCard";
 import TabbedPage from "../common/TabbedPage";
 import SavedItemsPreviewCard from "../Saved/components/SavedItemsPreviewCard";
 import UserCardSmall from "./components/UserCardSmall";
-import { getFile, httpReqAsync } from "../../services/httpReqAsync";
+import { httpReqAsync } from "../../services/httpReqAsync";
 import { useNavigate, useParams } from "react-router-dom";
 import useLocalStorageState from "../../util/useLocalStorageState";
 
@@ -73,7 +73,6 @@ const SearchResult = () => {
       description: "Unlock your creativity with our songwriting course",
     },
   ];
-
   const tabs = [
     {
       name: "courses",

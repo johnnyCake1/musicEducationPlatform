@@ -1,6 +1,8 @@
 package com.zheenbek.music_learn.entity;
 
 
+import com.zheenbek.music_learn.entity.user.User;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

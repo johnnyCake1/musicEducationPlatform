@@ -1,7 +1,7 @@
 package com.zheenbek.music_learn.service;
 
-import com.zheenbek.music_learn.entity.Role;
-import com.zheenbek.music_learn.entity.User;
+import com.zheenbek.music_learn.entity.user.Role;
+import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 

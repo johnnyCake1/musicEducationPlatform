@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./CourseCreationPage.css";
 import { FaBook, FaCheck } from "react-icons/fa";
 import useLocalStorageState from "../../util/useLocalStorageState";
-import { API_URL } from '../../constants';
+import { API_URL } from "../../constants";
+import { useParams } from "react-router-dom";
+import { getFile, httpReqAsync } from "../../services/httpReqAsync";
+import VideoPlayer from "../common/VideoPlayer";
 
 const CourseCreationPage = () => {
+  const { courseId } = useParams();
   const [currentUser] = useLocalStorageState(null, "currentUser");
   const [jwt] = useLocalStorageState("", "jwt");
+  const [toggleRefresh, setToggleRefresh] = useState(false);
   const [courseData, setCourseData] = useState({
+    id: courseId,
     authorId: currentUser.id,
     courseName: "",
     price: 0,
@@ -17,9 +23,92 @@ const CourseCreationPage = () => {
     whatYouWillLearn: [],
     curriculum: [],
     tags: [],
-    previewPicture: null,
+    previewImage: null,
     promoVideo: null,
   });
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFiles = async (curriculum) => {
+      const updatedCurriculum = await Promise.all(
+        curriculum.map(async (module) => {
+          const updatedTopics = await Promise.all(
+            module.courseTopics.map(async (topic) => {
+              if (
+                topic.contentData.contentType === "FILE" &&
+                topic.contentData.fileId
+              ) {
+                const fileData = await getFile(
+                  `/api/v1/files/${topic.contentData.fileId}`,
+                  jwt
+                );
+                if (fileData && fileData instanceof Blob) {
+                  const updatedContentData = {
+                    ...topic.contentData,
+                    file: fileData,
+                  };
+                  return {
+                    ...topic,
+                    contentData: updatedContentData,
+                  };
+                }
+              }
+              return topic;
+            })
+          );
+          return {
+            ...module,
+            courseTopics: updatedTopics,
+          };
+        })
+      );
+      setCourseData((prevCourseData) => ({
+        ...prevCourseData,
+        curriculum: updatedCurriculum,
+      }));
+    };
+
+    //fetch the course data
+    httpReqAsync(`/api/v1/courses/${courseId}`, "GET", jwt).then((result) => {
+      if (String(currentUser.id) === String(result.authorId)) {
+        //fill out the data
+        setCourseData(result);
+        console.log("the result:", result);
+        //fetch course preview image and append it to course data
+        getFile(`/api/v1/files/${result.previewImageId}`, jwt).then(
+          (blobPicture) => {
+            if (blobPicture && blobPicture instanceof Blob) {
+              setCourseData((prevCourseData) => ({
+                ...prevCourseData,
+                previewImage: blobPicture,
+              }));
+            }
+          }
+        );
+        //fetch course promo video and append it to course data
+        getFile(`/api/v1/files/${result.promoVideoId}`, jwt).then(
+          (blobVideo) => {
+            if (blobVideo && blobVideo instanceof Blob) {
+              setCourseData((prevCourseData) => ({
+                ...prevCourseData,
+                promoVideo: blobVideo,
+              }));
+            }
+          }
+        );
+        //fetch course topics
+        fetchFiles(result.curriculum);
+      } else {
+        setError("This user cannot access this page!");
+      }
+    });
+  }, [jwt, courseId, currentUser, toggleRefresh]);
+
+  console.log("courseData:", courseData);
+
+  if (error || !courseData) {
+    return <div>{`Error: ${error}`}</div>;
+  }
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
@@ -32,7 +121,6 @@ const CourseCreationPage = () => {
       // Add decimal places
       value = parseFloat(value).toFixed(2);
       console.log("sas2", name, value);
-
     }
     setCourseData((prevState) => ({ ...prevState, [name]: value }));
   };
@@ -57,29 +145,31 @@ const CourseCreationPage = () => {
 
   const handleCurriculumChange = (e, moduleIndex, topicIndex) => {
     const { name, value, type, files } = e.target;
-    // console.log("----------------START------------------");
-    // console.log("curriculum change!");
-    // console.log("moduleIndex:", moduleIndex);
-    // console.log("topicIndex:", topicIndex);
-    // console.log("name:", name);
-    // console.log("value:", value);
-    // console.log("type:", type);
-    // console.log("files:", files);
-    // console.log("---------------END-------------------");
+
+    if (type === "file") {
+      console.log("state of course data before sending file:", courseData);
+      httpReqAsync("/api/v1/files", "POST", jwt, files[0]).then((result) => {
+        console.log("state of course data after sending file:", courseData);
+        setCourseData((prevState) => {
+          const curriculum = [...prevState.curriculum];
+          curriculum[moduleIndex].courseTopics[topicIndex].contentData = {
+            contentType: "FILE",
+            file: files[0],
+            fileId: result,
+          };
+          return { ...prevState, curriculum };
+        });
+      });
+
+      return;
+    }
 
     setCourseData((prevState) => {
       const curriculum = [...prevState.curriculum];
-      if (type === "file") {
-        console.log("oh file!:", files[0]);
-        curriculum[moduleIndex].courseTopics[
-          topicIndex
-        ].contentData.contentType = "FILE";
-        curriculum[moduleIndex].courseTopics[topicIndex].contentData.file =
-          files[0];
-      } else {
-        curriculum[moduleIndex].courseTopics[topicIndex][name] = value;
-      }
-      return { ...prevState, curriculum };
+      curriculum[moduleIndex].courseTopics[topicIndex][name] = value;
+
+      const newCourseData = { ...prevState, curriculum };
+      return newCourseData;
     });
   };
 
@@ -138,64 +228,46 @@ const CourseCreationPage = () => {
   const handlePreviewPictureChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
-    setCourseData((prevState) => ({ ...prevState, previewPicture: file }));
+    httpReqAsync("/api/v1/files", "POST", jwt, file).then((result) => {
+      setCourseData((prevState) => ({
+        ...prevState,
+        previewImage: file,
+        previewImageId: result,
+      }));
+    });
   };
 
   const handlePromoVideoChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
-    setCourseData((prevState) => ({ ...prevState, promoVideo: file }));
+    httpReqAsync("/api/v1/files", "POST", jwt, file).then((result) => {
+      setCourseData((prevState) => ({
+        ...prevState,
+        promoVideo: file,
+        promoVideoId: result,
+      }));
+    });
   };
 
-  // Create a new course with file uploads
-  const createCourse = async () => {
-    // Prepare the file objects
-    const previewImageFile = courseData.previewPicture;
-    const promoVideoFile = courseData.promoVideo;
-    // Create the FormData object to send the request
-    const formData = new FormData();
-    formData.append("previewPicture", previewImageFile);
-    formData.append("promoVideo", promoVideoFile);
-    // Append the course data JSON string to the FormData object
-    formData.append("courseDataJson", JSON.stringify(courseData));
-
-    // Append the contentDataFiles individually
-    const contentDataFiles = [];
-    for (const module of courseData.curriculum) {
-      for (const topic of module.courseTopics) {
-        const contentDataFile = topic.contentData.file;
-        if (contentDataFile) {
-          contentDataFiles.push(contentDataFile);
-        }
-      }
-    }
-    for (let i = 0; i < contentDataFiles.length; i++) {
-      formData.append("contentDataFiles", contentDataFiles[i]);
-    }
-    // Send the request
-    try {
-      const response = await fetch(API_URL +"/api/v1/courses", {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        method: "POST",
-        body: formData,
-      });
-      if (response.ok) {
-        console.log("Course created successfully.");
-      } else {
-        console.error("Failed to create course.");
-      }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handlePublishCourse = (e) => {
     e.preventDefault();
-    // Perform further actions with the courseData object
     console.log("final data sent:", courseData);
-    createCourse();
+    courseData.published = true;
+    httpReqAsync(`/api/v1/courses`, "PUT", jwt, courseData).then((result) => {
+      console.log("saved:", result);
+      setCourseData(result);
+      setToggleRefresh(!toggleRefresh);
+    });
+  };
+
+  const handleSaveAsDraft = (e) => {
+    e.preventDefault();
+    courseData.published = false;
+    httpReqAsync(`/api/v1/courses`, "PUT", jwt, courseData).then((result) => {
+      console.log("saved:", result);
+      setCourseData(result);
+      setToggleRefresh(!toggleRefresh);
+    });
   };
 
   return (
@@ -373,13 +445,25 @@ const CourseCreationPage = () => {
                     {/* Add more content type options */}
                   </select>
                   {topic.contentData.contentType === "FILE" && (
-                    <input
-                      type="file"
-                      onChange={(e) =>
-                        handleCurriculumChange(e, moduleIndex, topicIndex)
-                      }
-                      name="contentData"
-                    />
+                    // setPicSrc()
+                    <>
+                      {topic?.contentData?.file && (
+                        <img
+                          src={
+                            URL.createObjectURL(topic.contentData.file) ?? ""
+                          }
+                          alt="uploaded file"
+                          style={{ maxWidth: "500px" }}
+                        />
+                      )}
+                      <input
+                        type="file"
+                        onChange={(e) =>
+                          handleCurriculumChange(e, moduleIndex, topicIndex)
+                        }
+                        name="contentData"
+                      />
+                    </>
                   )}
                 </div>
               ))}
@@ -462,11 +546,18 @@ const CourseCreationPage = () => {
         )}
         <hr />
         <div>
-          <label htmlFor="previewPicture">Preview Picture (Mandatory):</label>
+          <label htmlFor="previewImage">Preview Picture (Mandatory):</label>
+          {courseData?.previewImage && (
+            <img
+              src={URL.createObjectURL(courseData?.previewImage)}
+              alt="uploaded file"
+              style={{ maxWidth: "600px" }}
+            />
+          )}
           <input
             type="file"
-            id="previewPicture"
-            name="previewPicture"
+            id="previewImage"
+            name="previewImage"
             accept="image/*"
             onChange={handlePreviewPictureChange}
             required
@@ -474,6 +565,11 @@ const CourseCreationPage = () => {
         </div>
         <div>
           <label htmlFor="promoVideo">Promo Video (Mandatory):</label>
+          {courseData?.promoVideo && (
+            <VideoPlayer
+              videoSrc={URL.createObjectURL(courseData?.promoVideo)}
+            />
+          )}
           <input
             type="file"
             id="promoVideo"
@@ -484,7 +580,8 @@ const CourseCreationPage = () => {
           />
         </div>
 
-        <button onClick={handleSubmit}>Create Course</button>
+        <button onClick={handlePublishCourse}>Publish course</button>
+        <button onClick={handleSaveAsDraft}>Save draft</button>
       </form>
     </div>
   );

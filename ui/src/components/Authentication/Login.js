@@ -4,7 +4,7 @@ import Form from "./components/Forms";
 import Background from "./components/Background";
 import "./scss/auth.scss";
 import useLocalStorageState from "../../util/useLocalStorageState";
-import { API_URL } from '../../constants';
+import { API_URL } from "../../constants";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -48,7 +48,7 @@ const Login = () => {
       password: password,
     };
 
-    fetch(API_URL+"/api/v1/auth/login", {
+    fetch(API_URL + "/api/v1/auth/login", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -58,6 +58,9 @@ const Login = () => {
       .then((res) => {
         if (res.status === 200) {
           return res.json();
+        }
+        if (res.status === 503) {
+          return Promise.reject("Server is not available");
         }
         return Promise.reject("Invalid login attempt");
       })

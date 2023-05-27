@@ -1,8 +1,10 @@
 package com.zheenbek.music_learn.controller;
 
-import com.zheenbek.music_learn.dto.UserDTO;
-import com.zheenbek.music_learn.entity.Course;
+import com.zheenbek.music_learn.dto.course.CourseDTO;
+import com.zheenbek.music_learn.dto.user.UserDTO;
+import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.Review;
+import com.zheenbek.music_learn.service.CourseService;
 import com.zheenbek.music_learn.service.FileService;
 import com.zheenbek.music_learn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +34,12 @@ import static com.zheenbek.music_learn.controller.CourseController.getFileSystem
 public class UserController {
 
     private final UserService userService;
-    private final FileService fileService;
+    private final CourseService courseService;
 
     @Autowired
-    public UserController(UserService userService, FileService fileService) {
+    public UserController(UserService userService, CourseService courseService) {
         this.userService = userService;
-        this.fileService = fileService;
+        this.courseService = courseService;
     }
 
     @GetMapping

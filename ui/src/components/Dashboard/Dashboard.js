@@ -40,7 +40,7 @@ const Dashboard = () => {
   const [jwt] = useLocalStorageState("", "jwt");
   const [currentUser] = useLocalStorageState(null, "currentUser");
   useEffect(() => {
-    httpReqAsync(`api/v1/conversations`, "GET", jwt).then((convs) => {
+    httpReqAsync(`/api/v1/conversations`, "GET", jwt).then((convs) => {
       setConversations(convs);
     });
   }, [jwt]);

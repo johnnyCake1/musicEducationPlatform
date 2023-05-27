@@ -1,7 +1,7 @@
 package com.zheenbek.music_learn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zheenbek.music_learn.entity.user.User;
 
 import javax.persistence.*;
 import java.util.Date;
