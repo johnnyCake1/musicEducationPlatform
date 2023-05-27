@@ -3,7 +3,7 @@ import "./CourseCreationPage.css";
 import { FaBook, FaCheck } from "react-icons/fa";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import { API_URL } from "../../constants";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getFile, httpReqAsync } from "../../services/httpReqAsync";
 import VideoPlayer from "../common/VideoPlayer";
 
@@ -27,6 +27,7 @@ const CourseCreationPage = () => {
     promoVideo: null,
   });
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFiles = async (curriculum) => {
@@ -75,27 +76,31 @@ const CourseCreationPage = () => {
         setCourseData(result);
         console.log("the result:", result);
         //fetch course preview image and append it to course data
-        getFile(`/api/v1/files/${result.previewImageId}`, jwt).then(
-          (blobPicture) => {
-            if (blobPicture && blobPicture instanceof Blob) {
-              setCourseData((prevCourseData) => ({
-                ...prevCourseData,
-                previewImage: blobPicture,
-              }));
+        if (result.previewImageId) {
+          getFile(`/api/v1/files/${result.previewImageId}`, jwt).then(
+            (blobPicture) => {
+              if (blobPicture && blobPicture instanceof Blob) {
+                setCourseData((prevCourseData) => ({
+                  ...prevCourseData,
+                  previewImage: blobPicture,
+                }));
+              }
             }
-          }
-        );
+          );
+        }
         //fetch course promo video and append it to course data
-        getFile(`/api/v1/files/${result.promoVideoId}`, jwt).then(
-          (blobVideo) => {
-            if (blobVideo && blobVideo instanceof Blob) {
-              setCourseData((prevCourseData) => ({
-                ...prevCourseData,
-                promoVideo: blobVideo,
-              }));
+        if (result.promoVideoId) {
+          getFile(`/api/v1/files/${result.promoVideoId}`, jwt).then(
+            (blobVideo) => {
+              if (blobVideo && blobVideo instanceof Blob) {
+                setCourseData((prevCourseData) => ({
+                  ...prevCourseData,
+                  promoVideo: blobVideo,
+                }));
+              }
             }
-          }
-        );
+          );
+        }
         //fetch course topics
         fetchFiles(result.curriculum);
       } else {
@@ -255,8 +260,7 @@ const CourseCreationPage = () => {
     courseData.published = true;
     httpReqAsync(`/api/v1/courses`, "PUT", jwt, courseData).then((result) => {
       console.log("saved:", result);
-      setCourseData(result);
-      setToggleRefresh(!toggleRefresh);
+      navigate(`/courses/${courseId}/description`);
     });
   };
 
@@ -275,7 +279,9 @@ const CourseCreationPage = () => {
       <h1>Create a Course</h1>
       <form>
         <div>
-          <label htmlFor="courseName">Course Name:</label>
+          <label htmlFor="courseName">
+            Course Name <span style={{ color: "red" }}>*</span>
+          </label>
           <input
             type="text"
             id="courseName"
@@ -286,7 +292,7 @@ const CourseCreationPage = () => {
         </div>
 
         <div>
-          <label htmlFor="price">Course price ($):</label>
+          <label htmlFor="price">Course price($)</label>
           <input
             type="number"
             id="price"
@@ -448,13 +454,22 @@ const CourseCreationPage = () => {
                     // setPicSrc()
                     <>
                       {topic?.contentData?.file && (
-                        <img
-                          src={
-                            URL.createObjectURL(topic.contentData.file) ?? ""
-                          }
-                          alt="uploaded file"
-                          style={{ maxWidth: "500px" }}
-                        />
+                        <>
+                          {topic.contentData.file.type.startsWith("image/") && (
+                            <img
+                              src={URL.createObjectURL(topic.contentData.file)}
+                              alt="topic"
+                              style={{ maxWidth: "500px" }}
+                            />
+                          )}
+                          {topic.contentData.file.type.startsWith("video/") && (
+                            <VideoPlayer
+                              videoSrc={URL.createObjectURL(
+                                topic.contentData.file
+                              )}
+                            />
+                          )}
+                        </>
                       )}
                       <input
                         type="file"
@@ -567,7 +582,7 @@ const CourseCreationPage = () => {
           <label htmlFor="promoVideo">Promo Video (Mandatory):</label>
           {courseData?.promoVideo && (
             <VideoPlayer
-              videoSrc={URL.createObjectURL(courseData?.promoVideo)}
+              videoSrc={URL.createObjectURL(courseData.promoVideo)}
             />
           )}
           <input
@@ -580,8 +595,12 @@ const CourseCreationPage = () => {
           />
         </div>
 
-        <button onClick={handlePublishCourse}>Publish course</button>
-        <button onClick={handleSaveAsDraft}>Save draft</button>
+        <button type="submit" onClick={handlePublishCourse}>
+          Publish course
+        </button>
+        <button type="submit" onClick={handleSaveAsDraft}>
+          Save draft
+        </button>
       </form>
     </div>
   );

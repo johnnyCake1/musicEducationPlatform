@@ -24,6 +24,9 @@ function Navigation() {
         <Link to="/my-courses" className={linkClass}>
           My courses
         </Link>
+        <Link to="/my-learnings" className={linkClass}>
+          My learnings
+        </Link>
         <Link to="/courses" className={linkClass}>
           Explore
         </Link>

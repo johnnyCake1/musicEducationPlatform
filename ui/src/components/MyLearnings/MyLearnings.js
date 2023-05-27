@@ -6,7 +6,7 @@ import { httpReqAsync } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import "./MyLearnings.css";
 
-const MyCourses = () => {
+const MyLearnings = () => {
   //TODO: implement finished courses filter
   const finishedCourses = [];
   const navigate = useNavigate();
@@ -151,4 +151,4 @@ const MyCourses = () => {
   return <TabbedPage tabs={tabs} />;
 };
 
-export default MyCourses;
+export default MyLearnings;

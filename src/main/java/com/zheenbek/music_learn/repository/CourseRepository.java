@@ -11,7 +11,9 @@ import java.util.List;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findAllByAuthorId(Long authorId);
+
     List<Course> findByEnrolledStudentsId(Long userId);
+
     @Query("SELECT c FROM Course c WHERE " +
             "LOWER(c.courseName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.username) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +

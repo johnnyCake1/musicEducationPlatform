@@ -47,11 +47,11 @@ const CourseDescription = () => {
           <div className="course-header-right">
             <CourseSummaryCard
               courseId={course.id}
+              authorId={course.authorId}
               name={course.courseName}
               description={course.courseShortDescription}
               reviews={course.reviews}
-              enrolledStudents={course.enrolledStudents}
-              authorId={course.author}
+              enrolledStudentsIds={course.enrolledStudentsIds}
               lastUpdated={course.lastUpdatedDate}
               price={course.price}
             />
@@ -95,7 +95,7 @@ const CourseDescription = () => {
           <h2>Reviews</h2>
           <Reviews
             reviews={courseReviews}
-            currentUserCanReview={course.enrolledStudents.includes(
+            currentUserCanReview={course.enrolledStudentsIds.includes(
               currentUser.id
             )}
             onSubmitReview={(reviewToSubmit) =>

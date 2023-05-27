@@ -80,26 +80,28 @@ const SearchResult = () => {
       content: courses ? (
         courses.length > 0 ? (
           <div className="my-cards-grid">
-            {courses.map((course) => (
-              <CoursePreviewCard
-                key={course.id}
-                courseId={course.id}
-                authorId={course.author}
-                title={course.courseName}
-                takenCount={course?.enrolledStudents?.length}
-                formattedCreationDate={new Date(
-                  course.creationDate
-                ).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                price={course.price}
-                tags={course.tags}
-                onClick={() => navigate(`/courses/${course.id}/description`)}
-              />
-              // <CoursePreviewCard key={course.id} {...course} />
-            ))}
+            {courses
+              .filter((course) => course.published)
+              .map((course) => (
+                <CoursePreviewCard
+                  key={course.id}
+                  courseId={course.id}
+                  authorId={course.author}
+                  title={course.courseName}
+                  takenCount={course?.enrolledStudents?.length}
+                  formattedCreationDate={new Date(
+                    course.creationDate
+                  ).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                  price={course.price}
+                  tags={course.tags}
+                  onClick={() => navigate(`/courses/${course.id}/description`)}
+                />
+                // <CoursePreviewCard key={course.id} {...course} />
+              ))}
           </div>
         ) : (
           <div>{`No course was found for keyword ${keyword}`}</div>

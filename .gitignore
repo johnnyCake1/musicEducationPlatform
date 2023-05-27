@@ -31,4 +31,6 @@ hs_err_pid*
 
 /src/main/resources/application.properties
 
-/src/main/storage/*
+/src/main/storage/course_displayed_files/*
+/src/main/storage/message_attachments/*
+/src/main/storage/profile_pictures/*
