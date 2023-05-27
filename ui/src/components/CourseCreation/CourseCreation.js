@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./CourseCreationPage.css";
 import { FaBook, FaCheck } from "react-icons/fa";
 import useLocalStorageState from "../../util/useLocalStorageState";
-import { API_URL } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import { getFile, httpReqAsync } from "../../services/httpReqAsync";
 import VideoPlayer from "../common/VideoPlayer";
@@ -71,41 +70,51 @@ const CourseCreationPage = () => {
 
     //fetch the course data
     httpReqAsync(`/api/v1/courses/${courseId}`, "GET", jwt).then((result) => {
-      if (String(currentUser.id) === String(result.authorId)) {
-        //fill out the data
-        setCourseData(result);
-        console.log("the result:", result);
-        //fetch course preview image and append it to course data
-        if (result.previewImageId) {
-          getFile(`/api/v1/files/${result.previewImageId}`, jwt).then(
-            (blobPicture) => {
-              if (blobPicture && blobPicture instanceof Blob) {
-                setCourseData((prevCourseData) => ({
-                  ...prevCourseData,
-                  previewImage: blobPicture,
-                }));
-              }
-            }
-          );
-        }
-        //fetch course promo video and append it to course data
-        if (result.promoVideoId) {
-          getFile(`/api/v1/files/${result.promoVideoId}`, jwt).then(
-            (blobVideo) => {
-              if (blobVideo && blobVideo instanceof Blob) {
-                setCourseData((prevCourseData) => ({
-                  ...prevCourseData,
-                  promoVideo: blobVideo,
-                }));
-              }
-            }
-          );
-        }
-        //fetch course topics
-        fetchFiles(result.curriculum);
-      } else {
-        setError("This user cannot access this page!");
+      if (
+        String(currentUser.id) !== String(result.authorId) ||
+        result.published
+      ) {
+        console.log(
+          "This user cannot access this page or the course was not a draft"
+        );
+        navigate("/my-courses");
+        setError(
+          "This user cannot access this page or the course was not a draft"
+        );
+        return;
       }
+
+      //fill out the data
+      setCourseData(result);
+      console.log("the result:", result);
+      //fetch course preview image and append it to course data
+      if (result.previewImageId) {
+        getFile(`/api/v1/files/${result.previewImageId}`, jwt).then(
+          (blobPicture) => {
+            if (blobPicture && blobPicture instanceof Blob) {
+              setCourseData((prevCourseData) => ({
+                ...prevCourseData,
+                previewImage: blobPicture,
+              }));
+            }
+          }
+        );
+      }
+      //fetch course promo video and append it to course data
+      if (result.promoVideoId) {
+        getFile(`/api/v1/files/${result.promoVideoId}`, jwt).then(
+          (blobVideo) => {
+            if (blobVideo && blobVideo instanceof Blob) {
+              setCourseData((prevCourseData) => ({
+                ...prevCourseData,
+                promoVideo: blobVideo,
+              }));
+            }
+          }
+        );
+      }
+      //fetch course topics
+      fetchFiles(result.curriculum);
     });
   }, [jwt, courseId, currentUser, toggleRefresh]);
 
@@ -274,6 +283,11 @@ const CourseCreationPage = () => {
     });
   };
 
+  const handleDeleteCourse = (e) => {
+    e.preventDefault();
+    httpReqAsync(`/api/v1/courses/${courseData.id}`, "DELETE", jwt, courseData);
+    navigate(`/my-courses`);
+  };
   return (
     <div className="course-creation-page">
       <h1>Create a Course</h1>
@@ -600,6 +614,9 @@ const CourseCreationPage = () => {
         </button>
         <button type="submit" onClick={handleSaveAsDraft}>
           Save draft
+        </button>
+        <button type="button" onClick={handleDeleteCourse}>
+          Delete course (no confirmation!)
         </button>
       </form>
     </div>

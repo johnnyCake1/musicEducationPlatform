@@ -53,6 +53,8 @@
 
 .course-summary-card__button {
   padding: 8px 16px;
+  margin-left: 10px;
+  margin-right: 10px;
   border-radius: 8px;
   background-color: var(--purple);
   color: #fff;

@@ -21,6 +21,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -54,7 +55,7 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "followers")
     @JsonIdentityReference(alwaysAsId = true)
     private List<User> followings = new ArrayList<>();
-    @ManyToOne
+    @OneToOne(orphanRemoval = true)
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity profilePic;
     private Date startDate;

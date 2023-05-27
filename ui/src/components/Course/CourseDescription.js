@@ -37,6 +37,10 @@ const CourseDescription = () => {
     );
   }, [jwt, courseId]);
 
+  if (!course || !course.published) {
+    return <div>Course not found</div>;
+  }
+
   return course ? (
     <div className="course-description-container">
       <div className="about-course-content">

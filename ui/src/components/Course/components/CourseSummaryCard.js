@@ -3,6 +3,7 @@ import "./CourseSummaryCard.css";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import useLocalStorageState from "../../../util/useLocalStorageState";
 import { httpReqAsync } from "../../../services/httpReqAsync";
+import { useNavigate } from "react-router-dom";
 
 const CourseSummaryCard = ({
   courseId,
@@ -17,17 +18,13 @@ const CourseSummaryCard = ({
   const [jwt] = useLocalStorageState("", "jwt");
   const [author, setAuthor] = useState(null);
   const [currentUser] = useLocalStorageState(null, "currentUser");
-  const [alreadyEnrolled, setAlreadyEnrolled] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
-    //check if already has been enrolled
-    console.log("enrolled students:", enrolledStudentsIds);
-    console.log("currentUser:", currentUser);
-    setAlreadyEnrolled(enrolledStudentsIds.includes(currentUser.id));
     //get the author's info
     httpReqAsync(`/api/v1/users/${authorId}`, "GET", jwt).then((result) => {
       setAuthor(result);
     });
-  }, [jwt, authorId, enrolledStudentsIds, currentUser, alreadyEnrolled]);
+  }, [jwt, authorId, enrolledStudentsIds, currentUser]);
 
   const calculateRating = () => {
     let ratingsSum = 0;
@@ -59,9 +56,7 @@ const CourseSummaryCard = ({
       `/api/v1/courses/${courseId}/enroll?userId=${currentUser.id}`,
       "POST",
       jwt
-    ).then((result) => {
-      setAlreadyEnrolled(true);
-    });
+    ).then((result) => {});
   };
 
   const dropCurrentUserFromCourse = () => {
@@ -73,18 +68,28 @@ const CourseSummaryCard = ({
     ).then((result) => {});
   };
 
+  const handleConvertToDraft = () => {
+    httpReqAsync(
+      `/api/v1/courses/${courseId}/convert-to-draft`,
+      "POST",
+      jwt
+    ).then((result) => {
+      navigate(`/my-courses/drafts/${courseId}`);
+    });
+  };
+
   // Determine the button text and action based on the price
   let buttonText = "";
   let buttonAction = null;
-  if (!alreadyEnrolled) {
+  if (enrolledStudentsIds.includes(currentUser.id)) {
+    buttonText = "Enrolled (click to drop)";
+    buttonAction = () => dropCurrentUserFromCourse();
+  } else {
     buttonText = price === 0 ? "Enroll for free" : `$${price} - Buy`;
     buttonAction =
       price === 0
         ? () => enrollCurrentUserToCourse()
         : () => alert("Buying feature not available yet(");
-  } else {
-    buttonText = "Enrolled (click to drop)";
-    buttonAction = () => dropCurrentUserFromCourse();
   }
 
   return (
@@ -104,12 +109,25 @@ const CourseSummaryCard = ({
           Created by {author?.username}
         </p>
         <p className="course-summary-card__info-item">
-          Last updated {lastUpdated}
+          Last updated:
+          {new Date(lastUpdated).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
         </p>
       </div>
       <button className="course-summary-card__button" onClick={buttonAction}>
         {buttonText}
       </button>
+      {true && (
+        <button
+          className="course-summary-card__button"
+          onClick={handleConvertToDraft}
+        >
+          Convert to draft to edit
+        </button>
+      )}
     </div>
   );
 };

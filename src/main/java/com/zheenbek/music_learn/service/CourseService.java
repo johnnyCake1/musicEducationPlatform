@@ -162,7 +162,6 @@ public class CourseService {
 
     private void deleteCourseModule(CourseModule moduleToDelete) {
         moduleToDelete.getCourseTopics().forEach(this::deleteCourseTopic);
-        courseModuleRepository.delete(moduleToDelete);
     }
 
     private void deleteCourseTopic(CourseTopic courseTopicToDelete) {
@@ -331,6 +330,18 @@ public class CourseService {
         return course.getReviews();
     }
 
+    public CourseDTO convertToDraft(Long courseId) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found to convert to draft with ID: " + courseId));
+        User author = course.getAuthor();
+        if (!author.getDraftCourses().contains(course)) {
+            author.getDraftCourses().add(course);
+        }
+        author.getPublishedCourses().remove(course);
+        userRepository.save(author);
+        course.setPublished(false);
+        return mapCourseToDto(courseRepository.save(course));
+    }
+
     @Transactional
     public Course enrollUser(Long courseId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
@@ -391,10 +402,10 @@ public class CourseService {
         if (courseDTO.getAuthorId() != null) {
             course.setAuthor(userRepository.findById(courseDTO.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("Course author not found with ID: " + courseDTO.getAuthorId())));
         }
-        if (courseDTO.getPreviewImageId() != null){
+        if (courseDTO.getPreviewImageId() != null) {
             course.setPreviewImage(fileRepository.findById(courseDTO.getPreviewImageId()).orElseThrow(() -> new EntityNotFoundException("Course preview image file entity not found with ID: " + courseDTO.getPreviewImageId())));
         }
-        if (courseDTO.getPromoVideoId() != null){
+        if (courseDTO.getPromoVideoId() != null) {
             course.setPromoVideo(fileRepository.findById(courseDTO.getPromoVideoId()).orElseThrow(() -> new EntityNotFoundException("Course promo video file entity not found with ID: " + courseDTO.getPromoVideoId())));
         }
         course.setEnrolledStudents(courseDTO.getEnrolledStudentsIds().stream().map(id -> userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Course student not found with ID: " + id))).collect(Collectors.toList()));
@@ -428,7 +439,7 @@ public class CourseService {
         if (contentDataDTO.getQuiz() != null) {
             contentData.setQuiz(contentDataDTO.getQuiz());
         }
-        if (contentDataDTO.getFileId() != null){
+        if (contentDataDTO.getFileId() != null) {
             contentData.setFile(fileRepository.findById(contentDataDTO.getFileId()).orElseThrow(() -> new EntityNotFoundException("Content data file entity not found with ID: " + contentDataDTO.getFileId())));
         }
         return contentData;
