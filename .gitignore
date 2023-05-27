@@ -29,8 +29,6 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-/src/main/resources/application.properties
+src/main/resources/application.properties
 
-/src/main/storage/course_displayed_files/*
-/src/main/storage/message_attachments/*
-/src/main/storage/profile_pictures/*
+src/main/storage/files/*

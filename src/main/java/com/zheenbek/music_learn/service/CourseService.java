@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import static com.zheenbek.music_learn.service.FileService.FILES_SERVING_ENDPOINT;
 import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEntityFromFile;
+import static com.zheenbek.music_learn.service.UserService.mapUserToDto;
 
 @Service
 public class CourseService {
@@ -344,7 +345,7 @@ public class CourseService {
     }
 
     @Transactional
-    public Course enrollUser(Long courseId, Long userId) {
+    public CourseDTO enrollUser(Long courseId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
         if (!user.getTakenCourses().contains(course)) {
@@ -355,7 +356,7 @@ public class CourseService {
             course.getEnrolledStudents().add(user);
             courseRepository.save(course);
         }
-        return course;
+        return mapCourseToDto(course);
     }
 
     public Course dropUser(Long courseId, Long userId) {
@@ -449,6 +450,9 @@ public class CourseService {
     private CourseDTO mapCourseToDto(Course course) {
         CourseDTO courseDTO = new CourseDTO();
         courseDTO.setId(course.getId());
+        if (course.getAuthor() != null){
+            courseDTO.setAuthor(mapUserToDto(course.getAuthor()));
+        }
         courseDTO.setCourseLongDescription(course.getCourseLongDescription());
         courseDTO.setCourseName(course.getCourseName());
         courseDTO.setPrice(course.getPrice());
@@ -473,6 +477,7 @@ public class CourseService {
         }
         if (course.getEnrolledStudents() != null) {
             courseDTO.setEnrolledStudentsIds(course.getEnrolledStudents().stream().map(User::getId).collect(Collectors.toList()));
+            courseDTO.setEnrolledStudents(course.getEnrolledStudents().stream().map(UserService::mapUserToDto).collect(Collectors.toList()));
         }
         if (course.getCurriculum() != null) {
             courseDTO.setCurriculum(course.getCurriculum().stream().map(this::mapCourseModuleToDto).collect(Collectors.toList()));

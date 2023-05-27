@@ -21,7 +21,7 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
     
-    private final int TOKEN_EXPIRATION = 1000 * 60 * 60 * 10;
+    private final int TOKEN_EXPIRATION = 2 * 1000 * 60 * 60 * 10;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

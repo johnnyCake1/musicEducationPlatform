@@ -152,8 +152,8 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/enroll")
-    public ResponseEntity<Course> enrollUser(@PathVariable Long id, @RequestParam Long userId) {
-        Course updatedCourse = courseService.enrollUser(id, userId);
+    public ResponseEntity<CourseDTO> enrollUser(@PathVariable Long id, @RequestParam Long userId) {
+        CourseDTO updatedCourse = courseService.enrollUser(id, userId);
         return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
     }
 
