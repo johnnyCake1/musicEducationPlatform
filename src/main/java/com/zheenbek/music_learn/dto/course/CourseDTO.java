@@ -2,6 +2,7 @@ package com.zheenbek.music_learn.dto.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zheenbek.music_learn.dto.user.UserDTO;
 import com.zheenbek.music_learn.entity.Review;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 public class CourseDTO {
     private Long id;
     private Long authorId;
+    private UserDTO author;
     private float price;
     private String courseName;
     private String courseShortDescription;
@@ -23,6 +25,7 @@ public class CourseDTO {
     @JsonProperty(value = "image_url")
     private String previewImagePath;
     private List<Long> enrolledStudentsIds = new ArrayList<>();
+    private List<UserDTO> enrolledStudents = new ArrayList<>();
     private List<CourseModuleDTO> curriculum = new ArrayList<>();
     private List<String> requirements = new ArrayList<>();
     private List<String> whatYouWillLearn = new ArrayList<>();
@@ -196,5 +199,21 @@ public class CourseDTO {
 
     public void setPublished(boolean published) {
         isPublished = published;
+    }
+
+    public UserDTO getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(UserDTO author) {
+        this.author = author;
+    }
+
+    public List<UserDTO> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
+    public void setEnrolledStudents(List<UserDTO> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
     }
 }
