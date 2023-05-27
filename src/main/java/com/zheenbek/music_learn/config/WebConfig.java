@@ -8,8 +8,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/profile-pictures/**")
-                .addResourceLocations("file:/src/main/storage/profile_pictures/")
+        registry.addResourceHandler("/files/**")
+                .addResourceLocations("file:src/main/storage/files/")
                 .setCachePeriod(0);
     }
 }
+

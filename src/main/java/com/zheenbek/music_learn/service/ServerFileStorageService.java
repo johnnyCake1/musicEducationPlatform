@@ -3,6 +3,7 @@ package com.zheenbek.music_learn.service;
 import com.zheenbek.music_learn.entity.FileEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.activation.MimeType;
 import java.io.File;
@@ -21,7 +22,8 @@ public class ServerFileStorageService {
     private String MESSAGE_ATTACHMENTS_DIRECTORY;
     @Value("${storage.message-course-file}")
     private String COURSE_FILES_DIRECTORY;
-
+    @Value("${storage.files-directory}")
+    private String FILES_STORAGE_DIRECTORY;
     public ServerFileStorageService() {
 
     }
@@ -32,6 +34,22 @@ public class ServerFileStorageService {
         Files.write(filePath, fileData);
         return filePath.toFile();
     }
+
+
+    public File storeFile(MultipartFile file, String filenamePrefix) throws IOException {
+        String filename = filenamePrefix + '-' + UUID.randomUUID() + fileExtensionFromMediaType(file.getContentType());
+        File fileToSave;
+        try {
+            // Create a new file in files directory
+            Path filePath = Paths.get(FILES_STORAGE_DIRECTORY, filename);
+            Files.write(filePath, file.getBytes());
+            fileToSave = filePath.toFile();
+        } catch (Exception e) {
+            throw new IOException("could not store file because:" + e);
+        }
+        return fileToSave;
+    }
+
 
     public File storeProfilePicture(byte[] fileData, String contentType, String filenamePrefix) throws IOException {
         return storeFile(fileData, contentType, filenamePrefix, PROFILES_DIRECTORY);

@@ -1,6 +1,5 @@
 package com.zheenbek.music_learn.service;
 
-import com.zheenbek.music_learn.dto.course.CourseDTO;
 import com.zheenbek.music_learn.dto.user.UserDTO;
 import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.FileEntity;
@@ -13,11 +12,13 @@ import com.zheenbek.music_learn.repository.ReviewRepository;
 import com.zheenbek.music_learn.repository.RoleRepository;
 import com.zheenbek.music_learn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.File;
@@ -29,6 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.zheenbek.music_learn.service.FileService.FILES_SERVING_ENDPOINT;
 import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEntityFromFile;
 
 @Service
@@ -38,7 +40,6 @@ public class UserService {
     private final CourseRepository courseRepository;
     private final FileRepository fileRepository;
     private final ReviewRepository reviewRepository;
-
     private final ServerFileStorageService serverFileStorageService;
 
     @Autowired
@@ -106,7 +107,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         FileEntity oldProfilePic = user.getProfilePic();
         //save new file in the file system
-        File storedPicture = serverFileStorageService.storeProfilePicture(file.getBytes(), file.getContentType(), user.getUsername());
+        File storedPicture = serverFileStorageService.storeFile(file, user.getUsername());
         //save new file in the database
         FileEntity newProfilePic = fileRepository.save(fileEntityFromFile(storedPicture, file.getContentType()));
         //update user
@@ -139,7 +140,7 @@ public class UserService {
     public File addStoredFile(MultipartFile file, Long userId) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         //save new file in the file system
-        File storedPicture = serverFileStorageService.storeProfilePicture(file.getBytes(), file.getContentType(), user.getUsername());
+        File storedPicture = serverFileStorageService.storeFile(file, user.getUsername());
         //save new file in the database
         FileEntity savedFile = fileRepository.save(fileEntityFromFile(storedPicture, file.getContentType()));
         //update user
@@ -286,6 +287,9 @@ public class UserService {
         userDTO.setLastName(user.getLastName());
         userDTO.setStartDate(user.getStartDate());
         userDTO.setAboutMe(user.getAboutMe());
+        if (user.getProfilePic() != null) {
+            userDTO.setProfilePicturePath(FILES_SERVING_ENDPOINT + '/' + user.getProfilePic().getFileName());
+        }
         userDTO.setTags(user.getTags());
         userDTO.setFollowersIds(user.getFollowers().stream().map(User::getId).collect(Collectors.toList()));
         userDTO.setFollowingsIds(user.getFollowings().stream().map(User::getId).collect(Collectors.toList()));

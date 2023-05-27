@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.zheenbek.music_learn.service.FileService.FILES_SERVING_ENDPOINT;
 import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEntityFromFile;
 
 @Service
@@ -73,8 +74,8 @@ public class CourseService {
         Course course = mapDtoToCourse(courseDTO);
         //create the files in the system and database and append to the entity
         //save in the system:
-        File storedVideoFile = serverFileStorageService.storeCourseFile(promoVideo.getBytes(), promoVideo.getContentType(), course.getCourseName());
-        File storedPictureFile = serverFileStorageService.storeCourseFile(previewPicture.getBytes(), previewPicture.getContentType(), course.getCourseName());
+        File storedVideoFile = serverFileStorageService.storeFile(promoVideo, course.getCourseName());
+        File storedPictureFile = serverFileStorageService.storeFile(previewPicture, course.getCourseName());
         //save in the database:
         FileEntity courseVideoEntity = fileRepository.save(fileEntityFromFile(storedVideoFile, promoVideo.getContentType()));
         FileEntity coursePictureEntity = fileRepository.save(fileEntityFromFile(storedPictureFile, previewPicture.getContentType()));
@@ -93,7 +94,7 @@ public class CourseService {
                         case FILE: {
                             MultipartFile topicContentFile = orderedTopicContentFiles[topicFileIndex++];
                             //save in the system:
-                            File file = serverFileStorageService.storeCourseFile(topicContentFile.getBytes(), topicContentFile.getContentType(), topic.getTopicName());
+                            File file = serverFileStorageService.storeFile(topicContentFile, topic.getTopicName());
                             //save in the database:
                             FileEntity fileEntity = fileRepository.save(fileEntityFromFile(file, topicContentFile.getContentType()));
                             //append:
@@ -461,9 +462,11 @@ public class CourseService {
         courseDTO.setPublished(course.isPublished());
         if (course.getPreviewImage() != null) {
             courseDTO.setPreviewImageId(course.getPreviewImage().getId());
+            courseDTO.setPreviewImagePath(FILES_SERVING_ENDPOINT + '/' + course.getPreviewImage().getFileName());
         }
         if (course.getPromoVideo() != null) {
             courseDTO.setPromoVideoId(course.getPromoVideo().getId());
+            courseDTO.setPromoVideoPath(FILES_SERVING_ENDPOINT + '/' + course.getPromoVideo().getFileName());
         }
         if (course.getAuthor() != null) {
             courseDTO.setAuthorId(course.getAuthor().getId());
@@ -503,6 +506,7 @@ public class CourseService {
         contentDataDTO.setContentType(contentData.getContentType());
         if (contentData.getFile() != null) {
             contentDataDTO.setFileId(contentData.getFile().getId());
+            contentDataDTO.setFilePath(FILES_SERVING_ENDPOINT + '/' + contentData.getFile().getFileName());
         }
         if (contentData.getQuiz() != null && contentData.getQuiz().size() > 0) {
             contentDataDTO.setQuiz(contentData.getQuiz());
