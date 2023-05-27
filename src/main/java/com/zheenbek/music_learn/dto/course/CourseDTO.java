@@ -1,6 +1,7 @@
 package com.zheenbek.music_learn.dto.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zheenbek.music_learn.entity.Review;
 
 import java.util.ArrayList;
@@ -16,7 +17,11 @@ public class CourseDTO {
     private String courseShortDescription;
     private String courseLongDescription;
     private Long promoVideoId;
+    @JsonProperty(value = "video_url")
+    private String promoVideoPath;
     private Long previewImageId;
+    @JsonProperty(value = "image_url")
+    private String previewImagePath;
     private List<Long> enrolledStudentsIds = new ArrayList<>();
     private List<CourseModuleDTO> curriculum = new ArrayList<>();
     private List<String> requirements = new ArrayList<>();
@@ -69,6 +74,32 @@ public class CourseDTO {
 
     public void setCourseShortDescription(String courseShortDescription) {
         this.courseShortDescription = courseShortDescription;
+    }
+
+    public String getPreviewImagePath() {
+        return previewImagePath;
+    }
+
+    /**
+     * previewImagePath should contain the user's profile picture in the following pattern: "localhost:8080/my-image.png"
+     *
+     * @param previewImagePath must follow the mentioned pattern
+     */
+    public void setPreviewImagePath(String previewImagePath) {
+        this.previewImagePath = previewImagePath;
+    }
+
+    public String getPromoVideoPath() {
+        return promoVideoPath;
+    }
+
+    /**
+     * promoVideoPath should contain the user's profile picture in the following pattern: "localhost:8080/my-video.mp4"
+     *
+     * @param promoVideoPath must follow the mentioned pattern
+     */
+    public void setPromoVideoPath(String promoVideoPath) {
+        this.promoVideoPath = promoVideoPath;
     }
 
     public String getCourseLongDescription() {

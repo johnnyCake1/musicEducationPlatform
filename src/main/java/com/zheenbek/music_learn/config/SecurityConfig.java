@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**").permitAll()
+                .antMatchers("/files/**").permitAll()
                 .antMatchers("/storage/**").permitAll() // Permit all requests to "/storage/**"
                 .anyRequest().authenticated()
                 .and()

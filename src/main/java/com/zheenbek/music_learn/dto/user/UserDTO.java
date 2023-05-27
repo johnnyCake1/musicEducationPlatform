@@ -1,5 +1,6 @@
 package com.zheenbek.music_learn.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -15,6 +16,8 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String aboutMe;
+    @JsonProperty(value = "img_url")
+    private String profilePicturePath;
     private List<String> tags;
     private List<Long> followersIds;
     private List<Long> followingsIds;
@@ -49,6 +52,22 @@ public class UserDTO {
     public String getUsername() {
         return username;
     }
+
+
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
+    /**
+     * profilePicturePath should contain the user's profile picture in the following pattern: "localhost:8080/my-image.png"
+     * @param profilePicturePath must follow the mentioned pattern
+     */
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
+    }
+
+
+
 
     public void setUsername(String username) {
         this.username = username;
