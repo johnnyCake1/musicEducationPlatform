@@ -1,5 +1,6 @@
 package com.zheenbek.music_learn.entity.course;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,7 +13,7 @@ public class CourseTopic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String topicName;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private ContentData contentData;
 
     public Long getId() {

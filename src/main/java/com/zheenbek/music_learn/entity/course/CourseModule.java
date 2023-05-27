@@ -17,7 +17,7 @@ public class CourseModule {
     private Long id;
     private String moduleName;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "course_module_id")
     private List<CourseTopic> courseTopics = new ArrayList<>();
 

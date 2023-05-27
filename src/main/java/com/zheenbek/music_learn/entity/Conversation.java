@@ -16,7 +16,7 @@ public class Conversation {
 
     private String name;
 
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity profilePic;
 

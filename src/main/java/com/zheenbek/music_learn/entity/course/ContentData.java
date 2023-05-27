@@ -3,6 +3,7 @@ package com.zheenbek.music_learn.entity.course;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.zheenbek.music_learn.entity.FileEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -26,10 +27,10 @@ public class ContentData {
     }
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity file;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> quiz;
 
     public void setId(Long id) {

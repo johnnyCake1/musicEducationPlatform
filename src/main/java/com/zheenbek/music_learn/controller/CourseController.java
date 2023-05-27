@@ -103,6 +103,12 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/{id}/convert-to-draft")
+    public ResponseEntity<CourseDTO> convertToDraft (@PathVariable("id") Long courseId) {
+        CourseDTO updatedCourse = courseService.convertToDraft(courseId);
+        return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}/{courseModuleId}")
     public ResponseEntity<Void> deleteCourseModule(@PathVariable("id") Long courseId, @PathVariable Long courseModuleId) {
         courseService.deleteCourseModule(courseId, courseModuleId);

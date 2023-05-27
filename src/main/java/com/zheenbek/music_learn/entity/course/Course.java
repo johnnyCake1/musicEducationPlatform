@@ -37,17 +37,17 @@ public class Course {
     )
     @JsonIdentityReference(alwaysAsId = true)
     private List<User> enrolledStudents = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "course_id")
     private List<CourseModule> curriculum = new ArrayList<>();
     private float price;
     private String courseName;
     private String courseShortDescription;
     private String courseLongDescription;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity promoVideo;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity previewImage;
     @ElementCollection
