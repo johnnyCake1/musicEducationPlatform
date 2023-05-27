@@ -1,29 +1,18 @@
 import React, { useEffect, useState } from "react";
-import "./MyCourses.css";
 import CoursePreviewCard from "../Course/components/CoursePreviewCard";
 import TabbedPage from "../common/TabbedPage";
 import { Link, useNavigate } from "react-router-dom";
 import { httpReqAsync } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
+import "./MyCourses.css";
 
 const MyCourses = () => {
-  //TODO: implement finished courses filter
-  const finishedCourses = [];
   const navigate = useNavigate();
   const [jwt] = useLocalStorageState("", "jwt");
   const [currentUser] = useLocalStorageState(null, "currentUser");
-  const [takenCourses, setTakenCourses] = useState(null);
   const [publishedCourses, setPublishedCourses] = useState(null);
-  const [savedCourses, setSavedCourses] = useState(null);
+  const [draftCourses, setDraftCourses] = useState(null);
   useEffect(() => {
-    //get taken courses
-    httpReqAsync(
-      `/api/v1/users/${currentUser.id}/taken-courses`,
-      "GET",
-      jwt
-    ).then((result) => {
-      setTakenCourses(result);
-    });
     //get published courses
     httpReqAsync(
       `/api/v1/users/${currentUser.id}/published-courses`,
@@ -34,50 +23,26 @@ const MyCourses = () => {
     });
     //get saved courses
     httpReqAsync(
-      `/api/v1/users/${currentUser.id}/saved-courses`,
+      `/api/v1/courses/draft-courses?authorId=${currentUser.id}`,
       "GET",
       jwt
     ).then((result) => {
-      setSavedCourses(result);
+      console.log("drafts:", result);
+      setDraftCourses(result);
     });
   }, [jwt, currentUser]);
 
-  const archived = [];
-
+  const handleDraftCreation = () => {
+    httpReqAsync(
+      `/api/v1/courses/draft-courses/create-empty?authorId=${currentUser.id}`,
+      "POST",
+      jwt
+    ).then((emptyCourseData) => {
+      console.log("here is result:!", emptyCourseData);
+      navigate(`/my-courses/drafts/${emptyCourseData.id}`);
+    });
+  };
   const tabs = [
-    {
-      name: "takenCourses",
-      label: "Taken courses",
-      content: takenCourses ? (
-        takenCourses.length > 0 ? (
-          <div className="my-cards-grid">
-            {takenCourses.map((course) => (
-              <CoursePreviewCard
-                key={course.id}
-                courseId={course.id}
-                authorId={course.author}
-                title={course.courseName}
-                takenCount={course?.enrolledStudents?.length}
-                formattedCreationDate={new Date(
-                  course.creationDate
-                ).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                price={course.price}
-                tags={course.tags}
-                onClick={() => navigate(`/courses/${course.id}/description`)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div>{"Nothing in your taken courses yet :("}</div>
-        )
-      ) : (
-        <div>Loading ...</div>
-      ),
-    },
     {
       name: "publishedCourses",
       label: "Published courses",
@@ -114,88 +79,57 @@ const MyCourses = () => {
           ) : (
             <div>Loading ...</div>
           )}
-          <Link to="/courses/create" className="create-course-link">
-            Click here to publish a new course
-          </Link>
+          <span onClick={handleDraftCreation} className="create-course-link">
+            Click here to create a new course
+          </span>
+          {/* <Link to="/courses/create" className="create-course-link">
+            Click here to create a new course
+          </Link> */}
         </>
       ),
     },
     {
-      name: "finishedCourses",
-      label: "Finished courses",
-      content:
-        finishedCourses.length > 0 ? (
-          <div className="my-cards-grid">
-            {finishedCourses.map((course) => (
-              <CoursePreviewCard
-                key={course.id}
-                courseId={course.id}
-                authorId={course.author}
-                title={course.courseName}
-                takenCount={course?.enrolledStudents?.length}
-                formattedCreationDate={new Date(
-                  course.creationDate
-                ).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                price={course.price}
-                tags={course.tags}
-                onClick={() => navigate(`/courses/${course.id}/description`)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div>{"Nothing in your finished courses yet :("}</div>
-        ),
-    },
-    {
-      name: "saveCourses",
-      label: "Saved courses",
-      content: savedCourses ? (
-        savedCourses.length > 0 ? (
-          <div className="my-cards-grid">
-            {savedCourses.map((course) => (
-              <CoursePreviewCard
-                key={course.id}
-                courseId={course.id}
-                authorId={course.author}
-                title={course.courseName}
-                takenCount={course?.enrolledStudents?.length}
-                formattedCreationDate={new Date(
-                  course.creationDate
-                ).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                price={course.price}
-                tags={course.tags}
-                onClick={() => navigate(`/courses/${course.id}/description`)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div>{"Nothing in your saved courses yet :("}</div>
-        )
-      ) : (
-        <div>Loading ...</div>
+      name: "draftCourses",
+      label: "Draft courses",
+      content: (
+        <>
+          {draftCourses ? (
+            draftCourses.length > 0 ? (
+              <div className="my-cards-grid">
+                {draftCourses.map((course) => (
+                  <CoursePreviewCard
+                    key={course.id}
+                    courseId={course.id}
+                    authorId={course.authorId}
+                    title={course.courseName}
+                    takenCount={course?.enrolledStudents?.length}
+                    formattedCreationDate={new Date(
+                      course.creationDate
+                    ).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                    price={course.price}
+                    tags={course.tags}
+                    onClick={() => navigate(`/my-courses/drafts/${course.id}`)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div>{"Nothing in your published courses yet :("}</div>
+            )
+          ) : (
+            <div>Loading ...</div>
+          )}
+          <span onClick={handleDraftCreation} className="create-course-link">
+            Click here to create a new course
+          </span>
+          {/* <Link to="/courses/create" className="create-course-link">
+            Click here to create a new course
+          </Link> */}
+        </>
       ),
-    },
-    {
-      name: "archived",
-      label: "Archived",
-      content:
-        archived.length > 0 ? (
-          <div className="my-cards-grid">
-            {archived.map((course) => (
-              <CoursePreviewCard key={course.id} {...course} />
-            ))}
-          </div>
-        ) : (
-          <div>{"Nothing in your archives yet :("}</div>
-        ),
     },
   ];
 

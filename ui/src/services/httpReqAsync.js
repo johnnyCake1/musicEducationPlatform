@@ -1,20 +1,24 @@
-import { API_URL } from '../constants';
+import { API_URL } from "../constants";
 
 export function httpReqAsync(url, reqMethod, jwt, reqBody) {
   const fetchData = {
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: {},
     method: reqMethod,
   };
   if (jwt) {
     fetchData.headers.Authorization = `Bearer ${jwt}`;
   }
   if (reqBody) {
-    if (reqBody instanceof String) {
+    if (reqBody instanceof Blob) {
+      console.log("Sending file");
+      const formData = new FormData();
+      formData.append("file", reqBody);
+      fetchData.body = formData;
+    } else if (reqBody instanceof String) {
       fetchData.body = reqBody;
     } else if (reqBody instanceof Object) {
       fetchData.body = JSON.stringify(reqBody);
+      fetchData.headers["Content-Type"] = "application/json";
     }
   }
 
@@ -27,21 +31,6 @@ export function httpReqAsync(url, reqMethod, jwt, reqBody) {
         return res.text(); // Get the response body as text
       }
     }
-    console.log("bad request!");
-  });
-}
-
-export function postFile(url, file, jwt) {
-  const fetchData = {
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
-    method: "POST",
-    body: file,
-  };
-
-  return fetch(API_URL + url, fetchData).then((res) => {
-    if (200 <= res.status && res.status < 300) return res;
     console.log("bad request!");
   });
 }

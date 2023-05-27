@@ -9,30 +9,32 @@ import useLocalStorageState from "../../../util/useLocalStorageState";
 const CoursePreviewCard = ({
   courseId,
   authorId,
-  title,
-  price,
-  takenCount,
-  formattedCreationDate,
+  title = "",
+  price = 0.0,
+  takenCount = 0,
+  formattedCreationDate = "date",
   tags,
   progress,
   onClick,
 }) => {
   const [showAddToSavedIcon, setShowAddToSavedIcon] = useState(false);
   const [jwt] = useLocalStorageState("", "jwt");
-  const [picSrc, setPicSrc] = useState("");
+  const [picSrc, setPicSrc] = useState("https://via.placeholder.com/500x500");
   const [author, setAuthor] = useState(null);
   const [currentUser] = useLocalStorageState(null, "currentUser");
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    console.log("fetching...");
     //get course's preview image
-    getFile(`/api/v1/courses/${courseId}/preview-picture`, jwt).then(
-      (pictureBlob) => {
-        console.log("I got the picture:", pictureBlob);
-        setPicSrc(URL.createObjectURL(pictureBlob));
-      }
-    );
+    getFile(`/api/v1/courses/${courseId}/preview-picture`, jwt)
+      .then((pictureBlob) => {
+        if (pictureBlob instanceof Blob) {
+          setPicSrc(URL.createObjectURL(pictureBlob));
+        }
+      })
+      .catch((err) => {
+        console.log("bla");
+      });
     //get author's info
     httpReqAsync(`/api/v1/users/${authorId}`, "GET", jwt).then((result) => {
       console.log("got the user:", result);
@@ -128,9 +130,6 @@ const CoursePreviewCard = ({
 CoursePreviewCard.propTypes = {
   courseId: PropTypes.number.isRequired,
   authorId: PropTypes.number.isRequired,
-  formattedCreationDate: PropTypes.string.isRequired,
-  takenCount: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired,
 };
 
 export default CoursePreviewCard;

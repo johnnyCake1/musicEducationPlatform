@@ -1,7 +1,7 @@
 package com.zheenbek.music_learn.controller;
 
 import com.zheenbek.music_learn.entity.Assignment;
-import com.zheenbek.music_learn.entity.User;
+import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.service.AssignmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

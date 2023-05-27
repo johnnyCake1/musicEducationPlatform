@@ -1,11 +1,12 @@
 package com.zheenbek.music_learn.service;
 
-import com.zheenbek.music_learn.dto.UserDTO;
-import com.zheenbek.music_learn.entity.Course;
+import com.zheenbek.music_learn.dto.course.CourseDTO;
+import com.zheenbek.music_learn.dto.user.UserDTO;
+import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Review;
-import com.zheenbek.music_learn.entity.Role;
-import com.zheenbek.music_learn.entity.User;
+import com.zheenbek.music_learn.entity.user.Role;
+import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.repository.CourseRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.repository.ReviewRepository;
@@ -61,7 +62,7 @@ public class UserService {
         Role userRole = new Role("ROLE_USER");
         userRole.setUser(createdUser);
         roleRepository.save(userRole);
-        return convertToUserDTO(createdUser);
+        return mapUserToDto(createdUser);
     }
 
     public UserDTO updateUserInfo(Long userId, UserDTO userInfo) {
@@ -78,11 +79,11 @@ public class UserService {
         if (userInfo.getTags() != null) {
             user.setTags(user.getTags());
         }
-        return convertToUserDTO(userRepository.save(user));
+        return mapUserToDto(userRepository.save(user));
     }
 
     public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream().map(UserService::convertToUserDTO).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(UserService::mapUserToDto).collect(Collectors.toList());
     }
 
     public Optional<User> findByUsername(String username) {
@@ -90,7 +91,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> findById(Long userId) {
-        return userRepository.findById(userId).map(UserService::convertToUserDTO);
+        return userRepository.findById(userId).map(UserService::mapUserToDto);
     }
 
     public Optional<File> getProfilePictureByUserId(Long userId) {
@@ -171,8 +172,8 @@ public class UserService {
                 .findFirst()
                 .orElse(null);
         FileEntity oldProfilePic = user.getProfilePic();
-        if (fileEntityToDelete == null){
-            return convertToUserDTO(user);
+        if (fileEntityToDelete == null) {
+            return mapUserToDto(user);
         }
         //update user
         user.getStoredFiles().remove(fileEntityToDelete);
@@ -181,7 +182,7 @@ public class UserService {
         serverFileStorageService.deleteProfilePicture(fileEntityToDelete.getFileName());
         //delete file from the database
         fileRepository.delete(fileEntityToDelete);
-        return convertToUserDTO(user);
+        return mapUserToDto(user);
     }
 
     @Transactional
@@ -189,14 +190,14 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
         user.getSavedCourses().add(course);
-        return convertToUserDTO(userRepository.save(user));
+        return mapUserToDto(userRepository.save(user));
     }
 
     @Transactional
     public UserDTO deleteSavedCourse(Long userId, Long courseId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         user.getSavedCourses().removeIf(c -> c.getId().equals(courseId));
-        return convertToUserDTO(userRepository.save(user));
+        return mapUserToDto(userRepository.save(user));
     }
 
     @Transactional
@@ -230,7 +231,7 @@ public class UserService {
     }
 
     public List<UserDTO> findUsersByKeyword(String keyword) {
-        return userRepository.searchUsersByKeyword(keyword).stream().map(UserService::convertToUserDTO).collect(Collectors.toList());
+        return userRepository.searchUsersByKeyword(keyword).stream().map(UserService::mapUserToDto).collect(Collectors.toList());
     }
 
     @Transactional
@@ -245,7 +246,7 @@ public class UserService {
             user.getFollowings().add(userToFollow);
             userRepository.save(user);
         }
-        return convertToUserDTO(user);
+        return mapUserToDto(user);
     }
 
     public UserDTO unfollowUser(Long userId, Long userIdToUnfollow) {
@@ -259,7 +260,7 @@ public class UserService {
             user.getFollowings().remove(userToUnfollow);
             userRepository.save(user);
         }
-        return convertToUserDTO(user);
+        return mapUserToDto(user);
     }
 
     @Transactional
@@ -274,7 +275,7 @@ public class UserService {
         return updatedReviews;
     }
 
-    public static UserDTO convertToUserDTO(User user) {
+    public static UserDTO mapUserToDto(User user) {
         if (user == null) {
             return null;
         }
@@ -290,6 +291,7 @@ public class UserService {
         userDTO.setFollowingsIds(user.getFollowings().stream().map(User::getId).collect(Collectors.toList()));
         userDTO.setPublishedCoursesIds(user.getPublishedCourses().stream().map(Course::getId).collect(Collectors.toList()));
         userDTO.setTakenCoursesIds(user.getTakenCourses().stream().map(Course::getId).collect(Collectors.toList()));
+        userDTO.setDraftCoursesIds(user.getDraftCourses().stream().map(Course::getId).collect(Collectors.toList()));
         userDTO.setSavedCoursesIds(user.getSavedCourses().stream().map(Course::getId).collect(Collectors.toList()));
 //        userDTO.setAuthorities(user.getAuthorities()); //this is causing cyclic relationship
         return userDTO;

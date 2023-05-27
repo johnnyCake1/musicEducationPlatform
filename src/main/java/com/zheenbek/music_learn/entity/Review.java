@@ -1,6 +1,7 @@
 package com.zheenbek.music_learn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.zheenbek.music_learn.entity.user.User;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -2,13 +2,11 @@ package com.zheenbek.music_learn.service;
 
 import com.zheenbek.music_learn.dto.ConversationDTO;
 import com.zheenbek.music_learn.dto.MessageDTO;
-import com.zheenbek.music_learn.dto.UserDTO;
+import com.zheenbek.music_learn.dto.user.UserDTO;
 import com.zheenbek.music_learn.entity.Conversation;
-import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Message;
-import com.zheenbek.music_learn.entity.User;
+import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.repository.ConversationRepository;
-import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,14 +25,12 @@ import java.util.stream.Collectors;
 public class ConversationService {
 
     private final ConversationRepository conversationRepository;
-    private final FileRepository fileRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public ConversationService(ConversationRepository conversationRepository, FileRepository fileRepository,
+    public ConversationService(ConversationRepository conversationRepository,
                                UserRepository userRepository) {
         this.conversationRepository = conversationRepository;
-        this.fileRepository = fileRepository;
         this.userRepository = userRepository;
     }
 

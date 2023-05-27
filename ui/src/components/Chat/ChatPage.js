@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./ChatPage.css";
 import Conversations from "./components/Conversations";
-import { httpReqAsync, postFile } from "../../services/httpReqAsync";
+import { httpReqAsync } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
-import { API_URL } from '../../constants';
+import { API_URL } from "../../constants";
 
 const ChatPage = () => {
   const [currentUser] = useLocalStorageState(null, "currentUser");
@@ -30,29 +30,9 @@ const ChatPage = () => {
     });
   }, [jwt, toggleRefresh, currentUser.id]);
 
+  //TODO: implement fetching files if message had a file
   useEffect(() => {
     if (selectedConversation) {
-      const promises = [];
-      const blobs = {};
-
-      for (const m of selectedConversation.messages) {
-        if (!m.message) {
-          const promise = fetch(API_URL +`/storage/messageFile?messageId=${m.id}`)
-            .then((resp) => resp.blob())
-            .then((blob) => {
-              blobs[m.id] = blob;
-            });
-
-          promises.push(promise);
-        }
-      }
-      Promise.all(promises)
-        .then(() => {
-          setFileBlobs((prevFileBlobs) => ({ ...prevFileBlobs, ...blobs }));
-        })
-        .catch((error) => {
-          console.error("Error occurred during fetch requests:", error);
-        });
     }
   }, [selectedConversation, toggleRefresh]);
 
@@ -82,15 +62,7 @@ const ChatPage = () => {
     }
 
     if (uploadedFile) {
-      postFile(
-        `storage/messageFile?conversationId=${selectedConversation.id}&userId=${currentUser.id}`,
-        uploadedFile,
-        jwt
-      ).then((resp) => {
-        console.log("Resp:", resp);
-        setToggleRefresh(!toggleRefresh);
-        setUploadedFile(null);
-      });
+      //then upload the file
     }
   };
 
