@@ -9,7 +9,7 @@ const CourseSummaryCard = ({
   name,
   description,
   reviews,
-  enrolledStudents,
+  enrolledStudentsIds,
   authorId,
   lastUpdated,
   price,
@@ -20,14 +20,14 @@ const CourseSummaryCard = ({
   const [alreadyEnrolled, setAlreadyEnrolled] = useState(false);
   useEffect(() => {
     //check if already has been enrolled
-    console.log("enrolled students:", enrolledStudents);
+    console.log("enrolled students:", enrolledStudentsIds);
     console.log("currentUser:", currentUser);
-    setAlreadyEnrolled(enrolledStudents.includes(currentUser.id));
+    setAlreadyEnrolled(enrolledStudentsIds.includes(currentUser.id));
     //get the author's info
     httpReqAsync(`/api/v1/users/${authorId}`, "GET", jwt).then((result) => {
       setAuthor(result);
     });
-  }, [jwt, authorId, enrolledStudents, currentUser, alreadyEnrolled]);
+  }, [jwt, authorId, enrolledStudentsIds, currentUser, alreadyEnrolled]);
 
   const calculateRating = () => {
     let ratingsSum = 0;
@@ -98,7 +98,7 @@ const CourseSummaryCard = ({
       <p className="course-summary-card__description">{description}</p>
       <div className="course-summary-card__info">
         <p className="course-summary-card__info-item">
-          {enrolledStudents?.length} students
+          {enrolledStudentsIds?.length} students
         </p>
         <p className="course-summary-card__info-item">
           Created by {author?.username}
