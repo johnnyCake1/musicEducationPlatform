@@ -2,6 +2,7 @@ package com.zheenbek.music_learn.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zheenbek.music_learn.dto.course.CategoryDTO;
 import com.zheenbek.music_learn.dto.course.CourseDTO;
 import com.zheenbek.music_learn.dto.course.CourseModuleDTO;
 import com.zheenbek.music_learn.dto.course.CourseTopicDTO;
@@ -41,33 +42,19 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<String> createCourse(@RequestBody CourseDTO courseDTO) {
-//        // Access the file data
-//        // - promoVideo: MultipartFile
-//        // - previewImage: MultipartFile
-//
-//        // Process the file data as needed
-//
-//        // Save the course and return a response
-//
-//        return ResponseEntity.ok("Course created successfully.");
-//    }
-
     @PostMapping
-    public ResponseEntity<String> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
+    public ResponseEntity<CourseDTO> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
                                                @RequestParam("previewPicture") MultipartFile previewPicture,
                                                @RequestPart("contentDataFiles") MultipartFile[] topicContentFiles,
                                                @RequestParam String courseDataJson) throws JsonProcessingException {
         CourseDTO course = new ObjectMapper().readValue(courseDataJson, CourseDTO.class);
         try {
-            course = courseService.saveCourse(course, promoVideo, previewPicture, topicContentFiles);
+            course = courseService.createCourse(course, promoVideo, previewPicture, topicContentFiles);
         } catch (IOException e) {
             return ResponseEntity.badRequest().build();
         }
 
-//        return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
-        return new ResponseEntity<>("Course is created successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(course, HttpStatus.CREATED);
     }
 
     /**
@@ -75,8 +62,8 @@ public class CourseController {
      * If the course object also contains {@link CourseDTO#id} then it will update existing course. Also depending on the value of {@link CourseDTO#isPublished}, it will either publish the course or save as draft course with {@link CourseDTO#authorId} being {@link com.zheenbek.music_learn.dto.user.UserDTO} author <br><br>
      * Otherwise, with {@link CourseDTO#id} field being {@code null}, it will create a new course entity with {@link CourseDTO#isPublished} being false <br><br>
      *
-     * @param course
-     * @return
+     * @param course course object that will replace the actual course info
+     * @return updated course
      */
     @PutMapping
     ResponseEntity<CourseDTO> createOrUpdateCourse(@RequestBody CourseDTO course) {
@@ -161,6 +148,35 @@ public class CourseController {
     public ResponseEntity<Course> dropUser(@PathVariable Long id, @RequestParam Long userId) {
         Course updatedCourse = courseService.dropUser(id, userId);
         return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
+    }
+
+    @PostMapping("/categories")
+    public ResponseEntity<CategoryDTO> createNewCategory(@RequestPart String categoryJson, @RequestPart MultipartFile file) throws IOException {
+        CategoryDTO categoryDTO = new ObjectMapper().readValue(categoryJson, CategoryDTO.class);
+        try {
+            categoryDTO = courseService.createCategory(categoryDTO, file);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return new ResponseEntity<>(categoryDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        List<CategoryDTO> categories = courseService.getAllCategories();
+        return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
+    @GetMapping("/categories/{categoryId}")
+    public ResponseEntity<CategoryDTO> getCategory(@PathVariable Long categoryId) {
+        CategoryDTO category = courseService.getCategoryById(categoryId);
+        return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+
+    @GetMapping("/categories/{categoryId}/get-courses")
+    public ResponseEntity<List<CourseDTO>> getCoursesByCategory(@PathVariable Long categoryId) {
+        List<CourseDTO> foundCourses = courseService.getAllCategoriesByCategory(categoryId);
+        return new ResponseEntity<>(foundCourses, HttpStatus.OK);
     }
 
     @GetMapping("/draft-courses")

@@ -18,6 +18,7 @@ public class CourseDTO {
     private String courseName;
     private String courseShortDescription;
     private String courseLongDescription;
+    private CategoryDTO category;
     private Long promoVideoId;
     @JsonProperty(value = "video_url")
     private String promoVideoPath;
@@ -215,5 +216,13 @@ public class CourseDTO {
 
     public void setEnrolledStudents(List<UserDTO> enrolledStudents) {
         this.enrolledStudents = enrolledStudents;
+    }
+
+    public CategoryDTO getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryDTO category) {
+        this.category = category;
     }
 }
