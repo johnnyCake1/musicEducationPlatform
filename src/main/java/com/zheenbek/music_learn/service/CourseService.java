@@ -1,9 +1,11 @@
 package com.zheenbek.music_learn.service;
 
+import com.zheenbek.music_learn.dto.course.CategoryDTO;
 import com.zheenbek.music_learn.dto.course.ContentDataDTO;
 import com.zheenbek.music_learn.dto.course.CourseDTO;
 import com.zheenbek.music_learn.dto.course.CourseModuleDTO;
 import com.zheenbek.music_learn.dto.course.CourseTopicDTO;
+import com.zheenbek.music_learn.entity.course.Category;
 import com.zheenbek.music_learn.entity.course.ContentData;
 import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.course.CourseModule;
@@ -11,6 +13,7 @@ import com.zheenbek.music_learn.entity.course.CourseTopic;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Review;
 import com.zheenbek.music_learn.entity.user.User;
+import com.zheenbek.music_learn.repository.CategoryRepository;
 import com.zheenbek.music_learn.repository.ContentDataRepository;
 import com.zheenbek.music_learn.repository.CourseModuleRepository;
 import com.zheenbek.music_learn.repository.CourseRepository;
@@ -45,6 +48,10 @@ public class CourseService {
     private final ReviewRepository reviewRepository;
     private final ServerFileStorageService serverFileStorageService;
     private final ContentDataRepository contentDataRepository;
+    private final CategoryRepository categoryRepository;
+
+    public static final Long DEFAULT_CATEGORY_ID = 1L;
+
 
     @Autowired
     public CourseService(CourseRepository courseRepository,
@@ -54,7 +61,8 @@ public class CourseService {
                          ServerFileStorageService serverFileStorageService,
                          UserRepository userRepository,
                          ReviewRepository reviewRepository,
-                         ContentDataRepository contentDataRepository) {
+                         ContentDataRepository contentDataRepository,
+                         CategoryRepository categoryRepository) {
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
         this.courseModuleRepository = courseModuleRepository;
@@ -63,6 +71,7 @@ public class CourseService {
         this.fileRepository = fileRepository;
         this.serverFileStorageService = serverFileStorageService;
         this.reviewRepository = reviewRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<CourseDTO> getAllCourses() {
@@ -70,7 +79,7 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseDTO saveCourse(CourseDTO courseDTO, MultipartFile promoVideo, MultipartFile previewPicture, MultipartFile[] orderedTopicContentFiles) throws IOException {
+    public CourseDTO createCourse(CourseDTO courseDTO, MultipartFile promoVideo, MultipartFile previewPicture, MultipartFile[] orderedTopicContentFiles) throws IOException {
         //convert CourseDTO to Course entity
         Course course = mapDtoToCourse(courseDTO);
         //create the files in the system and database and append to the entity
@@ -189,6 +198,7 @@ public class CourseService {
         newCourse.setCourseLongDescription("");
         newCourse.setCourseShortDescription("");
         newCourse.setPrice(0);
+        newCourse.setCategory(categoryRepository.findById(DEFAULT_CATEGORY_ID).orElse(null));
         Course savedCourse = courseRepository.save(newCourse);
         author.getDraftCourses().add(savedCourse);
         userRepository.save(author);
@@ -387,6 +397,10 @@ public class CourseService {
         return updatedReviews;
     }
 
+    public List<CategoryDTO> getAllCategories() {
+        return categoryRepository.findAll().stream().map(this::mapCategoryToDto).collect(Collectors.toList());
+    }
+
     private Course mapDtoToCourse(CourseDTO courseDTO) {
         Course course = new Course();
         course.setId(courseDTO.getId());
@@ -401,6 +415,10 @@ public class CourseService {
         course.setCreationDate(courseDTO.getCreationDate());
         course.setLastUpdatedDate(courseDTO.getLastUpdatedDate());
         course.setPublished(courseDTO.isPublished());
+        //category cannot be created by course, so it must have an id
+        if (courseDTO.getCategory() != null){
+            course.setCategory(mapDtoToCategory(courseDTO.getCategory()));
+        }
         if (courseDTO.getAuthorId() != null) {
             course.setAuthor(userRepository.findById(courseDTO.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("Course author not found with ID: " + courseDTO.getAuthorId())));
         }
@@ -464,6 +482,9 @@ public class CourseService {
         courseDTO.setCreationDate(course.getCreationDate());
         courseDTO.setLastUpdatedDate(course.getLastUpdatedDate());
         courseDTO.setPublished(course.isPublished());
+        if (course.getCategory() != null){
+            courseDTO.setCategory(mapCategoryToDto(course.getCategory()));
+        }
         if (course.getPreviewImage() != null) {
             courseDTO.setPreviewImageId(course.getPreviewImage().getId());
             courseDTO.setPreviewImagePath(FILES_SERVING_ENDPOINT + '/' + course.getPreviewImage().getFileName());
@@ -483,6 +504,16 @@ public class CourseService {
             courseDTO.setCurriculum(course.getCurriculum().stream().map(this::mapCourseModuleToDto).collect(Collectors.toList()));
         }
         return courseDTO;
+    }
+
+    private CategoryDTO mapCategoryToDto(Category category){
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setName(category.getName());
+        categoryDTO.setId(category.getId());
+        if (category.getPicture() != null){
+            categoryDTO.setPicturePath(FILES_SERVING_ENDPOINT + '/' + category.getPicture().getFileName());
+        }
+        return categoryDTO;
     }
 
     private CourseModuleDTO mapCourseModuleToDto(CourseModule courseModule) {
@@ -517,5 +548,32 @@ public class CourseService {
             contentDataDTO.setQuiz(contentData.getQuiz());
         }
         return contentDataDTO;
+    }
+
+    private Category mapDtoToCategory(CategoryDTO categoryDTO){
+        //if id is provided then use that category
+        if (categoryDTO.getId() != null){
+            return categoryRepository.findById(categoryDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Provided category was not found with ID: " + categoryDTO.getId()));
+        }
+        //else use default or nullify
+        return categoryRepository.findById(DEFAULT_CATEGORY_ID).orElse(null);
+    }
+
+    public CategoryDTO createCategory(CategoryDTO categoryDTO, MultipartFile categoryPicture) throws IOException {
+        File pictureFile = serverFileStorageService.storeFile(categoryPicture, categoryDTO.getName());
+        FileEntity pictureEntity = fileRepository.save(fileEntityFromFile(pictureFile, categoryPicture.getContentType()));
+        Category category = new Category();
+        category.setName(categoryDTO.getName());
+        category.setPicture(pictureEntity);
+        return mapCategoryToDto(categoryRepository.save(category));
+    }
+
+    public CategoryDTO getCategoryById(Long categoryId) {
+        return mapCategoryToDto(categoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException("Category not found to get with ID: " + categoryId)));
+    }
+
+    public List<CourseDTO> getAllCategoriesByCategory(Long categoryId) {
+        List<Course> foundCourses = courseRepository.findAllByCategoryId(categoryId);
+        return foundCourses.stream().map(this::mapCourseToDto).collect(Collectors.toList());
     }
 }

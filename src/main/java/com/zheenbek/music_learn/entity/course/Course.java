@@ -44,6 +44,8 @@ public class Course {
     private String courseName;
     private String courseShortDescription;
     private String courseLongDescription;
+    @ManyToOne
+    private Category category;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity promoVideo;
@@ -199,5 +201,13 @@ public class Course {
 
     public void setPublished(boolean published) {
         isPublished = published;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

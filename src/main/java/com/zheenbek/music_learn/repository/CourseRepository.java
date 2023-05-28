@@ -13,6 +13,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findAllByAuthorId(Long authorId);
 
     List<Course> findByEnrolledStudentsId(Long userId);
+    List<Course> findAllByCategoryId(Long categoryId);
 
     @Query("SELECT c FROM Course c WHERE " +
             "LOWER(c.courseName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
