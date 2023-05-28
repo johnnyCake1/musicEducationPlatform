@@ -19,6 +19,7 @@ import com.zheenbek.music_learn.repository.CourseModuleRepository;
 import com.zheenbek.music_learn.repository.CourseRepository;
 import com.zheenbek.music_learn.repository.CourseTopicRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
+import com.zheenbek.music_learn.repository.QuestionRepository;
 import com.zheenbek.music_learn.repository.ReviewRepository;
 import com.zheenbek.music_learn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class CourseService {
     private final ServerFileStorageService serverFileStorageService;
     private final ContentDataRepository contentDataRepository;
     private final CategoryRepository categoryRepository;
+    private final QuestionRepository questionRepository;
 
     public static final Long DEFAULT_CATEGORY_ID = 1L;
 
@@ -62,7 +64,8 @@ public class CourseService {
                          UserRepository userRepository,
                          ReviewRepository reviewRepository,
                          ContentDataRepository contentDataRepository,
-                         CategoryRepository categoryRepository) {
+                         CategoryRepository categoryRepository,
+                         QuestionRepository questionRepository) {
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
         this.courseModuleRepository = courseModuleRepository;
@@ -72,6 +75,7 @@ public class CourseService {
         this.serverFileStorageService = serverFileStorageService;
         this.reviewRepository = reviewRepository;
         this.categoryRepository = categoryRepository;
+        this.questionRepository = questionRepository;
     }
 
     public List<CourseDTO> getAllCourses(boolean onlyPublished) {
@@ -103,7 +107,9 @@ public class CourseService {
             for (CourseTopic topic : module.getCourseTopics()) {
                 if (topic.getContentData() != null) {
                     switch (topic.getContentData().getContentType()) {
-                        case FILE: {
+                        case IMAGE:
+                        case DOC:
+                        case FILE  : {
                             MultipartFile topicContentFile = orderedTopicContentFiles[topicFileIndex++];
                             //save in the system:
                             File file = serverFileStorageService.storeFile(topicContentFile, topic.getTopicName());
@@ -113,7 +119,12 @@ public class CourseService {
                             topic.getContentData().setFile(fileEntity);
                             break;
                         }
-                        case QUIZ:
+                        case QUIZ:{
+                            if (topic.getContentData().getQuiz() != null){
+                                questionRepository.saveAll(topic.getContentData().getQuiz());
+                            }
+                            break;
+                        }
                         case UNKNOWN: {
                             break;
                         }
@@ -292,7 +303,7 @@ public class CourseService {
                 fileRepository.save(contentData.getFile());
             }
             if (contentData.getQuiz() != null) {
-//                quizRepository.save(contentData.getQuiz());
+                questionRepository.saveAll(contentData.getQuiz());
             }
             contentDataRepository.save(contentData);
         }

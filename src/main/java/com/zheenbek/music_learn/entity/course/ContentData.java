@@ -22,6 +22,9 @@ public class ContentData {
 
     public enum ContentType {
         FILE,
+        DOC,
+        IMAGE,
+        VIDEO,
         QUIZ,
         UNKNOWN
     }
