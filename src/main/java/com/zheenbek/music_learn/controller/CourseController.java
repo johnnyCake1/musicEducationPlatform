@@ -72,11 +72,11 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseDTO>> getAllCourses(@RequestParam(required = false) Long authorId) {
+    public ResponseEntity<List<CourseDTO>> getAllCourses(@RequestParam(required = false) Long authorId, @RequestParam(required = false, defaultValue = "false") Boolean onlyPublished) {
         if (authorId == null) {
-            return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.OK);
+            return new ResponseEntity<>(courseService.getAllCourses(onlyPublished), HttpStatus.OK);
         }
-        return new ResponseEntity<>(courseService.getAllCoursesByAuthorId(authorId), HttpStatus.OK);
+        return new ResponseEntity<>(courseService.getAllCoursesByAuthorId(authorId, onlyPublished), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

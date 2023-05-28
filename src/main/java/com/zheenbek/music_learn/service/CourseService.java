@@ -74,8 +74,10 @@ public class CourseService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<CourseDTO> getAllCourses() {
-        return courseRepository.findAll().stream().map(this::mapCourseToDto).collect(Collectors.toList());
+    public List<CourseDTO> getAllCourses(boolean onlyPublished) {
+        return courseRepository.findAll().stream()
+                .filter(course -> !onlyPublished || course.isPublished())
+                .map(this::mapCourseToDto).collect(Collectors.toList());
     }
 
     @Transactional
@@ -313,8 +315,10 @@ public class CourseService {
         return courses.stream().map(this::mapCourseToDto).collect(Collectors.toList());
     }
 
-    public List<CourseDTO> getAllCoursesByAuthorId(Long authorId) {
-        return courseRepository.findAllByAuthorId(authorId).stream().map(this::mapCourseToDto).collect(Collectors.toList());
+    public List<CourseDTO> getAllCoursesByAuthorId(Long authorId, boolean onlyPublished) {
+        return courseRepository.findAllByAuthorId(authorId).stream()
+                .filter(e -> onlyPublished && e.isPublished())
+                .map(this::mapCourseToDto).collect(Collectors.toList());
     }
 
     public List<Course> findCoursesByKeyword(String keyword) {
