@@ -95,8 +95,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/saved-courses")
-    public ResponseEntity<List<Course>> getAllSavedCourses(@PathVariable Long userId) {
-        List<Course> savedCourses = userService.getAllSavedCourses(userId);
+    public ResponseEntity<List<CourseDTO>> getAllSavedCourses(@PathVariable Long userId) {
+        List<CourseDTO> savedCourses = userService.getAllSavedCourses(userId);
         return new ResponseEntity<>(savedCourses, HttpStatus.OK);
     }
 
@@ -113,14 +113,14 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/taken-courses")
-    public ResponseEntity<List<Course>> getAllTakenCourses(@PathVariable Long userId) {
-        List<Course> takenCourses = userService.getAllTakenCourses(userId);
+    public ResponseEntity<List<CourseDTO>> getAllTakenCourses(@PathVariable Long userId) {
+        List<CourseDTO> takenCourses = userService.getAllTakenCourses(userId);
         return new ResponseEntity<>(takenCourses, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/published-courses")
-    public ResponseEntity<List<Course>> getAllPublishedCourses(@PathVariable Long userId) {
-        List<Course> savedCourses = userService.getAllPublishedCourses(userId);
+    public ResponseEntity<List<CourseDTO>> getAllPublishedCourses(@PathVariable Long userId) {
+        List<CourseDTO> savedCourses = userService.getAllPublishedCourses(userId);
         return new ResponseEntity<>(savedCourses, HttpStatus.OK);
     }
 

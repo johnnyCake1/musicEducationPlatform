@@ -1,5 +1,6 @@
 package com.zheenbek.music_learn.service;
 
+import com.zheenbek.music_learn.dto.course.CourseDTO;
 import com.zheenbek.music_learn.dto.user.UserDTO;
 import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.FileEntity;
@@ -30,6 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.zheenbek.music_learn.service.CourseService.mapCourseToDto;
 import static com.zheenbek.music_learn.service.FileService.FILES_SERVING_ENDPOINT;
 import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEntityFromFile;
 
@@ -202,18 +204,27 @@ public class UserService {
     }
 
     @Transactional
-    public List<Course> getAllTakenCourses(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId)).getTakenCourses();
+    public List<CourseDTO> getAllTakenCourses(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId))
+                .getTakenCourses()
+                .stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
     @Transactional
-    public List<Course> getAllSavedCourses(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId)).getSavedCourses();
+    public List<CourseDTO> getAllSavedCourses(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId))
+                .getSavedCourses()
+                .stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
     @Transactional
-    public List<Course> getAllPublishedCourses(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId)).getPublishedCourses();
+    public List<CourseDTO> getAllPublishedCourses(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId))
+                .getPublishedCourses()
+                .stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
     public String getUsername(Long userId) {
