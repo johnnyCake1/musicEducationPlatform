@@ -37,6 +37,15 @@ public class Course {
     )
     @JsonIdentityReference(alwaysAsId = true)
     private List<User> enrolledStudents = new ArrayList<>();
+
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "course_save_in_users",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JsonIdentityReference(alwaysAsId = true)
+    private List<User> savedInUsers = new ArrayList<>();
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "course_id")
     private List<CourseModule> curriculum = new ArrayList<>();
@@ -97,6 +106,14 @@ public class Course {
 
     public void setCourseLongDescription(String courseLongDescription) {
         this.courseLongDescription = courseLongDescription;
+    }
+
+    public List<User> getSavedInUsers() {
+        return savedInUsers;
+    }
+
+    public void setSavedInUsers(List<User> savedInUsers) {
+        this.savedInUsers = savedInUsers;
     }
 
     public List<Review> getReviews() {

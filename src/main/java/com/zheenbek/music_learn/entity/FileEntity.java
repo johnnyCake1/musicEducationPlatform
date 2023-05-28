@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "file")
 @JsonTypeName("file")
-public class FileEntity /*extends DisplayableContent*/ {
+public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

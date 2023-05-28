@@ -433,6 +433,7 @@ public class CourseService {
             course.setPromoVideo(fileRepository.findById(courseDTO.getPromoVideoId()).orElseThrow(() -> new EntityNotFoundException("Course promo video file entity not found with ID: " + courseDTO.getPromoVideoId())));
         }
         course.setEnrolledStudents(courseDTO.getEnrolledStudentsIds().stream().map(id -> userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Course student not found with ID: " + id))).collect(Collectors.toList()));
+        course.setSavedInUsers(courseDTO.getSavedInStudentsIds().stream().map(id -> userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id + " who has course saved with ID:" + course.getId()))).collect(Collectors.toList()));
         if (courseDTO.getCurriculum() != null) {
             course.setCurriculum(courseDTO.getCurriculum().stream().map(this::mapDtoToCourseModule).collect(Collectors.toList()));
         }
@@ -475,6 +476,7 @@ public class CourseService {
         if (course.getAuthor() != null){
             courseDTO.setAuthor(mapUserToDto(course.getAuthor()));
         }
+        courseDTO.setSavedInStudentsIds(course.getSavedInUsers().stream().map(User::getId).collect(Collectors.toList()));
         courseDTO.setCourseLongDescription(course.getCourseLongDescription());
         courseDTO.setCourseName(course.getCourseName());
         courseDTO.setPrice(course.getPrice());

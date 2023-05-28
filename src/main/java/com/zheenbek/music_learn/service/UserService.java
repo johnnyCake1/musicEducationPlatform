@@ -192,6 +192,8 @@ public class UserService {
     public UserDTO addSavedCourse(Long userId, Long courseId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+        course.getSavedInUsers().add(user);
+        courseRepository.save(course);
         user.getSavedCourses().add(course);
         return mapUserToDto(userRepository.save(user));
     }
@@ -199,6 +201,9 @@ public class UserService {
     @Transactional
     public UserDTO deleteSavedCourse(Long userId, Long courseId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+        course.getSavedInUsers().removeIf(u -> u.getId().equals(userId));
+        courseRepository.save(course);
         user.getSavedCourses().removeIf(c -> c.getId().equals(courseId));
         return mapUserToDto(userRepository.save(user));
     }

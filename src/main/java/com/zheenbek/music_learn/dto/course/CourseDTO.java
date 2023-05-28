@@ -26,6 +26,7 @@ public class CourseDTO {
     @JsonProperty(value = "image_url")
     private String previewImagePath;
     private List<Long> enrolledStudentsIds = new ArrayList<>();
+    private List<Long> savedInStudentsIds = new ArrayList<>();
     private List<UserDTO> enrolledStudents = new ArrayList<>();
     private List<CourseModuleDTO> curriculum = new ArrayList<>();
     private List<String> requirements = new ArrayList<>();
@@ -176,6 +177,14 @@ public class CourseDTO {
 
     public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public List<Long> getSavedInStudentsIds() {
+        return savedInStudentsIds;
+    }
+
+    public void setSavedInStudentsIds(List<Long> savedInStudentsIds) {
+        this.savedInStudentsIds = savedInStudentsIds;
     }
 
     public Long getPromoVideoId() {

@@ -66,7 +66,7 @@ public class User implements UserDetails {
     @JsonIdentityReference(alwaysAsId = true)
     private List<Course> takenCourses = new ArrayList<>();
 
-    @OneToMany
+    @ManyToMany(mappedBy = "savedInUsers")
     @JsonIdentityReference(alwaysAsId = true)
     private List<Course> savedCourses = new ArrayList<>();
 
