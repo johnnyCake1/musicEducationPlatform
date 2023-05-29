@@ -1,5 +1,6 @@
 package com.zheenbek.music_learn.service;
 
+import com.zheenbek.music_learn.dto.FileDTO;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.repository.ConversationRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
@@ -44,16 +45,26 @@ public class FileService {
         this.serverFileStorageService = serverFileStorageService;
     }
 
-    public FileEntity createFile(MultipartFile file) throws IOException {
+    public FileDTO createFile(MultipartFile file) throws IOException {
         //save in the system:
         File storedFile = serverFileStorageService.storeFile(file, file.getOriginalFilename());
         //save in the database:
         FileEntity fileEntity = fileEntityFromFile(storedFile, file.getContentType());
-        return fileRepository.save(fileEntity);
+        return mapFileEntityToDto(fileRepository.save(fileEntity));
     }
 
     public File getFileById(Long fileId) {
         FileEntity fileEntity = fileRepository.findById(fileId).orElseThrow(() -> new EntityNotFoundException("File not found with ID: " + fileId));
         return new File(fileEntity.getFilePath());
+    }
+
+    public static FileDTO mapFileEntityToDto(FileEntity fileEntity){
+        FileDTO fileDTO = new FileDTO();
+        fileDTO.setId(fileEntity.getId());
+        if (fileEntity.getFilePath() != null && fileEntity.getFileName() != null) {
+            fileDTO.setFilePath(FILES_SERVING_ENDPOINT + '/' + fileEntity.getFileName());
+        }
+        fileDTO.setMediaType(fileDTO.getMediaType());
+        return fileDTO;
     }
 }

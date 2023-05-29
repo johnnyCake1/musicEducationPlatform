@@ -1,32 +1,31 @@
 package com.zheenbek.music_learn.dto;
 
-import org.springframework.core.io.Resource;
-
 public class FileDTO {
-    private Long fileId;
-    private Resource fileResource;
+    private Long id;
+    private String filePath;
+    private String mediaType;
 
-    public FileDTO(){
-
-    }
-    public FileDTO(Long fileId, Resource fileResource) {
-        this.fileId = fileId;
-        this.fileResource = fileResource;
+    public Long getId() {
+        return id;
     }
 
-    public Long getFileId() {
-        return fileId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setFileId(Long fileId) {
-        this.fileId = fileId;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public Resource getFileResource() {
-        return fileResource;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
-    public void setFileResource(Resource fileResource) {
-        this.fileResource = fileResource;
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
     }
 }

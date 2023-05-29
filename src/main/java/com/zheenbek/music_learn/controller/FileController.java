@@ -1,5 +1,6 @@
 package com.zheenbek.music_learn.controller;
 
+import com.zheenbek.music_learn.dto.FileDTO;
 import com.zheenbek.music_learn.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -28,8 +29,8 @@ public class FileController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createFile(@RequestPart("file") MultipartFile file) throws IOException {
-        return ResponseEntity.ok().body(fileService.createFile(file).getId());
+    public ResponseEntity<FileDTO> createFile(@RequestPart("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok().body(fileService.createFile(file));
     }
 
     @GetMapping("/{fileId}")
