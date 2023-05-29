@@ -1,40 +1,72 @@
 import React, { useEffect, useState } from "react";
-import "./ChatPage.css";
 import Conversations from "./components/Conversations";
 import { httpReqAsync } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
-import { API_URL } from "../../constants";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+import "./ChatPage.css";
 
 const ChatPage = () => {
   const [currentUser] = useLocalStorageState(null, "currentUser");
   const [jwt] = useLocalStorageState("", "jwt");
-  const [conversations, setConversations] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedConversation, setSelectedConversation] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [message, setMessage] = useState("");
+  const [messageInput, setMessage] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [toggleRefresh, setToggleRefresh] = useState(true);
 
-  const [fileBlobs, setFileBlobs] = useState({});
+  const [privateChats, setPrivateChats] = useState([]);
+  const [selectedPrivateChat, setSelectedPrivateChat] = useState(null);
+  const [selectedChatMessages, setSelectedChatMessages] = useState([]);
+
+  const [stompClient, setStompClient] = useState(null);
+
+  const isConnected = stompClient && stompClient.connected;
 
   useEffect(() => {
     httpReqAsync(
-      `/api/v1/conversations?userId=${currentUser.id}`,
+      `/api/v1/chats/private-chats/${currentUser.id}`,
       "GET",
       jwt
-    ).then((convs) => {
-      setIsLoading(false);
-      setConversations(convs);
+    ).then((result) => {
+      console.log("Got all the private chats:", result);
+      setPrivateChats(result);
     });
-  }, [jwt, toggleRefresh, currentUser.id]);
+  }, [jwt, currentUser]);
 
-  //TODO: implement fetching files if message had a file
   useEffect(() => {
-    if (selectedConversation) {
+    const socket = new SockJS("/chat");
+    const client = Stomp.over(socket);
+    client.connect({}, () => {
+      setStompClient(client);
+    });
+
+    return () => {
+      if (stompClient) {
+        stompClient.disconnect();
+      }
+    };
+  }, [stompClient]);
+
+  useEffect(() => {
+    if (selectedPrivateChat) {
+      //load selectedChatMessages
+      console.log("this is selected:", selectedPrivateChat);
+
+      // Subscribe to the selected conversation's topic
+      const subscription = stompClient.subscribe(
+        `/topic/private/${selectedPrivateChat.id}`,
+        (message) => {
+          const chatMessage = JSON.parse(message.body);
+          console.log("Socket sent result:", chatMessage);
+          setSelectedChatMessages((prevMessages) => [...prevMessages, chatMessage]);
+        }
+      );
+
+      return () => {
+        subscription.unsubscribe();
+      };
     }
-  }, [selectedConversation, toggleRefresh]);
+  }, [selectedPrivateChat, stompClient]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -47,74 +79,31 @@ const ChatPage = () => {
 
   const handleMessageSend = (event) => {
     event.preventDefault();
-    if (message) {
-      const newMessage = {
-        conversationId: selectedConversation.id,
-        sender: { id: currentUser.id },
-        message: message,
-      };
-      httpReqAsync(`/api/v1/messages`, "POST", jwt, newMessage).then(
-        (message) => {
-          setToggleRefresh(!toggleRefresh);
-          setMessage("");
-        }
-      );
-    }
 
-    if (uploadedFile) {
-      //then upload the file
-    }
-  };
+    if (isConnected) {
+      if (messageInput) {
+        const chatMessage = {
+          senderId: currentUser.id, // Update with appropriate sender information
+          content: messageInput,
+        };
 
-  const onDelete = (messageId) => {
-    httpReqAsync(`api/v1/messages?messageId=${messageId}`, "DELETE", jwt).then(
-      (resp) => {
-        console.log("deleted!");
+        stompClient.send(
+          `/app/private/${selectedPrivateChat.id}/sendPrivateMessage`,
+          {},
+          JSON.stringify(chatMessage)
+        );
       }
-    );
-  };
 
-  if (isLoading) return <div>Loading...</div>;
-
-  const renderFile = (messageId) => {
-    const file = fileBlobs[messageId];
-    if (!file) {
-      return <div>Loading...</div>;
+      if (uploadedFile) {
+        //then send the file
+      }
     }
-    const isImage = file.type.startsWith("image/");
-    const isVideo = file.type.startsWith("video/");
-    const fileSrc = URL.createObjectURL(file);
-    // Limit the preview size to 300px x 300px
-    const previewStyle = {
-      maxWidth: "300px",
-      maxHeight: "300px",
-    };
-    return (
-      <div className="file-display">
-        {isImage ? (
-          <img src={fileSrc} alt={file.name} style={previewStyle} />
-        ) : isVideo ? (
-          <video controls style={previewStyle}>
-            <source src={fileSrc} type={file.type} />
-          </video>
-        ) : (
-          <div className="file-icon">
-            <i className="fas fa-file" />
-          </div>
-        )}
-
-        <div className="file-info">
-          <div className="file-name">{file.name}</div>
-          <div className="file-actions">
-            <a href={fileSrc} target="_blank" rel="noopener noreferrer">
-              <i className="fas fa-download" />
-              Download
-            </a>
-          </div>
-        </div>
-      </div>
-    );
   };
+
+  const onDelete = (messageId) => {};
+
+  if (!privateChats) return <div>Loading private chats...</div>;
+  if (!isConnected) return <div>Connecting...</div>;
 
   return (
     <div className="chat-page">
@@ -132,9 +121,10 @@ const ChatPage = () => {
               onChange={handleSearch}
             />
           </div>
-          {conversations && (
+          {privateChats && (
             <Conversations
-              conversations={conversations.filter((conversation) => {
+              privateChats={privateChats.filter((chat) => {
+                console.log("fff:", chat);
                 // Check if the conversation name matches the search term
                 // const nameMatch = conversation.name
                 //   .toLowerCase()
@@ -150,8 +140,9 @@ const ChatPage = () => {
                 // return nameMatch || messageMatch;
                 return true;
               })}
-              selectedConversation={selectedConversation}
-              setSelectedConversation={setSelectedConversation}
+              selectedPrivateChat={selectedPrivateChat}
+              setSelectedPrivateChat={setSelectedPrivateChat}
+              setSelectedChatMessages={setSelectedChatMessages}
             />
           )}
         </div>
@@ -160,43 +151,30 @@ const ChatPage = () => {
             <Logo />
           </div> */}
       </div>
-      {selectedConversation && (
+      {selectedPrivateChat && (
         <div className="right-column">
           <div className="chat-header">
             <ProfilePicture />
-            <div className="username">{selectedConversation.name}</div>
+            <div className="username">chat id: {selectedPrivateChat.id}</div>
           </div>
           <div className="message-history">
-            {selectedConversation.messages.map((message) => (
+            {selectedChatMessages.map((message) => (
               <div
                 key={message.id}
                 className={`message-item ${
-                  message.sender.id === currentUser.id
-                    ? "align-right color"
-                    : ""
+                  message.senderId === currentUser.id ? "align-right color" : ""
                 }`}
               >
-                {message.message ? (
-                  <div className="message-bubble">
-                    {message.message}
-                    {message.sender.id === currentUser.id && (
-                      <i
-                        className="fas fa-trash delete-icon"
-                        onClick={() => onDelete(message.id)}
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <div className="message-bubble">
-                    {renderFile(message.id)}
-                    {message.sender.id === currentUser.id && (
-                      <i
-                        className="fas fa-trash delete-icon"
-                        onClick={() => onDelete(message.id)}
-                      />
-                    )}
-                  </div>
-                )}
+                {console.log("logging!!!", message)}
+                <div className="message-bubble">
+                  {message.content}
+                  {message.senderId === currentUser.id && (
+                    <i
+                      className="fas fa-trash delete-icon"
+                      onClick={() => onDelete(message.id)}
+                    />
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -206,7 +184,7 @@ const ChatPage = () => {
                 style={{ width: "100%" }}
                 type="text"
                 placeholder="Type your message here"
-                value={message}
+                value={messageInput}
                 onChange={(event) => setMessage(event.target.value)}
               />
               <label htmlFor="file-upload" className="upload-button">

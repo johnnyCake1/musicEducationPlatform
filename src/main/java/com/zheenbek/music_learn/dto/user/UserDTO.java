@@ -1,6 +1,7 @@
 package com.zheenbek.music_learn.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zheenbek.music_learn.dto.chat.PrivateChatDTO;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;

@@ -1,25 +1,29 @@
 package com.zheenbek.music_learn.service;
 
+import com.zheenbek.music_learn.dto.chat.ChatMessageDTO;
+import com.zheenbek.music_learn.dto.chat.PrivateChatDTO;
 import com.zheenbek.music_learn.dto.course.CourseDTO;
 import com.zheenbek.music_learn.dto.user.UserDTO;
-import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Review;
+import com.zheenbek.music_learn.entity.chat.ChatMessage;
+import com.zheenbek.music_learn.entity.chat.PrivateChat;
+import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.user.Role;
 import com.zheenbek.music_learn.entity.user.User;
-import com.zheenbek.music_learn.repository.CourseRepository;
+import com.zheenbek.music_learn.repository.chat.PrivateChatRepository;
+import com.zheenbek.music_learn.repository.course.CourseRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.repository.ReviewRepository;
-import com.zheenbek.music_learn.repository.RoleRepository;
-import com.zheenbek.music_learn.repository.UserRepository;
+import com.zheenbek.music_learn.repository.user.RoleRepository;
+import com.zheenbek.music_learn.repository.user.UserRepository;
+import com.zheenbek.music_learn.service.chat.PrivateChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.File;
@@ -31,7 +35,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.zheenbek.music_learn.service.CourseService.mapCourseToDto;
 import static com.zheenbek.music_learn.service.FileService.FILES_SERVING_ENDPOINT;
 import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEntityFromFile;
 
@@ -43,15 +46,20 @@ public class UserService {
     private final FileRepository fileRepository;
     private final ReviewRepository reviewRepository;
     private final ServerFileStorageService serverFileStorageService;
+    private final PrivateChatRepository privateChatRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, FileRepository fileRepository, ServerFileStorageService serverFileStorageService, CourseRepository courseRepository, ReviewRepository reviewRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, FileRepository fileRepository,
+                       ServerFileStorageService serverFileStorageService, CourseRepository courseRepository,
+                       ReviewRepository reviewRepository, RoleRepository roleRepository,
+                       PrivateChatRepository privateChatRepository) {
         this.userRepository = userRepository;
         this.fileRepository = fileRepository;
         this.serverFileStorageService = serverFileStorageService;
         this.courseRepository = courseRepository;
         this.reviewRepository = reviewRepository;
         this.roleRepository = roleRepository;
+        this.privateChatRepository = privateChatRepository;
     }
 
     public UserDTO createNewUser(String username, String password) {
@@ -83,6 +91,11 @@ public class UserService {
             user.setTags(user.getTags());
         }
         return mapUserToDto(userRepository.save(user));
+    }
+
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
     }
 
     public List<UserDTO> getAllUsers() {
@@ -174,7 +187,6 @@ public class UserService {
                 .filter(file -> Objects.equals(file.getId(), fileId))
                 .findFirst()
                 .orElse(null);
-        FileEntity oldProfilePic = user.getProfilePic();
         if (fileEntityToDelete == null) {
             return mapUserToDto(user);
         }
@@ -313,7 +325,8 @@ public class UserService {
         userDTO.setTakenCoursesIds(user.getTakenCourses().stream().map(Course::getId).collect(Collectors.toList()));
         userDTO.setDraftCoursesIds(user.getDraftCourses().stream().map(Course::getId).collect(Collectors.toList()));
         userDTO.setSavedCoursesIds(user.getSavedCourses().stream().map(Course::getId).collect(Collectors.toList()));
-//        userDTO.setAuthorities(user.getAuthorities()); //this is causing cyclic relationship
+        //  userDTO.setPrivateChats(user.getPrivateChats().stream().map(PrivateChatService::mapPrivateChatToDto).collect(Collectors.toList()));
+        //  userDTO.setAuthorities(user.getAuthorities()); //this is causing cyclic relationship
         return userDTO;
     }
 }

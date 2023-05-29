@@ -2,7 +2,7 @@ package com.zheenbek.music_learn.service;
 
 import com.zheenbek.music_learn.entity.user.Role;
 import com.zheenbek.music_learn.entity.user.User;
-import com.zheenbek.music_learn.repository.RoleRepository;
+import com.zheenbek.music_learn.repository.user.RoleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;

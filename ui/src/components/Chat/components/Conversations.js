@@ -7,9 +7,9 @@ import { httpReqAsync } from "../../../services/httpReqAsync";
 const Conversation = ({
   participantsIds,
   currentUserId,
-  messages,
+  chatMessages,
   isSelected,
-  onClick
+  onClick,
 }) => {
   const [conversationName, setConversationName] = useState("");
   const [jwt] = useLocalStorageState("", "jwt");
@@ -34,9 +34,9 @@ const Conversation = ({
       <div className="">
         <div className="username">{conversationName}</div>
         <div className="message-preview">
-          {messages && messages.length > 0
+          {/* {messages && messages.length > 0
             ? messages[messages.length - 1].message
-            : ""}
+            : ""} */}
         </div>
       </div>
     </div>
@@ -44,21 +44,25 @@ const Conversation = ({
 };
 
 const Conversations = ({
-  conversations,
-  selectedConversation,
-  setSelectedConversation,
+  privateChats,
+  selectedPrivateChat,
+  setSelectedPrivateChat,
+  setSelectedChatMessages,
 }) => {
   const [currentUser] = useLocalStorageState(null, "currentUser");
   return (
     <div className="conversation-list">
-      {conversations.map((conv) => (
+      {privateChats.map((chat) => (
         <Conversation
-          key={conv.id}
-          participantsIds={conv.participantsIds}
+          key={chat.id}
+          participantsIds={chat.participantsIds}
           currentUserId={currentUser.id}
-          messages={conv.messages}
-          isSelected={selectedConversation?.id === conv.id}
-          onClick={() => setSelectedConversation(conv)}
+          chatMessages={chat.chatMessages}
+          isSelected={selectedPrivateChat?.id === chat.id}
+          onClick={() => {
+            setSelectedPrivateChat(chat);
+            setSelectedChatMessages(chat.chatMessages);
+          }}
         />
       ))}
     </div>

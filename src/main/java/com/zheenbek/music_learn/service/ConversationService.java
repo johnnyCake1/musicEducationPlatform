@@ -6,8 +6,8 @@ import com.zheenbek.music_learn.dto.user.UserDTO;
 import com.zheenbek.music_learn.entity.Conversation;
 import com.zheenbek.music_learn.entity.Message;
 import com.zheenbek.music_learn.entity.user.User;
-import com.zheenbek.music_learn.repository.ConversationRepository;
-import com.zheenbek.music_learn.repository.UserRepository;
+import com.zheenbek.music_learn.repository.course.ConversationRepository;
+import com.zheenbek.music_learn.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

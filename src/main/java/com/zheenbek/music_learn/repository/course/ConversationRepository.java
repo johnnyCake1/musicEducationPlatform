@@ -1,4 +1,4 @@
-package com.zheenbek.music_learn.repository;
+package com.zheenbek.music_learn.repository.course;
 
 import com.zheenbek.music_learn.entity.Conversation;
 import org.springframework.data.jpa.repository.JpaRepository;

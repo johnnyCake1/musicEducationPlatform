@@ -4,7 +4,6 @@ import Login from "./components/Authentication/Login";
 import Forgot from "./components/Authentication/Forgot";
 import Register from "./components/Authentication/Register";
 import ProfilePage from "./components/Profile/ProfilePage";
-import Navigation_old from "./components/common/Navigation_old";
 
 import SearchResult from "./components/Search/SearchResult";
 import CourseDescription from "./components/Course/CourseDescription";
@@ -21,6 +20,7 @@ import MyLearnings from './components/MyLearnings/MyLearnings';
 import withSidebarAndAuth from "./components/common/withSidebarAndAuth"
 import ContentAndAuth from './components/common/ContentAndAuth';
 import Homepage from "./components/Homepage/Homepage";
+
 
 function App() {
   

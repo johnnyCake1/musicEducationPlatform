@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.zheenbek.music_learn.entity.chat.PrivateChat;
 import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Review;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,6 +37,8 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+    @ManyToMany(mappedBy = "participants", fetch = FetchType.EAGER)
+    private List<PrivateChat> privateChats;
     @JsonIgnore
     private String password;
     private String firstName;
@@ -80,6 +84,9 @@ public class User implements UserDetails {
 
     @OneToMany
     private List<Review> reviews = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<PrivateChat> privateChats = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     @JsonIgnore
@@ -232,6 +239,14 @@ public class User implements UserDetails {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public List<PrivateChat> getPrivateChats() {
+        return privateChats;
+    }
+
+    public void setPrivateChats(List<PrivateChat> privateChats) {
+        this.privateChats = privateChats;
     }
 
     public List<FileEntity> getStoredFiles() {

@@ -1,6 +1,6 @@
 package com.zheenbek.music_learn.config;
 
-import com.zheenbek.music_learn.repository.UserRepository;
+import com.zheenbek.music_learn.repository.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -36,7 +36,8 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**").permitAll()
                 .antMatchers("/files/**").permitAll()
-                .antMatchers("/storage/**").permitAll() // Permit all requests to "/storage/**"
+                .antMatchers("/storage/**").permitAll()
+                .antMatchers("/chat/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

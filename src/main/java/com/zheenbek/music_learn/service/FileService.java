@@ -2,10 +2,10 @@ package com.zheenbek.music_learn.service;
 
 import com.zheenbek.music_learn.dto.FileDTO;
 import com.zheenbek.music_learn.entity.FileEntity;
-import com.zheenbek.music_learn.repository.ConversationRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.repository.MessageRepository;
-import com.zheenbek.music_learn.repository.UserRepository;
+import com.zheenbek.music_learn.repository.course.ConversationRepository;
+import com.zheenbek.music_learn.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
