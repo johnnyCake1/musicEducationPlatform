@@ -15,6 +15,7 @@ public class ContentDataDTO {
     @JsonProperty(value = "file_url")
     private String filePath;
     private List<Question> quiz;
+    private String text;
 
     public Long getId() {
         return id;
@@ -57,5 +58,13 @@ public class ContentDataDTO {
      */
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

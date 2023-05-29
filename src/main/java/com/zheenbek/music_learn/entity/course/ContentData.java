@@ -26,6 +26,7 @@ public class ContentData {
         IMAGE,
         VIDEO,
         QUIZ,
+        TEXT,
         UNKNOWN
     }
     @Enumerated(EnumType.STRING)
@@ -35,6 +36,8 @@ public class ContentData {
     private FileEntity file;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> quiz;
+
+    private String text;
 
     public void setId(Long id) {
         this.id = id;
@@ -66,5 +69,13 @@ public class ContentData {
 
     public void setQuiz(List<Question> quiz) {
         this.quiz = quiz;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
