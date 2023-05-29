@@ -74,12 +74,12 @@ const ProfilePage = () => {
 
   const handleMessage = () => {
     httpReqAsync(
-      `/api/v1/conversations?participantsIds=${currentUser.id},${userId}`,
+      `/api/v1/chats/private-chats/${currentUser.id}/${userId}`,
       "POST",
       jwt
     ).then((convId) => {
       console.log("conv created!:", convId);
-      navigate(`/chat?selectedConversation=${convId}`);
+      navigate(`/chat`);
     });
   };
 
