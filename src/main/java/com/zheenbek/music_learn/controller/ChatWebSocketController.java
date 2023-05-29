@@ -3,11 +3,9 @@ package com.zheenbek.music_learn.controller;
 import com.zheenbek.music_learn.dto.chat.ChatMessageDTO;
 import com.zheenbek.music_learn.entity.chat.ChatFile;
 import com.zheenbek.music_learn.entity.chat.ChatMessage;
-import com.zheenbek.music_learn.entity.chat.PrivateChat;
 import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.service.UserService;
 import com.zheenbek.music_learn.service.chat.ChatMessageService;
-import com.zheenbek.music_learn.service.chat.PrivateChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
@@ -20,7 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.Date;
 
 @Controller
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "https://v1910509.hosted-by-vdsina.ru", allowCredentials = "true")
 public class ChatWebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
 
