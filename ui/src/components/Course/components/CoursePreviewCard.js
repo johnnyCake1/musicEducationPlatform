@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import "./CoursePreviewCard.css";
+// import "./CoursePreviewCard.css";
 import ProfilePicture from "../../Profile/components/profile_card/ProfilePicture";
 import { FaBookmark } from "react-icons/fa";
 import { getFile, httpReqAsync } from "../../../services/httpReqAsync";

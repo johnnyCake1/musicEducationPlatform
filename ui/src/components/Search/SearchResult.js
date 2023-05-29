@@ -7,6 +7,7 @@ import UserCardSmall from "./components/UserCardSmall";
 import { httpReqAsync } from "../../services/httpReqAsync";
 import { useNavigate, useParams } from "react-router-dom";
 import useLocalStorageState from "../../util/useLocalStorageState";
+import CourseCard from '../Course/components/CourseCard';
 
 const SearchResult = () => {
   const { keyword } = useParams();
@@ -79,11 +80,12 @@ const SearchResult = () => {
       label: "Courses",
       content: courses ? (
         courses.length > 0 ? (
-          <div className="my-cards-grid">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
             {courses
               .filter((course) => course.published)
               .map((course) => (
-                <CoursePreviewCard
+                <CourseCard
+                  course={course}
                   key={course.id}
                   courseId={course.id}
                   authorId={course.author}
@@ -149,8 +151,13 @@ const SearchResult = () => {
         ),
     },
   ];
-
-  return <TabbedPage tabs={tabs} />;
+  return  (
+    <div className="container">
+      <div className="text-2xl font-semibold"> Storage </div>
+      <TabbedPage tabs={tabs} />
+    </div>
+  )
+  
 };
 
 export default SearchResult;

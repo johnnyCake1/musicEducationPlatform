@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./CourseContentPage.css"; // Import the CSS file for styling
+// import "./CourseContentPage.css"; // Import the CSS file for styling
 import { useParams } from "react-router-dom";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import { getFile, httpReqAsync } from "../../services/httpReqAsync";
@@ -141,6 +141,7 @@ const CourseContentPage = () => {
         <div className="displayable-media-window">
           {/* Displayable Media Window Content */}
           {/* ... */}
+          
           <DisplayableContent>
             <VideoPlayer videoSrc={courseVideoSrc} />
           </DisplayableContent>

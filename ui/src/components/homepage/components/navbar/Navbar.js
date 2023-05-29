@@ -27,7 +27,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar container">
+    <nav className="navbar container-fluid">
       <Logo />
       <menu>
         <ul
@@ -48,7 +48,7 @@ const Navbar = () => {
           </li>
           <li className="nav-btn">
             <Button
-              text={"Get Started"}
+              text={currentUser?"Dashboard":"Get Started"}
               btnClass={"my-btn-dark"}
               onClick={handleGetStarted}
             />

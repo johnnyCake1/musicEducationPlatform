@@ -1,5 +1,5 @@
 .course-creation-page {
-  max-width: 600px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 40px;
   background-color: #f9f9f9;
@@ -70,7 +70,7 @@
   background-color: #28a745;
 }
 
-.course-creation-page button[type="button"] {
+.course-creation-page button[type="button"].remove_button {
   margin-left: 8px;
   background-color: #dc3545;
 }
