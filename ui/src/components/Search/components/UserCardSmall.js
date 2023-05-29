@@ -6,7 +6,7 @@ const UserCardSmall = ({ userId, username, description }) => {
   const navigate = useNavigate();
   return (
     <div
-      className="user-small-card"
+      className="user-small-card card p-2"
       onClick={() => navigate(`/${userId}/profile`)}
     >
       <ProfilePicture userId={userId} size={75} />

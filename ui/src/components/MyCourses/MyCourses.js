@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { httpReqAsync } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import "./MyCourses.css";
+import MyCourseCard from '../Course/components/MyCourseCard';
 
 const MyCourses = () => {
   const navigate = useNavigate();
@@ -50,9 +51,10 @@ const MyCourses = () => {
         <>
           {publishedCourses ? (
             publishedCourses.length > 0 ? (
-              <div className="my-cards-grid">
+              <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
                 {publishedCourses.map((course) => (
-                  <CoursePreviewCard
+                  <MyCourseCard
+                    course = {course}
                     key={course.id}
                     courseId={course.id}
                     authorId={course.author}
@@ -74,15 +76,16 @@ const MyCourses = () => {
                 ))}
               </div>
             ) : (
-              <div>{"Nothing in your published courses yet :("}</div>
+              <div className="flex">{"Nothing in your published courses yet :("}</div>
             )
           ) : (
             <div>Loading ...</div>
           )}
-          <span onClick={handleDraftCreation} className="create-course-link">
+          <br />
+          <button onClick={handleDraftCreation} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Click here to create a new course
-          </span>
-          {/* <Link to="/courses/create" className="create-course-link">
+          </button>
+          {/* <Link to="/courses/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Click here to create a new course
           </Link> */}
         </>
@@ -95,9 +98,10 @@ const MyCourses = () => {
         <>
           {draftCourses ? (
             draftCourses.length > 0 ? (
-              <div className="my-cards-grid">
+              <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
                 {draftCourses.map((course) => (
-                  <CoursePreviewCard
+                  <MyCourseCard
+                    course = {course}
                     key={course.id}
                     courseId={course.id}
                     authorId={course.authorId}
@@ -117,23 +121,34 @@ const MyCourses = () => {
                 ))}
               </div>
             ) : (
-              <div>{"Nothing in your published courses yet :("}</div>
+              <div className="flex">{"Nothing in your published courses yet :("}</div>
             )
           ) : (
             <div>Loading ...</div>
           )}
-          <span onClick={handleDraftCreation} className="create-course-link">
+          <br />
+          
+          <button onClick={handleDraftCreation} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Click here to create a new course
-          </span>
-          {/* <Link to="/courses/create" className="create-course-link">
+          </button>
+          {/* <Link to="/courses/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Click here to create a new course
           </Link> */}
         </>
       ),
     },
   ];
+  
+  return (
+    <>
+      <div className="container">
+        <div className="text-2xl font-semibold"> My courses </div>
+        <TabbedPage tabs={tabs} />
+      </div>
 
-  return <TabbedPage tabs={tabs} />;
+      
+    </>
+  );
 };
 
 export default MyCourses;

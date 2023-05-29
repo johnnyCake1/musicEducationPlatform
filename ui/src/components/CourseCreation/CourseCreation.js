@@ -5,7 +5,8 @@ import useLocalStorageState from "../../util/useLocalStorageState";
 import { useNavigate, useParams } from "react-router-dom";
 import { getFile, httpReqAsync } from "../../services/httpReqAsync";
 import VideoPlayer from "../common/VideoPlayer";
-
+import { ReactSortable } from "react-sortablejs";
+import QuizCreator from './QuizCreatiion'
 const CourseCreationPage = () => {
   const { courseId } = useParams();
   const [currentUser] = useLocalStorageState(null, "currentUser");
@@ -70,19 +71,19 @@ const CourseCreationPage = () => {
 
     //fetch the course data
     httpReqAsync(`/api/v1/courses/${courseId}`, "GET", jwt).then((result) => {
-      if (
-        String(currentUser.id) !== String(result.authorId) ||
-        result.published
-      ) {
-        console.log(
-          "This user cannot access this page or the course was not a draft"
-        );
-        navigate("/my-courses");
-        setError(
-          "This user cannot access this page or the course was not a draft"
-        );
-        return;
-      }
+      // if (
+      //   String(currentUser.id) !== String(result.authorId) ||
+      //   result.published
+      // ) {
+      //   console.log(
+      //     "This user cannot access this page or the course was not a draft"
+      //   );
+      //   // navigate("/my-courses");
+      //   setError(
+      //     "This user cannot access this page or the course was not a draft"
+      //   );
+      //   return;
+      // }
 
       //fill out the data
       setCourseData(result);
@@ -159,6 +160,55 @@ const CourseCreationPage = () => {
 
   const handleCurriculumChange = (e, moduleIndex, topicIndex) => {
     const { name, value, type, files } = e.target;
+    console.log('log', value)
+    setCourseData((prevState) => {
+      const curriculum = [...prevState.curriculum];
+      curriculum[moduleIndex].courseTopics[topicIndex].contentData.contentType = value;
+
+      const newCourseData = { ...prevState, curriculum };
+      return newCourseData;
+    });
+  };
+  const handleTopicNameChange = (e, moduleIndex, topicIndex) => {
+    const { name, value, type, files } = e.target;
+    
+    setCourseData((prevState) => {
+      const curriculum = [...prevState.curriculum];
+      curriculum[moduleIndex].courseTopics[topicIndex][name] = value;
+
+      const newCourseData = { ...prevState, curriculum };
+      return newCourseData;
+    });
+  };
+  const handleTextChange = (e, moduleIndex, topicIndex) => {
+    const { name, value, type, files } = e.target;
+
+    setCourseData((prevState) => {
+      const curriculum = [...prevState.curriculum];
+      curriculum[moduleIndex].courseTopics[topicIndex].contentData.text = value;
+      curriculum[moduleIndex].courseTopics[topicIndex].contentData.contentType = "TEXT";
+
+      const newCourseData = { ...prevState, curriculum };
+      return newCourseData;
+    });
+  };
+  
+  const handleQuizUpdate = (data, moduleIndex, topicIndex) => {
+    // console.log('sdfds', data)
+    const updatedQuestions = data.map(({ id, ...rest }) => rest);
+
+    // console.log("sdfsdfsdfsd", curriculum[moduleIndex].courseTopics[topicIndex].contentData)
+    setCourseData((prevState) => {
+      const curriculum = [...prevState.curriculum];
+      console.log("sdfsdf",curriculum[moduleIndex].courseTopics[topicIndex].contentData)
+      curriculum[moduleIndex].courseTopics[topicIndex].contentData.quiz = updatedQuestions;
+      const newCourseData = { ...prevState, curriculum };
+      return newCourseData;
+    });
+  };
+
+  const handleUpload = (e, moduleIndex, topicIndex) => {
+    const { name, value, type, files } = e.target;
 
     if (type === "file") {
       console.log("state of course data before sending file:", courseData);
@@ -167,9 +217,8 @@ const CourseCreationPage = () => {
         setCourseData((prevState) => {
           const curriculum = [...prevState.curriculum];
           curriculum[moduleIndex].courseTopics[topicIndex].contentData = {
-            contentType: "FILE",
-            file: files[0],
-            fileId: result,
+            img_url: result.filePath,
+            fileId: result.id,
           };
           return { ...prevState, curriculum };
         });
@@ -177,14 +226,6 @@ const CourseCreationPage = () => {
 
       return;
     }
-
-    setCourseData((prevState) => {
-      const curriculum = [...prevState.curriculum];
-      curriculum[moduleIndex].courseTopics[topicIndex][name] = value;
-
-      const newCourseData = { ...prevState, curriculum };
-      return newCourseData;
-    });
   };
 
   const handleTagChange = (e, index) => {
@@ -243,9 +284,10 @@ const CourseCreationPage = () => {
     e.preventDefault();
     const file = e.target.files[0];
     httpReqAsync("/api/v1/files", "POST", jwt, file).then((result) => {
+      console.log('hello', result)
       setCourseData((prevState) => ({
         ...prevState,
-        previewImage: file,
+        img_url: URL.createObjectURL(file),
         previewImageId: result,
       }));
     });
@@ -279,7 +321,7 @@ const CourseCreationPage = () => {
     httpReqAsync(`/api/v1/courses`, "PUT", jwt, courseData).then((result) => {
       console.log("saved:", result);
       setCourseData(result);
-      setToggleRefresh(!toggleRefresh);
+      // setToggleRefresh(!toggleRefresh);
     });
   };
 
@@ -287,6 +329,15 @@ const CourseCreationPage = () => {
     e.preventDefault();
     httpReqAsync(`/api/v1/courses/${courseData.id}`, "DELETE", jwt, courseData);
     navigate(`/my-courses`);
+  };
+
+  const handleRequirementsSort = (newOrder) => {
+    console.log("newOrder", newOrder)
+    const newRequirements = newOrder.map((index) => courseData.requirements[index]);
+    setCourseData((prevState) => ({
+      ...prevState,
+      requirements: newRequirements,
+    }));
   };
   return (
     <div className="course-creation-page">
@@ -340,27 +391,42 @@ const CourseCreationPage = () => {
 
         <div>
           <label htmlFor="requirements">Requirements:</label>
-          {courseData.requirements.map((requirement, index) => (
-            <div key={index} className="item">
-              <FaBook className="what-youll-learn__tick" />
+          <ReactSortable
+            className="sortable-list"
+            animation="200"
+            easing="ease-out"
+            list={courseData.requirements}
+            setList={(newState) => {
+              setCourseData((prevState) => ({
+                ...prevState,
+                requirements: newState,
+              }));
+            }}
+          >
+            {courseData.requirements.map((requirement, index) => (
+              <div key={index} className="item">
+                <ion-icon name="list-outline" style={{fontSize:20, cursor:'move'}}></ion-icon> &nbsp;
+                <FaBook className="what-youll-learn__tick" />
 
-              <input
-                type="text"
-                key={index}
-                value={requirement}
-                onChange={(e) => handleRequirementsChange(e, index)}
-              />
-              <button
-                type="button"
-                onClick={() => handleRemoveRequirement(index)}
-                className="remove-button"
-              >
-                Remove
-              </button>
-            </div>
-          ))}
+                <input
+                  type="text"
+                  key={index}
+                  value={requirement}
+                  onChange={(e) => handleRequirementsChange(e, index)}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveRequirement(index)}
+                  className="remove-button remove_button"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </ReactSortable>
           <button
             type="button"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             onClick={() =>
               setCourseData((prevState) => ({
                 ...prevState,
@@ -373,28 +439,47 @@ const CourseCreationPage = () => {
           <hr />
         </div>
 
+        
+
         <div>
           <label htmlFor="whatYouWillLearn">What You Will Learn:</label>
-          {courseData.whatYouWillLearn.map((item, index) => (
-            <div key={index} className="item">
-              <FaCheck className="what-youll-learn__tick" />
-              <span>
-                <input
-                  type="text"
-                  key={index}
-                  value={item}
-                  onChange={(e) => handleWhatYouWillLearnChange(e, index)}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveWhatYouWillLearn(index)}
-                  className="remove-button"
-                >
-                  Remove
-                </button>
-              </span>
-            </div>
-          ))}
+          <ReactSortable
+            className="sortable-list"
+            animation="200"
+            easing="ease-out"
+            list={courseData.whatYouWillLearn}
+            setList={(newState) => {
+              setCourseData((prevState) => ({
+                ...prevState,
+                whatYouWillLearn: newState,
+              }));
+            }}
+          >
+            {courseData.whatYouWillLearn.map((item, index) => (
+              <div key={index} className="item">
+                <ion-icon name="list-outline" style={{ fontSize: 20, cursor: 'move' }}></ion-icon> &nbsp;
+
+                <FaCheck className="what-youll-learn__tick" />
+                <span>
+                  <input
+                    type="text"
+                    key={index}
+                    value={item}
+                    onChange={(e) => handleWhatYouWillLearnChange(e, index)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveWhatYouWillLearn(index)}
+                    className="remove-button remove_button"
+                  >
+                    Remove
+                  </button>
+                </span>
+              </div>
+            ))}
+          </ReactSortable>
+          
+          
           <button
             type="button"
             onClick={() =>
@@ -429,73 +514,154 @@ const CourseCreationPage = () => {
               <button
                 type="button"
                 onClick={() => handleRemoveModule(moduleIndex)}
-                className="remove-button"
+                className="remove-button remove_button"
               >
                 Remove Module
               </button>
-              {module.courseTopics.map((topic, topicIndex) => (
-                <div className="topic-item" key={topicIndex}>
-                  <label htmlFor={`topic-${moduleIndex}-${topicIndex}`}>
-                    Topic Name:
-                  </label>
-                  <input
-                    type="text"
-                    id={`topic-${moduleIndex}-${topicIndex}`}
-                    value={topic.topicName}
-                    onChange={(e) =>
-                      handleCurriculumChange(e, moduleIndex, topicIndex)
-                    }
-                    name="topicName"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTopic(moduleIndex, topicIndex)}
-                    className="remove-button"
-                  >
-                    Remove topic
-                  </button>
-                  <select
-                    value={topic.contentData.contentType}
-                    onChange={(e) =>
-                      handleCurriculumChange(e, moduleIndex, topicIndex)
-                    }
-                    name="contentType"
-                  >
-                    <option value="FILE">File</option>
-                    {/* Add more content type options */}
-                  </select>
-                  {topic.contentData.contentType === "FILE" && (
-                    // setPicSrc()
-                    <>
-                      {topic?.contentData?.file && (
+              <ReactSortable
+                className="sortable-list"
+                animation="200"
+                easing="ease-out"
+                list={module.courseTopics}
+                setList={(newState) => {
+                  setCourseData((prevState) => {
+                    const updatedModule = { ...prevState.curriculum[moduleIndex] };
+                    updatedModule.courseTopics = newState;
+
+                    const updatedCurriculum = [...prevState.curriculum];
+                    updatedCurriculum[moduleIndex] = updatedModule;
+
+                    return {
+                      ...prevState,
+                      curriculum: updatedCurriculum,
+                    };
+                  });
+                }}
+              >
+                {module.courseTopics.map((topic, topicIndex) => (
+
+                  <div className="topic-item" key={topicIndex}>
+                    <ion-icon name="list-outline" style={{ fontSize: 20, cursor: 'move' }}></ion-icon> &nbsp;
+                    <label htmlFor={`topic-${moduleIndex}-${topicIndex}`}>
+                      Topic Name:
+                    </label>
+                    <input
+                      type="text"
+                      id={`topic-${moduleIndex}-${topicIndex}`}
+                      value={topic.topicName}
+                      onChange={(e) =>
+                        handleTopicNameChange(e, moduleIndex, topicIndex)
+                      }
+                      name="topicName"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTopic(moduleIndex, topicIndex)}
+                      className="remove-button remove_button"
+                    >
+                      Remove topic
+                    </button>
+                    <select
+                      defaultValue="VIDEO"
+                      value={topic.contentData.contentType}
+                      onChange={(e) =>
+                        handleCurriculumChange(e, moduleIndex, topicIndex)
+                      }
+                      name="contentType"
+                    >
+                      <option value="VIDEO">VIDEO</option>
+                      <option value="IMAGE">IMAGE</option>
+                      <option value="DOC">DOC</option>
+                      <option value="TEXT">TEXT</option>
+                      <option value="QUIZ">QUIZ</option>
+
+                      {/* Add more content type options */}
+                    </select>
+                      <>
                         <>
-                          {topic.contentData.file.type.startsWith("image/") && (
+                          {topic.contentData.contentType == "IMAGE" && (
+                            <>
                             <img
-                              src={URL.createObjectURL(topic.contentData.file)}
+                              src={topic.img_url ? topic.img_url : "https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-default-placeholder.png"}
                               alt="topic"
-                              style={{ maxWidth: "500px" }}
+                              style={{ maxWidth: "300px" }}
                             />
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) =>
+                                handleUpload(e, moduleIndex, topicIndex)
+                              }
+                              name="contentData"
+                            />
+                            </>
                           )}
-                          {topic.contentData.file.type.startsWith("video/") && (
+                          {topic.contentData.contentType == "VIDEO" && (
+                            <>
                             <VideoPlayer
-                              videoSrc={URL.createObjectURL(
-                                topic.contentData.file
-                              )}
+                              videoSrc={topic.video_url}
+                            /><input
+                              type="file"
+                              accept="video/*"
+                              onChange={(e) =>
+                                handleUpload(e, moduleIndex, topicIndex)
+                              }
+                              name="contentData"
                             />
+                            </>
+                            
                           )}
+                          {topic.contentData.contentType == "DOC" && (
+                            <>
+                            <iframe src={topic.file_url} title="title">
+                              Presss me: <a href="./resources/crayola.pdf">Download PDF</a>
+                            </iframe>
+                            <input
+                              type="file"
+                              accept=".pdf, .doc, .docx, .xls, .xlsx"
+                              onChange={(e) =>
+                                handleUpload(e, moduleIndex, topicIndex)
+                              }
+                              name="contentData"
+                            />
+                            </>
+                            
+                          )}
+
+                        
                         </>
+                      
+                      {topic.contentData.contentType == "IMAGE" || topic.contentData.contentType == "VIDEO" || topic.contentData.contentType == "DOC" || topic.contentData.contentType == "FILE" && (
+                        <input
+                          type="file"
+                          onChange={(e) =>
+                            handleUpload(e, moduleIndex, topicIndex)
+                          }
+                          name="contentData"
+                        />
+                        )}
+                      {topic.contentData.contentType == "QUIZ" && (
+                        <>
+                          <QuizCreator handleQuizUpdate={handleQuizUpdate} topicIndex={topicIndex} moduleIndex={moduleIndex} quizData={topic.contentData.quiz} />
+                        </>
+
                       )}
-                      <input
-                        type="file"
-                        onChange={(e) =>
-                          handleCurriculumChange(e, moduleIndex, topicIndex)
-                        }
-                        name="contentData"
-                      />
-                    </>
-                  )}
-                </div>
-              ))}
+                      {topic.contentData.contentType == "TEXT" && (
+                        <>
+                          <textarea
+                            onChange={(e) =>
+                              handleTextChange(e, moduleIndex, topicIndex)
+                            } id="about" name="about" rows="3" class="with-border">
+                              {topic.contentData.text}
+                            </textarea>
+                        </>
+
+                      )}
+                      </>
+                  </div>
+                ))}
+              </ReactSortable>
+              
               <span className="topic-item">
                 <button
                   type="button"
@@ -503,8 +669,8 @@ const CourseCreationPage = () => {
                     setCourseData((prevState) => {
                       const curriculum = [...prevState.curriculum];
                       curriculum[moduleIndex].courseTopics.push({
-                        topicName: "",
-                        contentData: { file: null, contentType: "FILE" },
+                        topicName: "hello",
+                        contentData: { file: null, contentType: "VIDEO" },
                       });
                       return { ...prevState, curriculum };
                     })
@@ -554,7 +720,7 @@ const CourseCreationPage = () => {
             <button
               type="button"
               onClick={() => handleRemoveTag(index)}
-              className="remove-button"
+              className="remove-button remove_button"
             >
               Remove
             </button>
@@ -578,7 +744,7 @@ const CourseCreationPage = () => {
           <label htmlFor="previewImage">Preview Picture (Mandatory):</label>
           {courseData?.previewImage && (
             <img
-              src={URL.createObjectURL(courseData?.previewImage)}
+              src={courseData.img_url}
               alt="uploaded file"
               style={{ maxWidth: "600px" }}
             />
@@ -596,7 +762,7 @@ const CourseCreationPage = () => {
           <label htmlFor="promoVideo">Promo Video (Mandatory):</label>
           {courseData?.promoVideo && (
             <VideoPlayer
-              videoSrc={URL.createObjectURL(courseData.promoVideo)}
+              videoSrc={courseData.video_url}
             />
           )}
           <input
@@ -609,15 +775,17 @@ const CourseCreationPage = () => {
           />
         </div>
 
-        <button type="submit" onClick={handlePublishCourse}>
-          Publish course
-        </button>
-        <button type="submit" onClick={handleSaveAsDraft}>
-          Save draft
-        </button>
-        <button type="button" onClick={handleDeleteCourse}>
-          Delete course (no confirmation!)
-        </button>
+        <div className="flex justify-flex">
+          <button type="submit" onClick={handlePublishCourse}>
+            Publish course
+          </button>
+          <button type="submit" onClick={handleSaveAsDraft}>
+            Save draft
+          </button>
+          <button type="button" onClick={handleDeleteCourse}>
+            Delete course (no confirmation!)
+          </button>
+        </div>
       </form>
     </div>
   );

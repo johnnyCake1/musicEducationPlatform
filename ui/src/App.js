@@ -1,39 +1,32 @@
 import { Route, Routes } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
-import PrivateRoute from "./components/common/PrivateRoute";
-import Homepage from "./components/Homepage/Homepage";
 import Login from "./components/Authentication/Login";
 import Forgot from "./components/Authentication/Forgot";
 import Register from "./components/Authentication/Register";
 import ProfilePage from "./components/Profile/ProfilePage";
-import Navigation from "./components/common/Navigation";
+import Navigation_old from "./components/common/Navigation_old";
+
 import SearchResult from "./components/Search/SearchResult";
 import CourseDescription from "./components/Course/CourseDescription";
 import ChatPage from "./components/Chat/ChatPage";
 import MyCourses from "./components/MyCourses/MyCourses";
+import Courses from "./components/Courses/Courses";
 import Storage from "./components/Saved/Storage";
-import CourseContentPage from "./components/Course/CourseContentPage";
+// import CourseContentPage from "./components/Course/CourseContentPage";
 import Logout from "./components/Authentication/Logout";
 import Settings from "./components/Settings/Settings";
 import CourseCreationPage from "./components/CourseCreation/CourseCreation";
-import MyLearnings from "./components/MyLearnings/MyLearnings";
+
+import MyLearnings from './components/MyLearnings/MyLearnings';
+import withSidebarAndAuth from "./components/common/withSidebarAndAuth"
+import ContentAndAuth from './components/common/ContentAndAuth';
+import Homepage from "./components/Homepage/Homepage";
 
 function App() {
-  console.log("Hello from App!");
-
-  function withSidebarAndAuth(PageComponent) {
-    return (
-      <PrivateRoute>
-        <div className="flex">
-          <Navigation />
-          <PageComponent />
-        </div>
-      </PrivateRoute>
-    );
-  }
+  
 
   return (
-    <div className="App flex">
+    <div className="App">
       <div className="app-content">
         <Routes>
           <Route exact path="/" element={<Homepage />} />
@@ -52,24 +45,29 @@ function App() {
             element={withSidebarAndAuth(SearchResult)}
           />
           <Route path="/my-courses" element={withSidebarAndAuth(MyCourses)} />
-          <Route path="/my-learnings" element={withSidebarAndAuth(MyLearnings)} />
-          <Route
-            path="/my-courses/drafts/:courseId"
-            element={withSidebarAndAuth(CourseCreationPage)}
-          />
           <Route path="/storage" element={withSidebarAndAuth(Storage)} />
           <Route
             path="/courses/:courseId/description"
             element={withSidebarAndAuth(CourseDescription)}
           />
           <Route
-            path="/courses/:courseId/content"
-            element={withSidebarAndAuth(CourseContentPage)}
+            path="/my-courses/drafts/:courseId"
+            element={withSidebarAndAuth(CourseCreationPage)}
+          />
+          <Route
+            path="/courses/content/:courseId/:moduleId/:topicId"
+            element={<ContentAndAuth/>}
           />
           <Route
             path="/courses"
-            element={withSidebarAndAuth(CourseDescription)}
+            element={withSidebarAndAuth(Courses)}
           />
+          <Route
+            path="/courses/create"
+            element={withSidebarAndAuth(CourseCreationPage)}
+          />
+          
+          <Route path="/my-learnings" element={withSidebarAndAuth(MyLearnings)} />
           <Route path="/chat" element={withSidebarAndAuth(ChatPage)} />
         </Routes>
       </div>

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import "./Navigation.css";
+// import "./Navigation.css";
 import Logo from "./Logo";
 import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
 import { Link, useNavigate } from "react-router-dom";
 import useLocalStorageState from "../../util/useLocalStorageState";
+import logo from "./assets/MelodiousLogo.svg";
 
 function Navigation() {
   const navigate = useNavigate();
@@ -18,22 +19,22 @@ function Navigation() {
   const getNavLinks = (linkClass) => {
     return (
       <>
-        <Link to="/dashboard" className={linkClass}>
+        <Link to="/dashboard" >
           Dashboard
         </Link>
-        <Link to="/my-courses" className={linkClass}>
+        <Link to="/my-courses" >
           My courses
         </Link>
-        <Link to="/my-learnings" className={linkClass}>
+        <Link to="/my-learnings" >
           My learnings
         </Link>
-        <Link to="/courses" className={linkClass}>
+        <Link to="/courses" >
           Explore
         </Link>
-        <Link to="/chat" className={linkClass}>
+        <Link to="/chat" >
           Chats
         </Link>
-        <Link to="/storage" className={linkClass}>
+        <Link to="/storage" >
           Storage
         </Link>
       </>
@@ -45,17 +46,17 @@ function Navigation() {
       <>
         <ul>
           <li>
-            <Link to={`/${currentUser.id}/profile`} className={linkClass}>
+            <Link to={`/${currentUser.id}/profile`} >
               My profile
             </Link>
           </li>
           <li>
-            <Link to="/settings" className={linkClass}>
+            <Link to="/settings" >
               Settings
             </Link>
           </li>
           <li>
-            <Link to="/logout" className={linkClass}>
+            <Link to="/logout" >
               Log out
             </Link>
           </li>
@@ -66,73 +67,114 @@ function Navigation() {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      navigate(`/search/${searchBarContent}`);
+      
+      searchBarContent != "" ? navigate(`/search/${searchBarContent}`) : alert("Search could not be empty");
     }
   };
+  
 
   return (
-    <nav className="Navigation">
-      <div className="Navigation-logo">
-        <Logo />
-      </div>
-
-      <div className="Navigation-search">
-        <input
-          type="text"
-          placeholder="Search"
-          onChange={(e) => setSearchBarContent(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <Link to={`/search/${searchBarContent}`}>
-          <button className="search-btn">Search</button>
-        </Link>
-      </div>
-
-      <div className="Navigation-links">{getNavLinks("nav-link")}</div>
-
-      <div className="Navigation-profile">
-        <div className="Navigation-profile-picture">
-          <Link to={`/${currentUser.id}/profile`}>
-            <ProfilePicture
-              userId={currentUser.id}
-              size={50}
-              onClick={() => {}}
-            />
-          </Link>
-        </div>
-        <div className="Navigation-profile-dropdown">
-          <div className="Navigation-profile-username">
-            @{currentUser?.username}
-          </div>
-          {getProfileLinks("nav-link")}
-        </div>
-      </div>
-
-      <div className="Navigation-menu-icon" onClick={toggleMenu}>
-        <i className="fas fa-bars" style={{ color: "white" }}></i>
-      </div>
-
-      {isMenuOpen && (
-        <div className="Navigation-menu-panel">
-          {getNavLinks("nav-link")}
-          <div className="Navigation-profile-picture">
-            <Link to={`/${currentUser.id}/profile`}>
-              <ProfilePicture
-                userId={currentUser.id}
-                size={50}
-                onClick={() => {}}
+    <header className="is-transparent border-b backdrop-filter backdrop-blur-2xl uk-sticky uk-sticky-fixed" uk-sticky="cls-inactive: is-dark is-transparent border-b" style={{ position: 'sticky', top: '0px', width: '1425px' }}>
+      <div className="header_inner">
+        <div className="left-side">
+          {/* Logo */}
+          <div id="logo">
+            <Link to="/">
+              <img
+                src={logo}
+                alt="Melodious logo"
+                className="logo"
+                style={{ filter: "invert(1)" }}
               />
-              <div className="Navigation-profile-username">
-                @{currentUser?.username}
-              </div>
             </Link>
+            
           </div>
-          <div className="Navigation-profile-dropdown">
-            {getProfileLinks("nav-link")}
+          {/* icon menu for mobile */}
+          <div className="triger" uk-toggle="target: #wrapper ; cls: is-active">
           </div>
         </div>
-      )}
-    </nav>
+        <div className="right-side">
+          {/* Header search box  */}
+          <div className="header_search">
+            <i style={{ fontSize: "16px" }}><ion-icon name="search"></ion-icon></i>
+             <input onChange={(e) => setSearchBarContent(e.target.value)} onKeyDown={handleKeyDown} type="text" className="form-control" placeholder="Search" autoComplete="off" aria-expanded="false" />
+            <button onClick={() => {searchBarContent!=""?navigate(`/search/${searchBarContent}`):alert("Search could not be empty")}} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              Search
+            </button>
+          </div>
+          <div>
+                        
+            {/* messages */}
+            <Link className="header_widgets" to="/chat" >
+              
+              <ion-icon name="mail-outline" class="is-icon md hydrated" role="img" aria-label="notifications outline" />
+              <span> 2 </span>
+            </Link>
+            
+            {/* profile */}
+            <span  onClick={()=>toggleMenu()} aria-expanded="false" className={isMenuOpen?"uk-open":""}>
+              <img src="https://courseplus.netlify.app/assets/images/avatars/placeholder.png" className="header_widgets_avatar" alt="" />
+            </span>
+            <div uk-drop="mode: click;offset:5" className={isMenuOpen ? "header_dropdown profile_dropdown uk-drop  uk-open" : "header_dropdown profile_dropdown uk-drop "} >
+              <ul>
+                <li>
+                  <a href="#" className="user">
+                    <div className="user_avatar">
+                      <img src="https://courseplus.netlify.app/assets/images/avatars/placeholder.png" alt="" />
+                    </div>
+                    <div className="user_name">
+                      <div> {currentUser.firstName} + {currentUser.lastName} </div>
+                      <span> {currentUser.username} </span>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <Link to="/chat" >
+                    <ion-icon name="chatbubbles-outline" class="is-icon md hydrated" role="img" aria-label="settings outline"></ion-icon>
+                    Messages
+                  </Link>
+                </li>
+                <li>
+                  <hr />
+                </li>
+                <li>
+                  <Link to={`/${currentUser.id}/profile`} >
+                    <ion-icon name="person-circle-outline" class="is-icon md hydrated" role="img" aria-label="person circle outline" />
+                    My Account
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/settings" >
+                    <ion-icon name="settings-outline" class="is-icon md hydrated" role="img" aria-label="settings outline"></ion-icon>
+                    Account Settings
+                  </Link>
+                </li>
+                
+                
+                <li>
+                  <hr />
+                </li>
+                <li>
+                  <a href="#" id="night-mode" className="btn-night-mode" onclick="UIkit.notification({ message: 'Hmm...  <strong> Night mode </strong> feature is not available yet. ' , pos: 'bottom-right'  })">
+                    <ion-icon name="moon-outline" class="is-icon md hydrated" role="img" aria-label="moon outline" />
+                    Night mode
+                    <span className="btn-night-mode-switch">
+                      <span className="uk-switch-button" />
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <Link to="/logout" >
+                    <ion-icon name="log-out-outline" class="is-icon md hydrated" role="img" aria-label="log out outline" />
+                    Log Out
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
   );
 }
 

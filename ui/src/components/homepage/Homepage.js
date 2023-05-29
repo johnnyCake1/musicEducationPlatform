@@ -13,10 +13,10 @@ import CardsGallery from "./components/cardsgallery/CardsGallery";
 const Homepage = () => {
   return (
     <div className="homepage-styling">
-      <header className="header-bg">
+      <div className="header-bg">
         <Navbar />
         <Header />
-      </header>
+      </div>
       <Features
         heading={"Find the perfect tutor"}
         description1={`Welcome to our platform, where we connect music learners with

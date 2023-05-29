@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import CoursePreviewCard from "../Course/components/CoursePreviewCard";
 import TabbedPage from "../common/TabbedPage";
 import { useNavigate } from "react-router-dom";
 import { httpReqAsync } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import "./MyLearnings.css";
+import CourseCard from '../Course/components/MyCourseCard';
 
 const MyLearnings = () => {
   //TODO: implement finished courses filter
@@ -41,9 +41,9 @@ const MyLearnings = () => {
       label: "Taken courses",
       content: takenCourses ? (
         takenCourses.length > 0 ? (
-          <div className="my-cards-grid">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
             {takenCourses.map((course) => (
-              <CoursePreviewCard
+              <CourseCard course={course} 
                 key={course.id}
                 courseId={course.id}
                 authorId={course.author}
@@ -74,9 +74,9 @@ const MyLearnings = () => {
       label: "Finished courses",
       content:
         finishedCourses.length > 0 ? (
-          <div className="my-cards-grid">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
             {finishedCourses.map((course) => (
-              <CoursePreviewCard
+              <CourseCard course={course} 
                 key={course.id}
                 courseId={course.id}
                 authorId={course.author}
@@ -104,9 +104,9 @@ const MyLearnings = () => {
       label: "Saved courses",
       content: savedCourses ? (
         savedCourses.length > 0 ? (
-          <div className="my-cards-grid">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
             {savedCourses.map((course) => (
-              <CoursePreviewCard
+              <CourseCard course={course} 
                 key={course.id}
                 courseId={course.id}
                 authorId={course.author}
@@ -137,9 +137,9 @@ const MyLearnings = () => {
       label: "Archived",
       content:
         archived.length > 0 ? (
-          <div className="my-cards-grid">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
             {archived.map((course) => (
-              <CoursePreviewCard key={course.id} {...course} />
+              <CourseCard course={course}  key={course.id} {...course} />
             ))}
           </div>
         ) : (
@@ -147,8 +147,12 @@ const MyLearnings = () => {
         ),
     },
   ];
-
-  return <TabbedPage tabs={tabs} />;
+  return (
+    <div className="container">
+      <div className="text-2xl font-semibold"> My Learnings </div>
+      <TabbedPage tabs={tabs} />
+    </div>
+  )
 };
 
 export default MyLearnings;

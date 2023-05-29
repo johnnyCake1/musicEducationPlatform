@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import CoursePreviewCard from "./CoursePreviewCard";
 import "./Slider.css";
+import CourseCard from './MyCourseCard';
 
 const Slider = ({ cards }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  console.log("cards", cards)
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % cards.length);
   };
@@ -24,7 +25,7 @@ const Slider = ({ cards }) => {
           cards[(currentIndex + 1) % cards.length],
           cards[(currentIndex + 2) % cards.length],
         ];
-
+  console.log('visibleCards', visibleCards)
   return (
     <div className="my-card-slider">
       {cards.length > 3 && (
@@ -33,7 +34,7 @@ const Slider = ({ cards }) => {
       <div className="my-cards-container">
         {visibleCards.map((card, index) => (
           <div key={index} className="my-card-container">
-            <CoursePreviewCard {...card} />
+            <CourseCard course={card} />
           </div>
         ))}
       </div>

@@ -14,7 +14,9 @@
     "react-icons": "^4.3.1",
     "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
-    "sass": "^1.43.4"
+    "react-sortablejs": "^6.1.4",
+    "sass": "^1.43.4",
+    "sortablejs": "^1.15.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -41,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@types/sortablejs": "^1.15.1",
     "circular-json": "^0.5.9"
   }
 }

@@ -1,0 +1,151 @@
+
+/* -------------------------------------------------------------- */
+/* 05. Add your custom classes
+----------------------------------------------------------------- */
+/*# sourceMappingURL=style.css.map */
+
+body {
+background-color: #f9fafb;
+}
+header .header_inner .right-side .header_widgets .is-icon {
+font-size: 1.5rem;
+line-height: 2rem;
+}
+.uk-drop.uk-open {
+    display: block !important;
+}
+
+.header_inner {
+    position: relative;
+}
+
+.profile_dropdown.uk-drop.uk-open {
+    top: 10px;
+}
+
+
+.add-to-saved-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 8px;
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+  color: var(--purple);
+  cursor: pointer;
+  z-index: 999;
+  font-size: 1.8em;
+}
+.card {
+    position: relative;
+}
+.add-to-saved-icon.visible {
+  opacity: 1;
+  
+}
+
+.add-to-saved-icon:hover {
+  background-color: rgba(255, 255, 255, 1);
+}
+.uk-link-reset .text-white {
+    color: #FFF !important;
+}
+
+.text-white:hover {
+    color: #FFF !important;
+}
+
+.is-verticle header .header_inner .left-side {
+    width: 300px !important;
+}
+
+.user-small-card {
+    width: 100%;
+}
+
+.header_search {
+    border: solid 1px gray;
+    border-radius: 55px;
+}
+
+.header_search button {
+    border-radius: 25px;
+    margin-right: 5px;
+}
+
+.embed-video {
+    background: #000;
+    height: auto !important;
+}
+
+.video-player-container {
+    max-width: 100%;
+}
+.volume-control {
+    display: flex;
+}
+.video-controls label {
+    display: initial;
+    margin-bottom: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.course-creation-page input[type="text"], .course-creation-page input[type="file"], .course-creation-page textarea, .course-creation-page select {
+    margin-bottom: 0px !important;
+}
+
+.course-creation-page form > div {
+    margin-bottom: 15px;
+}
+
+.item > span {
+    display: flex;
+}
+
+form > div > label {
+    font-size: 24px;
+    padding-bottom: 10px;
+    padding-top: 20px;
+}
+
+.topic-item {
+    margin-top: 10px;
+}
+
+.course-creation-page select {
+    margin-top: 15px;
+}
+
+.topic-item > button {
+    margin-top: 10px;
+}
+
+.sortable-list .item {
+  transition: opacity 0.3s;
+}
+
+.sortable-list .item.sortable-ghost {
+  opacity: 0.5;
+}
+
+ion-icon.md.hydrated {}
+
+.topic-item {
+    position: relative;
+}
+
+.topic-item ion-icon.md.hydrated {
+    position: absolute;
+    left: 0;
+    top: 20px;
+    font-size: 30px !important;
+}
+
+.sortable-chosen {
+    background: #dfdfdf;
+}

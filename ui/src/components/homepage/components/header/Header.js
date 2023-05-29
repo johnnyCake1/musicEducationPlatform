@@ -6,6 +6,7 @@ import guitarHeader from "../../assets/guitar_player_background.png";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   useEffect(() => {
@@ -27,7 +28,9 @@ const Header = () => {
             courses in a range of musical instruments and genres.
           </p>
           <div className="header-cta">
-            <Button text={"Get Started"} btnClass={"my-btn-light"} href={"#"} />
+            <Link to={"/register"} style={{padding:10}} className={"my-btn-light"}  >
+              Get Started
+            </Link>
           </div>
         </div>
         <div className="header-right" data-aos="fade-left">

@@ -44,8 +44,12 @@ const Storage = () => {
         ),
     },
   ];
-
-  return <TabbedPage tabs={tabs} />;
+  return(
+    <div className="container">
+      <div className="text-2xl font-semibold"> Storage </div>
+      <TabbedPage tabs={tabs} />
+    </div>
+  )
 };
 
 export default Storage;

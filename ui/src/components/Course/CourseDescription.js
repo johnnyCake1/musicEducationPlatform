@@ -37,28 +37,61 @@ const CourseDescription = () => {
     );
   }, [jwt, courseId]);
 
-  if (!course || !course.published) {
-    return <div>Course not found</div>;
+  const stars = [];
+  const fullStars = Math.floor(course ? course.rating : 0);
+  for (let i = 0; i < fullStars; i++) {
+    stars.push(<ion-icon
+      name="star"
+      role="img"
+      key={i}
+      class="md hydrated"
+      aria-label="star"
+    />);
+  }
+  if (course ? course.rating:0 % 1 !== 0) {
+    stars.push(<ion-icon
+      name="star-half"
+      role="img"
+      class="md hydrated"
+      aria-label="star"
+    />);
+  }
+  const emptyStars = 5 - stars.length;
+  for (let i = 0; i < emptyStars; i++) {
+    stars.push(<ion-icon
+      name="star-outline"
+      role="img"
+      key={i}
+      class="md hydrated"
+      aria-label="star"
+    />);
   }
 
+  
   return course ? (
+    <>
+      <CourseSummaryCard
+        course={course}
+        courseId={course.id}
+        authorId={course.authorId}
+        name={course.courseName}
+        description={course.courseShortDescription}
+        reviews={course.reviews}
+        enrolledStudentsIds={course.enrolledStudentsIds}
+        lastUpdated={course.lastUpdatedDate}
+        price={course.price}
+      />
+      
+
+
     <div className="course-description-container">
       <div className="about-course-content">
         <div className="course-header">
-          <div className="course-header-left">
+          <div className="course-header-left" style={{width:'100%'}}>
             {courseVideoSrc && <VideoPlayer videoSrc={courseVideoSrc} />}
           </div>
           <div className="course-header-right">
-            <CourseSummaryCard
-              courseId={course.id}
-              authorId={course.authorId}
-              name={course.courseName}
-              description={course.courseShortDescription}
-              reviews={course.reviews}
-              enrolledStudentsIds={course.enrolledStudentsIds}
-              lastUpdated={course.lastUpdatedDate}
-              price={course.price}
-            />
+            
           </div>
         </div>
         <div className="course-description">
@@ -114,6 +147,7 @@ const CourseDescription = () => {
         </div>
       </div>
     </div>
+    </>
   ) : (
     <div>Loading .... </div>
   );
