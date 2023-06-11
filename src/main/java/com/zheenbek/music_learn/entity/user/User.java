@@ -23,10 +23,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +40,8 @@ public class User implements UserDetails {
     private Long id;
     private String username;
     @ManyToMany(mappedBy = "participants", fetch = FetchType.EAGER)
-    private List<PrivateChat> privateChats;
+    @OrderBy
+    private Set<PrivateChat> privateChats = new LinkedHashSet<>();
     @JsonIgnore
     private String password;
     private String firstName;
@@ -241,11 +244,11 @@ public class User implements UserDetails {
         this.tags = tags;
     }
 
-    public List<PrivateChat> getPrivateChats() {
+    public Set<PrivateChat> getPrivateChats() {
         return privateChats;
     }
 
-    public void setPrivateChats(List<PrivateChat> privateChats) {
+    public void setPrivateChats(Set<PrivateChat> privateChats) {
         this.privateChats = privateChats;
     }
 

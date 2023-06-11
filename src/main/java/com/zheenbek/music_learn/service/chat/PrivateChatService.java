@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.zheenbek.music_learn.service.FileService.FILES_SERVING_ENDPOINT;
@@ -34,11 +35,11 @@ public class PrivateChatService {
         return privateChatRepository.findById(privateChatId)
                 .orElseThrow(() -> new EntityNotFoundException("Private chat not with ID: " + privateChatId));
     }
-    public List<PrivateChatDTO> getUserPrivateChats(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId + " to get the private chats for"))
-                .getPrivateChats()
-                .stream().map(PrivateChatService::mapPrivateChatToDto).collect(Collectors.toList());
+    public Set<PrivateChatDTO> getUserPrivateChats(Long userId) {
+        User u =  userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId + " to get the private chats for"));
+        return u.getPrivateChats()
+                .stream().map(PrivateChatService::mapPrivateChatToDto).collect(Collectors.toSet());
     }
 //    @Transactional
 //    public PrivateChatDTO createNewPrivateChat(Long currentUserId, Long otherUserId) {

@@ -11,11 +11,13 @@ const ChatPage = () => {
   const [currentUser] = useLocalStorageState(null, "currentUser");
   const [jwt] = useLocalStorageState("", "jwt");
   const [searchTerm, setSearchTerm] = useState("");
-  const [messageInput, setMessage] = useState("");
+  const [messageInput, setMessageInput] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
 
   const [privateChats, setPrivateChats] = useState([]);
   const [selectedPrivateChat, setSelectedPrivateChat] = useState(null);
+  const [selectedChatPictureSrc, setSelectedChatPictureSrc] = useState("");
+  const [selectedChatName, setSelectedChatName] = useState("");
   const [selectedChatMessages, setSelectedChatMessages] = useState([]);
 
   const [stompClient, setStompClient] = useState(null);
@@ -65,11 +67,22 @@ const ChatPage = () => {
         }
       );
 
+      //determine conversation info
+      const otherUserId = selectedPrivateChat.participantsIds.find(
+        (id) => id !== currentUser.id
+      );
+      httpReqAsync(`/api/v1/users/${otherUserId}`, "GET", jwt).then(
+        (otherUser) => {
+          setSelectedChatPictureSrc(otherUser.img_url);
+          setSelectedChatName(otherUser.username);
+        }
+      );
+
       return () => {
         subscription.unsubscribe();
       };
     }
-  }, [selectedPrivateChat, stompClient]);
+  }, [selectedPrivateChat, stompClient, jwt, currentUser]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -100,6 +113,9 @@ const ChatPage = () => {
       if (uploadedFile) {
         //then send the file
       }
+
+      setUploadedFile(null);
+      setMessageInput("");
     }
   };
 
@@ -156,9 +172,10 @@ const ChatPage = () => {
       </div>
       {selectedPrivateChat && (
         <div className="right-column">
+          {console.log("Selected:", selectedPrivateChat)}
           <div className="chat-header">
-            <ProfilePicture />
-            <div className="username">chat id: {selectedPrivateChat.id}</div>
+            <ProfilePicture imageSrc={selectedChatPictureSrc} />
+            <div className="username">{selectedChatName}</div>
           </div>
           <div className="message-history">
             {selectedChatMessages.map((message) => (
@@ -187,7 +204,7 @@ const ChatPage = () => {
                 type="text"
                 placeholder="Type your message here"
                 value={messageInput}
-                onChange={(event) => setMessage(event.target.value)}
+                onChange={(event) => setMessageInput(event.target.value)}
               />
               <label htmlFor="file-upload" className="upload-button">
                 <i className="fas fa-paperclip chat-upload-icon"></i>

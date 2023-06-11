@@ -34,9 +34,9 @@ const Conversation = ({
       <div className="">
         <div className="username">{conversationName}</div>
         <div className="message-preview">
-          {/* {messages && messages.length > 0
-            ? messages[messages.length - 1].message
-            : ""} */}
+          {chatMessages && chatMessages.length > 0
+            ? chatMessages[chatMessages.length - 1].content
+            : ""}
         </div>
       </div>
     </div>

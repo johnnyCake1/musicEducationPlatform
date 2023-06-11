@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/chats")
@@ -25,8 +26,8 @@ public class ChatController {
 
 
     @GetMapping("/private-chats/{currentUserId}")
-    public ResponseEntity<List<PrivateChatDTO>> getUserPrivateChats(@PathVariable Long currentUserId) {
-        List<PrivateChatDTO> privateChatDTO = privateChatService.getUserPrivateChats(currentUserId);
+    public ResponseEntity<Set<PrivateChatDTO>> getUserPrivateChats(@PathVariable Long currentUserId) {
+        Set<PrivateChatDTO> privateChatDTO = privateChatService.getUserPrivateChats(currentUserId);
         return new ResponseEntity<>(privateChatDTO, HttpStatus.CREATED);
     }
 

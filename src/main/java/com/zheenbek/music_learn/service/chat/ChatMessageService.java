@@ -29,7 +29,7 @@ public class ChatMessageService {
                 .orElseThrow(() -> new EntityNotFoundException("Private chat no found with ID " + privateChatId));
         // Save the ChatMessage
         chatMessage.setPrivateChat(privateChat);
-        ChatMessage savedMessage = chatMessageRepository.save(chatMessage); // THIS IS WHERE THE ERROR HAPPENS
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
         // Add the ChatMessage to the PrivateChat
         privateChat.getChatMessages().add(savedMessage);
         // Save the PrivateChat
