@@ -53,9 +53,6 @@ const Dashboard = () => {
       "GET",
       jwt
     ).then((result) => {
-      console.log("==========");
-      console.log(result);
-      console.log("==========");
       setCourses(result);
     });
   }, [jwt, currentUser]);
@@ -115,7 +112,7 @@ const Dashboard = () => {
         <h2>Chats</h2>
         {conversations && conversations.length > 0 ? (
           <Conversations
-            conversations={conversations.slice(0, 4)}
+            privateChats={conversations.slice(0, 4)}
             onClick={(conv) => {
               navigate("/chat");
             }}
