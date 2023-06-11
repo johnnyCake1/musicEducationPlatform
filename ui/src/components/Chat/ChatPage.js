@@ -58,7 +58,10 @@ const ChatPage = () => {
         (message) => {
           const chatMessage = JSON.parse(message.body);
           console.log("Socket sent result:", chatMessage);
-          setSelectedChatMessages((prevMessages) => [...prevMessages, chatMessage]);
+          setSelectedChatMessages((prevMessages) => [
+            ...prevMessages,
+            chatMessage,
+          ]);
         }
       );
 
@@ -110,7 +113,7 @@ const ChatPage = () => {
       <div className="left-column">
         <div className="left-column-content">
           <div className="chat-profile-info">
-            <ProfilePicture userId={currentUser.id} />
+            <ProfilePicture imageSrc={currentUser.img_url} />
             <div className="username">{`@${currentUser.username}`}</div>
           </div>
           <div className="search-section">
@@ -165,7 +168,6 @@ const ChatPage = () => {
                   message.senderId === currentUser.id ? "align-right color" : ""
                 }`}
               >
-                {console.log("logging!!!", message)}
                 <div className="message-bubble">
                   {message.content}
                   {message.senderId === currentUser.id && (

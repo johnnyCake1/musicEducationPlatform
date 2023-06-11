@@ -12,25 +12,25 @@ const Conversation = ({
   onClick,
 }) => {
   const [conversationName, setConversationName] = useState("");
+  const [conversationImgUrl, setConversationImgUrl] = useState("");
   const [jwt] = useLocalStorageState("", "jwt");
   const idOfUserToDisplay = participantsIds.find(
     (userId) => userId !== currentUserId
   );
   useEffect(() => {
-    httpReqAsync(
-      `/api/v1/users/${idOfUserToDisplay}/username`,
-      "GET",
-      jwt
-    ).then((username) => {
-      setConversationName(username);
-    });
+    httpReqAsync(`/api/v1/users/${idOfUserToDisplay}`, "GET", jwt).then(
+      (user) => {
+        setConversationImgUrl(user.img_url);
+        setConversationName(user.username);
+      }
+    );
   });
   return (
     <div
       className={`conversation-item ${isSelected ? "selected" : ""}`}
       onClick={onClick}
     >
-      <ProfilePicture userId={idOfUserToDisplay} />
+      <ProfilePicture imageSrc={conversationImgUrl} />
       <div className="">
         <div className="username">{conversationName}</div>
         <div className="message-preview">

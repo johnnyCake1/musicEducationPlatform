@@ -118,7 +118,7 @@ public class UserService {
         return Optional.of(new File(user.getProfilePic().getFilePath()));
     }
 
-    public File updateUserProfilePicture(MultipartFile file, Long userId) throws IOException {
+    public String updateUserProfilePicture(MultipartFile file, Long userId) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         FileEntity oldProfilePic = user.getProfilePic();
         //save new file in the file system
@@ -134,7 +134,7 @@ public class UserService {
             //delete old profile picture from the database
             fileRepository.delete(oldProfilePic);
         }
-        return storedPicture;
+        return mapUserToDto(user).getProfilePicturePath();
     }
 
     public void deleteUserProfilePic(Long userId) {

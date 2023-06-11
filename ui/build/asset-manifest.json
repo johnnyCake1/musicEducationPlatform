@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.fc91840b.css",
-    "main.js": "/static/js/main.888c21a7.js",
+    "main.css": "/static/css/main.c9a77c25.css",
+    "main.js": "/static/js/main.1c66529d.js",
     "static/media/cards-gallery-bg.png": "/static/media/cards-gallery-bg.077f91255eda42415c12.png",
     "static/media/violin_lesson.jpeg": "/static/media/violin_lesson.a7d7219dd63a5bf19cff.jpeg",
     "static/media/fa-solid-900.svg": "/static/media/fa-solid-900.7a8b4f130182d19a2d7c.svg",
@@ -16,6 +16,8 @@
     "static/media/fa-brands-400.woff": "/static/media/fa-brands-400.2285773e6b4b172f07d9.woff",
     "static/media/fa-solid-900.woff2": "/static/media/fa-solid-900.1551f4f60c37af51121f.woff2",
     "static/media/fa-brands-400.woff2": "/static/media/fa-brands-400.d878b0a6a1144760244f.woff2",
+    "static/media/Feather-Icons.woff?7ncawf": "/static/media/Feather-Icons.6bb7710486e1c4ee2fe1.woff",
+    "static/media/Feather-Icons.ttf": "/static/media/Feather-Icons.777ed652f837208ad36f.ttf",
     "static/media/fa-regular-400.eot": "/static/media/fa-regular-400.77206a6bb316fa0aded5.eot",
     "static/media/fa-regular-400.ttf": "/static/media/fa-regular-400.491974d108fe4002b2aa.ttf",
     "static/media/fa-regular-400.woff": "/static/media/fa-regular-400.bb58e57c48a3e911f15f.woff",
@@ -23,11 +25,11 @@
     "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.7a3337626410ca2f4071.woff2",
     "static/media/soundWaves.svg": "/static/media/soundWaves.7c0a1f082e7fca8b3ff1676fa0073551.svg",
     "index.html": "/index.html",
-    "main.fc91840b.css.map": "/static/css/main.fc91840b.css.map",
-    "main.888c21a7.js.map": "/static/js/main.888c21a7.js.map"
+    "main.c9a77c25.css.map": "/static/css/main.c9a77c25.css.map",
+    "main.1c66529d.js.map": "/static/js/main.1c66529d.js.map"
   },
   "entrypoints": [
-    "static/css/main.fc91840b.css",
-    "static/js/main.888c21a7.js"
+    "static/css/main.c9a77c25.css",
+    "static/js/main.1c66529d.js"
   ]
 }

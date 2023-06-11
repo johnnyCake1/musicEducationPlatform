@@ -127,7 +127,7 @@ const CourseSummaryCard = ({
                 <ion-icon
                   name="people-circle-outline"
                   role="img"
-                  class="md hydrated"
+                  className="md hydrated"
                   aria-label="people circle outline"
                 />{" "}
                 {course.enrolledStudentsIds?.length} Enrolled{" "}

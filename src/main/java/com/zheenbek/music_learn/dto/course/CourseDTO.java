@@ -19,11 +19,13 @@ public class CourseDTO {
     private String courseShortDescription;
     private String courseLongDescription;
     private CategoryDTO category;
+    @JsonProperty(value = "video_id")
     private Long promoVideoId;
     @JsonProperty(value = "video_url")
     private String promoVideoPath;
+    @JsonProperty(value = "img_id")
     private Long previewImageId;
-    @JsonProperty(value = "image_url")
+    @JsonProperty(value = "img_url")
     private String previewImagePath;
     private List<Long> enrolledStudentsIds = new ArrayList<>();
     private List<Long> savedInStudentsIds = new ArrayList<>();

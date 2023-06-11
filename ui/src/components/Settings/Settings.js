@@ -4,10 +4,13 @@ import { FaCamera, FaLock, FaUser } from "react-icons/fa";
 import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import { httpReqAsync } from "../../services/httpReqAsync";
-import { API_URL } from '../../constants';
+import { API_URL } from "../../constants";
 
 const Settings = () => {
-  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const [currentUser, setCurrentUser] = useLocalStorageState(
+    null,
+    "currentUser"
+  );
   const [userInfo, setUserInfo] = useState(null);
   const [jwt] = useLocalStorageState("", "jwt");
   const [profilePictureSrc, setProfilePictureSrc] = useState("");
@@ -19,6 +22,7 @@ const Settings = () => {
     httpReqAsync(`/api/v1/users/${currentUser.id}`, "GET", jwt).then(
       (result) => {
         setUserInfo(result);
+        setProfilePictureSrc(result.img_url);
       }
     );
   }, [jwt, currentUser]);
@@ -63,23 +67,25 @@ const Settings = () => {
       const formData = new FormData();
       formData.append("file", newProfilePicFile);
 
-      fetch(API_URL +`/api/v1/users/${currentUser.id}/profile-picture`, {
+      fetch(API_URL + `/api/v1/users/${currentUser.id}/profile-picture`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
         body: formData,
-      }).then((res) => {
-        if (res.status === 200) {
-          console.log("asd");
-          setSuccessMessage("Changes succesfully saved");
-        } else {
-          console.log("ds");
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            return res.text();
+          }
           setFailMessage("Changes couldn't be saved");
-        }
-      });
+          return Promise.reject("Couldn't update profile picture");
+        })
+        .then((img_url) => {
+          setCurrentUser({ ...currentUser, img_url: img_url });
+          setSuccessMessage("Changes succesfully saved");
+        });
     }
-    console.log(userInfo);
 
     httpReqAsync(`/api/v1/users/${currentUser.id}`, "PUT", jwt, userInfo)
       .then((result) => {
@@ -101,11 +107,7 @@ const Settings = () => {
             <FaCamera className="icon" /> Profile Picture:
           </label>
           <div className="profile-picture-container">
-            <ProfilePicture
-              userId={currentUser.id}
-              imageSrc={profilePictureSrc}
-              size={100}
-            />
+            <ProfilePicture imageSrc={profilePictureSrc} size={100} />
             <input
               type="file"
               id="profilePicture"

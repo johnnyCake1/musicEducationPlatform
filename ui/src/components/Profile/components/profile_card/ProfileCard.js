@@ -3,9 +3,9 @@ import "./ProfileCard.css";
 import useLocalStorageState from "../../../../util/useLocalStorageState";
 import { useNavigate } from "react-router-dom";
 import { httpReqAsync } from "../../../../services/httpReqAsync";
-import { useState } from "react";
 const ProfileCard = ({
   userId,
+  img_url,
   firstName,
   lastName,
   username,
@@ -55,7 +55,7 @@ const ProfileCard = ({
 
   return (
     <div className="profile-header">
-      <ProfilePicture userId={userId} size={200} borderColor="#fff" />
+      <ProfilePicture imageSrc={img_url} size={200} borderColor="#fff" />
       <div className="profile-info">
         <div className="profile-name-wrapper">
           <h1 className="profile-name">

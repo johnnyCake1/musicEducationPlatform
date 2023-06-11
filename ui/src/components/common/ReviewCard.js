@@ -5,22 +5,26 @@ import useLocalStorageState from "../../util/useLocalStorageState";
 import "./ReviewCard.css";
 
 const ReviewCard = ({ review }) => {
-  const [reviewerUsername, setReviewerUsername] = useState("");
+  const [reviewer, setReviewer] = useState(null);
   const [jwt] = useLocalStorageState("", "jwt");
   useEffect(() => {
-    httpReqAsync(`/api/v1/users/${review.reviewer}/username`, 'GET', jwt).then(
-      (username) => {
-        setReviewerUsername(username);
+    httpReqAsync(`/api/v1/users/${review.reviewer}`, "GET", jwt).then(
+      (user) => {
+        setReviewer(user);
       }
     );
   });
   return (
     <div className="review-card">
       <div className="review-profile-picture profile-picture-wrapper">
-        <ProfilePicture userId={review.reviewer} size={50} borderColor="#fff" />
+        <ProfilePicture
+          imageSrc={reviewer?.img_url}
+          size={50}
+          borderColor="#fff"
+        />
       </div>
       <div className="review-info">
-        <h4 className="username">{reviewerUsername}</h4>
+        <h4 className="username">{reviewer?.username}</h4>
         <div className="rating">
           {[...Array(review.rating)].map((_, index) => (
             <span key={index} className="star">

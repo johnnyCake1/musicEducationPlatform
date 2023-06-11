@@ -44,7 +44,7 @@ const CourseDescription = () => {
       name="star"
       role="img"
       key={i}
-      class="md hydrated"
+      className="md hydrated"
       aria-label="star"
     />);
   }
@@ -52,7 +52,7 @@ const CourseDescription = () => {
     stars.push(<ion-icon
       name="star-half"
       role="img"
-      class="md hydrated"
+      className="md hydrated"
       aria-label="star"
     />);
   }
@@ -62,7 +62,7 @@ const CourseDescription = () => {
       name="star-outline"
       role="img"
       key={i}
-      class="md hydrated"
+      className="md hydrated"
       aria-label="star"
     />);
   }

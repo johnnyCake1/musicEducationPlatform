@@ -1,7 +1,10 @@
 package com.zheenbek.music_learn.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class FileDTO {
     private Long id;
+    @JsonProperty (value = "file_url")
     private String filePath;
     private String mediaType;
 

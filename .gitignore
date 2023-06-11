@@ -12,6 +12,7 @@
 
 #InteliJ IDE related
 .idea/
+*.iml
 
 /target
 

@@ -7,7 +7,7 @@ import UserCardSmall from "./components/UserCardSmall";
 import { httpReqAsync } from "../../services/httpReqAsync";
 import { useNavigate, useParams } from "react-router-dom";
 import useLocalStorageState from "../../util/useLocalStorageState";
-import CourseCard from '../Course/components/CourseCard';
+import CourseCard from "../Course/components/CourseCard";
 
 const SearchResult = () => {
   const { keyword } = useParams();
@@ -87,22 +87,8 @@ const SearchResult = () => {
                 <CourseCard
                   course={course}
                   key={course.id}
-                  courseId={course.id}
-                  authorId={course.author}
-                  title={course.courseName}
-                  takenCount={course?.enrolledStudents?.length}
-                  formattedCreationDate={new Date(
-                    course.creationDate
-                  ).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                  price={course.price}
-                  tags={course.tags}
                   onClick={() => navigate(`/courses/${course.id}/description`)}
                 />
-                // <CoursePreviewCard key={course.id} {...course} />
               ))}
           </div>
         ) : (
@@ -123,6 +109,7 @@ const SearchResult = () => {
                 <UserCardSmall
                   key={user.id}
                   userId={user.id}
+                  img_url={user.img_url}
                   username={user.username}
                   description={user?.aboutMe}
                 />
@@ -151,13 +138,12 @@ const SearchResult = () => {
         ),
     },
   ];
-  return  (
+  return (
     <div className="container">
       <div className="text-2xl font-semibold"> Storage </div>
       <TabbedPage tabs={tabs} />
     </div>
-  )
-  
+  );
 };
 
 export default SearchResult;

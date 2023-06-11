@@ -1,1 +1,1 @@
-export const API_URL = 'https://v1910509.hosted-by-vdsina.ru';
+export const API_URL = 'http://localhost:8080';

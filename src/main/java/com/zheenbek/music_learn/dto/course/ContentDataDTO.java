@@ -11,6 +11,7 @@ import java.util.List;
 public class ContentDataDTO {
     private Long id;
     private ContentData.ContentType contentType;
+    @JsonProperty(value = "file_id")
     private Long fileId;
     @JsonProperty(value = "file_url")
     private String filePath;

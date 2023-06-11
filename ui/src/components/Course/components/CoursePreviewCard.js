@@ -8,6 +8,7 @@ import useLocalStorageState from "../../../util/useLocalStorageState";
 
 const CoursePreviewCard = ({
   courseId,
+  img_url = "https://icon-library.com/images/placeholder-image-icon/placeholder-image-icon-21.jpg",
   authorId,
   title = "",
   price = 0.0,
@@ -19,22 +20,11 @@ const CoursePreviewCard = ({
 }) => {
   const [showAddToSavedIcon, setShowAddToSavedIcon] = useState(false);
   const [jwt] = useLocalStorageState("", "jwt");
-  const [picSrc, setPicSrc] = useState("https://via.placeholder.com/500x500");
   const [author, setAuthor] = useState(null);
   const [currentUser] = useLocalStorageState(null, "currentUser");
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    //get course's preview image
-    getFile(`/api/v1/courses/${courseId}/preview-picture`, jwt)
-      .then((pictureBlob) => {
-        if (pictureBlob instanceof Blob) {
-          setPicSrc(URL.createObjectURL(pictureBlob));
-        }
-      })
-      .catch((err) => {
-        console.log("bla");
-      });
     //get author's info
     httpReqAsync(`/api/v1/users/${authorId}`, "GET", jwt).then((result) => {
       console.log("got the user:", result);
@@ -83,14 +73,10 @@ const CoursePreviewCard = ({
       onMouseEnter={() => setShowAddToSavedIcon(true)}
       onMouseLeave={() => setShowAddToSavedIcon(false)}
     >
-      {picSrc ? (
-        <img onClick={onClick} className="image" src={picSrc} alt={title} />
-      ) : (
-        <div className="image">image is loading</div>
-      )}
+      <img onClick={onClick} className="image" src={img_url} alt={title} />
 
       <div className="card-body">
-        <ProfilePicture userId={author.id} size={40} />
+        <ProfilePicture imageSrc={author.img_url} size={40} />
         <div className="user-info">
           <h3 className="card-title" onClick={onClick}>
             {title}

@@ -16,15 +16,12 @@ import Logout from "./components/Authentication/Logout";
 import Settings from "./components/Settings/Settings";
 import CourseCreationPage from "./components/CourseCreation/CourseCreation";
 
-import MyLearnings from './components/MyLearnings/MyLearnings';
-import withSidebarAndAuth from "./components/common/withSidebarAndAuth"
-import ContentAndAuth from './components/common/ContentAndAuth';
+import MyLearnings from "./components/MyLearnings/MyLearnings";
+import withSidebarAndAuth from "./components/common/withSidebarAndAuth";
+import ContentAndAuth from "./components/common/ContentAndAuth";
 import Homepage from "./components/Homepage/Homepage";
 
-
 function App() {
-  
-
   return (
     <div className="App">
       <div className="app-content">
@@ -56,18 +53,18 @@ function App() {
           />
           <Route
             path="/courses/content/:courseId/:moduleId/:topicId"
-            element={<ContentAndAuth/>}
+            element={withSidebarAndAuth(ContentAndAuth)}
           />
-          <Route
-            path="/courses"
-            element={withSidebarAndAuth(Courses)}
-          />
+          <Route path="/courses" element={withSidebarAndAuth(Courses)} />
           <Route
             path="/courses/create"
             element={withSidebarAndAuth(CourseCreationPage)}
           />
-          
-          <Route path="/my-learnings" element={withSidebarAndAuth(MyLearnings)} />
+
+          <Route
+            path="/my-learnings"
+            element={withSidebarAndAuth(MyLearnings)}
+          />
           <Route path="/chat" element={withSidebarAndAuth(ChatPage)} />
         </Routes>
       </div>

@@ -66,14 +66,12 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/profile-picture")
-    public ResponseEntity<FileSystemResource> updateProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
-        File newProfilePicture;
+    public ResponseEntity<String> updateProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
         try {
-            newProfilePicture = userService.updateUserProfilePicture(file, userId);
+            return ResponseEntity.ok(userService.updateUserProfilePicture(file, userId));
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
-        return getFileSystemResourceResponseEntity(newProfilePicture);
     }
 
     @DeleteMapping("/{userId}/profile-picture")

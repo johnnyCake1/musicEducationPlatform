@@ -204,7 +204,7 @@ public class CourseController {
     }
 
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<List<Course>> searchAllCoursesByKeyword(@PathVariable String keyword) {
+    public ResponseEntity<List<CourseDTO>> searchAllCoursesByKeyword(@PathVariable String keyword) {
         return new ResponseEntity<>(courseService.findCoursesByKeyword(keyword), HttpStatus.OK);
     }
 

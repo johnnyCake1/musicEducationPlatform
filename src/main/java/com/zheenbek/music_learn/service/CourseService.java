@@ -12,6 +12,7 @@ import com.zheenbek.music_learn.entity.course.CourseModule;
 import com.zheenbek.music_learn.entity.course.CourseTopic;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Review;
+import com.zheenbek.music_learn.entity.course.Question;
 import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.repository.course.CategoryRepository;
 import com.zheenbek.music_learn.repository.course.ContentDataRepository;
@@ -110,7 +111,7 @@ public class CourseService {
                         case IMAGE:
                         case DOC:
                         case VIDEO:
-                        case FILE  : {
+                        case FILE: {
                             MultipartFile topicContentFile = orderedTopicContentFiles[topicFileIndex++];
                             //save in the system:
                             File file = serverFileStorageService.storeFile(topicContentFile, topic.getTopicName());
@@ -120,8 +121,8 @@ public class CourseService {
                             topic.getContentData().setFile(fileEntity);
                             break;
                         }
-                        case QUIZ:{
-                            if (topic.getContentData().getQuiz() != null){
+                        case QUIZ: {
+                            if (topic.getContentData().getQuiz() != null) {
                                 questionRepository.saveAll(topic.getContentData().getQuiz());
                             }
                             break;
@@ -258,7 +259,7 @@ public class CourseService {
         if (courseDTO.getId() != null) {
             Course course = courseRepository.findById(courseDTO.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Course not found to update with ID: " + courseDTO.getId()));
-            if (course.getAuthor() == null || Objects.equals(course.getAuthor().getId(), course.getId())) {
+            if (course.getAuthor() == null || !Objects.equals(course.getAuthor().getId(), courseDTO.getAuthorId())) {
                 throw new EntityNotFoundException("Course not found with ID" + courseDTO.getId() + " that has the user as author with ID: " + courseDTO.getAuthorId());
             }
             boolean oldPublishedStated = course.isPublished();
@@ -333,8 +334,8 @@ public class CourseService {
                 .map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
-    public List<Course> findCoursesByKeyword(String keyword) {
-        return courseRepository.searchCoursesByKeyword(keyword);
+    public List<CourseDTO> findCoursesByKeyword(String keyword) {
+        return courseRepository.searchCoursesByKeyword(keyword).stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
     public File getPreviewPictureByCourseId(Long courseId) {
@@ -432,7 +433,7 @@ public class CourseService {
         course.setLastUpdatedDate(courseDTO.getLastUpdatedDate());
         course.setPublished(courseDTO.isPublished());
         //category cannot be created by course, so it must have an id
-        if (courseDTO.getCategory() != null){
+        if (courseDTO.getCategory() != null) {
             course.setCategory(mapDtoToCategory(courseDTO.getCategory()));
         }
         if (courseDTO.getAuthorId() != null) {
@@ -474,18 +475,28 @@ public class CourseService {
         ContentData contentData = new ContentData();
         contentData.setContentType(contentDataDTO.getContentType());
         if (contentDataDTO.getQuiz() != null) {
-            contentData.setQuiz(contentDataDTO.getQuiz());
+            contentData.setQuiz(contentDataDTO.getQuiz().stream().map(this::mapDtoToQuiz).collect(Collectors.toList()));
         }
         if (contentDataDTO.getFileId() != null) {
             contentData.setFile(fileRepository.findById(contentDataDTO.getFileId()).orElseThrow(() -> new EntityNotFoundException("Content data file entity not found with ID: " + contentDataDTO.getFileId())));
         }
+        if (contentDataDTO.getText() != null) {
+            contentData.setText(contentDataDTO.getText());
+        }
         return contentData;
+    }
+
+    private Question mapDtoToQuiz(Question questionDTO) {
+        if (questionDTO.getId() != null) {
+            return questionRepository.findById(questionDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Question entity not found with ID: " + questionDTO.getId()));
+        }
+        return questionDTO;
     }
 
     public static CourseDTO mapCourseToDto(Course course) {
         CourseDTO courseDTO = new CourseDTO();
         courseDTO.setId(course.getId());
-        if (course.getAuthor() != null){
+        if (course.getAuthor() != null) {
             courseDTO.setAuthor(mapUserToDto(course.getAuthor()));
         }
         courseDTO.setSavedInStudentsIds(course.getSavedInUsers().stream().map(User::getId).collect(Collectors.toList()));
@@ -500,7 +511,7 @@ public class CourseService {
         courseDTO.setCreationDate(course.getCreationDate());
         courseDTO.setLastUpdatedDate(course.getLastUpdatedDate());
         courseDTO.setPublished(course.isPublished());
-        if (course.getCategory() != null){
+        if (course.getCategory() != null) {
             courseDTO.setCategory(mapCategoryToDto(course.getCategory()));
         }
         if (course.getPreviewImage() != null) {
@@ -524,11 +535,11 @@ public class CourseService {
         return courseDTO;
     }
 
-    public static CategoryDTO mapCategoryToDto(Category category){
+    public static CategoryDTO mapCategoryToDto(Category category) {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setName(category.getName());
         categoryDTO.setId(category.getId());
-        if (category.getPicture() != null){
+        if (category.getPicture() != null) {
             categoryDTO.setPicturePath(FILES_SERVING_ENDPOINT + '/' + category.getPicture().getFileName());
         }
         return categoryDTO;
@@ -565,12 +576,15 @@ public class CourseService {
         if (contentData.getQuiz() != null && contentData.getQuiz().size() > 0) {
             contentDataDTO.setQuiz(contentData.getQuiz());
         }
+        if (contentData.getText() != null) {
+            contentDataDTO.setText(contentData.getText());
+        }
         return contentDataDTO;
     }
 
-    public Category mapDtoToCategory(CategoryDTO categoryDTO){
+    public Category mapDtoToCategory(CategoryDTO categoryDTO) {
         //if id is provided then use that category
-        if (categoryDTO.getId() != null){
+        if (categoryDTO.getId() != null) {
             return categoryRepository.findById(categoryDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Provided category was not found with ID: " + categoryDTO.getId()));
         }
         //else use default or nullify

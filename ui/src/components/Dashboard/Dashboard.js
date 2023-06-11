@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import CoursePreviewCard from "../Course/components/CoursePreviewCard";
+import MyCourseCard from "../Course/components/MyCourseCard";
 import SavedItemsPreviewCard from "../Saved/components/SavedItemsPreviewCard";
 import Conversations from "../Chat/components/Conversations";
 import { Link, useNavigate } from "react-router-dom";
@@ -40,7 +41,7 @@ const Dashboard = () => {
   const [jwt] = useLocalStorageState("", "jwt");
   const [currentUser] = useLocalStorageState(null, "currentUser");
   useEffect(() => {
-    httpReqAsync(`api/v1/conversations`, "GET", jwt).then((convs) => {
+    httpReqAsync(`/api/v1/conversations`, "GET", jwt).then((convs) => {
       setConversations(convs);
     });
   }, [jwt]);
@@ -52,6 +53,9 @@ const Dashboard = () => {
       "GET",
       jwt
     ).then((result) => {
+      console.log("==========");
+      console.log(result);
+      console.log("==========");
       setCourses(result);
     });
   }, [jwt, currentUser]);
@@ -61,26 +65,36 @@ const Dashboard = () => {
       <div className="section-container my-learnings">
         <h2>My Learnings</h2>
         <div className="cards-container">
-          {courses &&
-            courses.map((course) => (
-              <CoursePreviewCard
-                key={course.id}
-                courseId={course.id}
-                authorId={course.author}
-                title={course.courseName}
-                takenCount={course?.enrolledStudents?.length}
-                formattedCreationDate={new Date(
-                  course.creationDate
-                ).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                price={course.price}
-                tags={course.tags}
-                onClick={() => navigate(`/courses/${course.id}/description`)}
-              />
-            ))}
+          {
+            courses &&
+              courses.map((course) => (
+                <MyCourseCard
+                  course={course}
+                  key={course.id}
+                  onClick={() => navigate(`/courses/${course.id}/description`)}
+                />
+              ))
+            // courses.map((course) => (
+            //   <CoursePreviewCard
+            //     key={course.id}
+            //     courseId={course.id}
+            //     img_url={course.img_url}
+            //     authorId={course.authorId}
+            //     title={course.courseName}
+            //     takenCount={course?.enrolledStudents?.length}
+            //     formattedCreationDate={new Date(
+            //       course.creationDate
+            //     ).toLocaleDateString("en-US", {
+            //       year: "numeric",
+            //       month: "long",
+            //       day: "numeric",
+            //     })}
+            //     price={course.price}
+            //     tags={course.tags}
+            //     onClick={() => navigate(`/courses/${course.id}/description`)}
+            //   />
+            // ))
+          }
         </div>
         <Link to="/my-courses" className="see-all-link">
           See all of my courses
@@ -122,6 +136,7 @@ const Dashboard = () => {
               <CoursePreviewCard
                 key={course.id}
                 courseId={course.id}
+                img_url={course.img_url}
                 authorId={course.author}
                 title={course.courseName}
                 takenCount={course?.enrolledStudents?.length}

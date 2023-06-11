@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { httpReqAsync } from "../../services/httpReqAsync";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import "./MyCourses.css";
-import MyCourseCard from '../Course/components/MyCourseCard';
+import MyCourseCard from "../Course/components/MyCourseCard";
 
 const MyCourses = () => {
   const navigate = useNavigate();
@@ -54,21 +54,7 @@ const MyCourses = () => {
               <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
                 {publishedCourses.map((course) => (
                   <MyCourseCard
-                    course = {course}
-                    key={course.id}
-                    courseId={course.id}
-                    authorId={course.author}
-                    title={course.courseName}
-                    takenCount={course?.enrolledStudents?.length}
-                    formattedCreationDate={new Date(
-                      course.creationDate
-                    ).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                    price={course.price}
-                    tags={course.tags}
+                    course={course}
                     onClick={() =>
                       navigate(`/courses/${course.id}/description`)
                     }
@@ -76,13 +62,18 @@ const MyCourses = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex">{"Nothing in your published courses yet :("}</div>
+              <div className="flex">
+                {"Nothing in your published courses yet :("}
+              </div>
             )
           ) : (
             <div>Loading ...</div>
           )}
           <br />
-          <button onClick={handleDraftCreation} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button
+            onClick={handleDraftCreation}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
             Click here to create a new course
           </button>
           {/* <Link to="/courses/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -101,34 +92,26 @@ const MyCourses = () => {
               <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
                 {draftCourses.map((course) => (
                   <MyCourseCard
-                    course = {course}
+                    course={course}
                     key={course.id}
-                    courseId={course.id}
-                    authorId={course.authorId}
-                    title={course.courseName}
-                    takenCount={course?.enrolledStudents?.length}
-                    formattedCreationDate={new Date(
-                      course.creationDate
-                    ).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                    price={course.price}
-                    tags={course.tags}
                     onClick={() => navigate(`/my-courses/drafts/${course.id}`)}
                   />
                 ))}
               </div>
             ) : (
-              <div className="flex">{"Nothing in your published courses yet :("}</div>
+              <div className="flex">
+                {"Nothing in your published courses yet :("}
+              </div>
             )
           ) : (
             <div>Loading ...</div>
           )}
           <br />
-          
-          <button onClick={handleDraftCreation} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+
+          <button
+            onClick={handleDraftCreation}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
             Click here to create a new course
           </button>
           {/* <Link to="/courses/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -138,15 +121,13 @@ const MyCourses = () => {
       ),
     },
   ];
-  
+
   return (
     <>
       <div className="container">
         <div className="text-2xl font-semibold"> My courses </div>
         <TabbedPage tabs={tabs} />
       </div>
-
-      
     </>
   );
 };

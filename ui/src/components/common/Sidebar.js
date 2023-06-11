@@ -31,7 +31,7 @@ function Sidebar() {
                     <NavLink to="/dashboard" >
                       <ion-icon
                         name="compass"
-                        class="bg-gradient-to-br from-purple-300 p-1 rounded-md side-icon text-opacity-80 text-white to-blue-500 md hydrated"
+                        className="bg-gradient-to-br from-purple-300 p-1 rounded-md side-icon text-opacity-80 text-white to-blue-500 md hydrated"
                         role="img"
                         aria-label="compass"
                       ></ion-icon>
@@ -43,7 +43,7 @@ function Sidebar() {
                     <NavLink to="/my-courses" >
                       <ion-icon
                         name="play-circle"
-                        class="bg-gradient-to-br from-yellow-300 p-1 rounded-md side-icon text-opacity-80 text-white to-red-500 md hydrated"
+                        className="bg-gradient-to-br from-yellow-300 p-1 rounded-md side-icon text-opacity-80 text-white to-red-500 md hydrated"
                         role="img"
                         aria-label="play circle"
                       ></ion-icon>
@@ -54,7 +54,7 @@ function Sidebar() {
                     <NavLink to="/courses" >
                       <ion-icon
                         name="albums"
-                        class="bg-gradient-to-br from-green-300 p-1 rounded-md side-icon text-opacity-80 text-white to-green-500 md hydrated"
+                        className="bg-gradient-to-br from-green-300 p-1 rounded-md side-icon text-opacity-80 text-white to-green-500 md hydrated"
                         role="img"
                         aria-label="albums"
                       ></ion-icon>
@@ -65,7 +65,7 @@ function Sidebar() {
                     <NavLink to="/my-learnings" >
                       <ion-icon
                         name="book"
-                        class="bg-gradient-to-br from-yellow-300 p-1 rounded-md side-icon text-opacity-80 text-white to-red-500 md hydrated"
+                        className="bg-gradient-to-br from-yellow-300 p-1 rounded-md side-icon text-opacity-80 text-white to-red-500 md hydrated"
                         role="img"
                         aria-label="book"
                       ></ion-icon>
@@ -76,7 +76,7 @@ function Sidebar() {
                     <NavLink to="/storage" >
                       <ion-icon
                         name="newspaper"
-                        class="bg-gradient-to-br from-purple-300 p-1 rounded-md side-icon text-opacity-80 text-white to-blue-500 md hydrated"
+                        className="bg-gradient-to-br from-purple-300 p-1 rounded-md side-icon text-opacity-80 text-white to-blue-500 md hydrated"
                         role="img"
                         aria-label="newspaper"
                       ></ion-icon>
