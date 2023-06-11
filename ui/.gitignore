@@ -17,4 +17,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+*.htaccess
+
 ./src/constants.js
