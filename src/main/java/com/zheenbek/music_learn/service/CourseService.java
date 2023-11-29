@@ -31,9 +31,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.zheenbek.music_learn.service.FileService.FILES_SERVING_ENDPOINT;
@@ -573,7 +571,7 @@ public class CourseService {
             contentDataDTO.setFileId(contentData.getFile().getId());
             contentDataDTO.setFilePath(FILES_SERVING_ENDPOINT + '/' + contentData.getFile().getFileName());
         }
-        if (contentData.getQuiz() != null && contentData.getQuiz().size() > 0) {
+        if (contentData.getQuiz() != null && !contentData.getQuiz().isEmpty()) {
             contentDataDTO.setQuiz(contentData.getQuiz());
         }
         if (contentData.getText() != null) {
@@ -591,15 +589,6 @@ public class CourseService {
         return categoryRepository.findById(DEFAULT_CATEGORY_ID).orElse(null);
     }
 
-    public CategoryDTO createCategory(CategoryDTO categoryDTO, MultipartFile categoryPicture) throws IOException {
-        File pictureFile = serverFileStorageService.storeFile(categoryPicture, categoryDTO.getName());
-        FileEntity pictureEntity = fileRepository.save(fileEntityFromFile(pictureFile, categoryPicture.getContentType()));
-        Category category = new Category();
-        category.setName(categoryDTO.getName());
-        category.setPicture(pictureEntity);
-        return mapCategoryToDto(categoryRepository.save(category));
-    }
-
     public CategoryDTO getCategoryById(Long categoryId) {
         return mapCategoryToDto(categoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException("Category not found to get with ID: " + categoryId)));
     }
@@ -607,5 +596,36 @@ public class CourseService {
     public List<CourseDTO> getAllCategoriesByCategory(Long categoryId) {
         List<Course> foundCourses = courseRepository.findAllByCategoryId(categoryId);
         return foundCourses.stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
+    }
+
+    public List<CourseDTO> getRecommendedCoursesForUser(Long userId) {
+        // we recommend by taken courses: type should be same
+        // we recommend by saved courses: keywords should be same
+        // if no taken courses and no saved items, then same as explore page
+        List<CourseDTO> relatedCourses = new ArrayList<>();
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        user.getTakenCourses()
+                .forEach((course) -> {
+                    relatedCourses.addAll(getRelatedCourses(course));
+                });
+        user.getSavedCourses()
+                .forEach((course) -> {
+                    relatedCourses.addAll(getRelatedCourses(course));
+                });
+        // remove duplicate course objects:
+        Set<CourseDTO> set = new LinkedHashSet<>(relatedCourses);
+        return new ArrayList<>(set);
+    }
+
+    private List<CourseDTO> getRelatedCourses(Course course) {
+        List<CourseDTO> relatedCourses = new ArrayList<>(findCoursesByKeyword(course.getAuthor().getUsername()));
+        Arrays.stream(course.getCourseName().split(" ")).forEach(word -> {
+            relatedCourses.addAll(findCoursesByKeyword(word));
+        });
+        course.getTags().forEach(tag -> {
+            relatedCourses.addAll(findCoursesByKeyword(tag));
+        });
+
+        return relatedCourses;
     }
 }

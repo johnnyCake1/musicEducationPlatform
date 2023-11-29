@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.Date;
 
 @Controller
-@CrossOrigin(origins = "https://v1910509.hosted-by-vdsina.ru", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class ChatWebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
 

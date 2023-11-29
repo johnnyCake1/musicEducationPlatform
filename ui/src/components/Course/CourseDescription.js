@@ -23,12 +23,6 @@ const CourseDescription = () => {
       console.log("I got the course:", result);
       setCourse(result);
     });
-    //get the course's video
-    getFile(`/api/v1/courses/${courseId}/course-video`, jwt).then(
-      (videoBlob) => {
-        setCourseVideoSrc(URL.createObjectURL(videoBlob));
-      }
-    );
     //get the reviews info
     httpReqAsync(`/api/v1/courses/${courseId}/reviews`, "GET", jwt).then(
       (result) => {
@@ -88,7 +82,7 @@ const CourseDescription = () => {
       <div className="about-course-content">
         <div className="course-header">
           <div className="course-header-left" style={{width:'100%'}}>
-            {courseVideoSrc && <VideoPlayer videoSrc={courseVideoSrc} />}
+            {course.video_url && <VideoPlayer videoSrc={course.video_url} />}
           </div>
           <div className="course-header-right">
             

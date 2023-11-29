@@ -42,6 +42,18 @@ public class CourseController {
         this.courseService = courseService;
     }
 
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<CourseDTO>> getRecommendedCoursesForUser(@RequestParam Long userId) {
+        List<CourseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
+        return new ResponseEntity<>(foundCourses, HttpStatus.OK);
+    }
+
+    @GetMapping("/explore")
+    public ResponseEntity<List<CourseDTO>> exploreCourses(@RequestParam Long userId) {
+        List<CourseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
+        return new ResponseEntity<>(foundCourses, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<CourseDTO> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
                                                @RequestParam("previewPicture") MultipartFile previewPicture,
@@ -148,17 +160,6 @@ public class CourseController {
     public ResponseEntity<Course> dropUser(@PathVariable Long id, @RequestParam Long userId) {
         Course updatedCourse = courseService.dropUser(id, userId);
         return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
-    }
-
-    @PostMapping("/categories")
-    public ResponseEntity<CategoryDTO> createNewCategory(@RequestPart String categoryJson, @RequestPart MultipartFile file) throws IOException {
-        CategoryDTO categoryDTO = new ObjectMapper().readValue(categoryJson, CategoryDTO.class);
-        try {
-            categoryDTO = courseService.createCategory(categoryDTO, file);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
-        }
-        return new ResponseEntity<>(categoryDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/categories")

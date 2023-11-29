@@ -59,7 +59,7 @@ function Navigation() {
     <header
       className="is-transparent border-b backdrop-filter backdrop-blur-2xl uk-sticky uk-sticky-fixed"
       uk-sticky="cls-inactive: is-dark is-transparent border-b"
-      style={{ position: "sticky", top: "0px", width: "1425px" }}
+      style={{ position: "sticky", top: "0px"}}
     >
       <div className="header_inner">
         <div className="left-side">

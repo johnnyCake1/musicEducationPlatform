@@ -2,7 +2,6 @@ import PrivateRoute from "./PrivateRoute";
 import Navigation from "./Navigation";
 import Sidebar from "./Sidebar";
 import '../../App.css'
-import '../common/Custom.css'
 
 function withSidebarAndAuth(PageComponent) {
     return (

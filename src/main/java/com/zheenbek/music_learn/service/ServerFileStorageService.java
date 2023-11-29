@@ -90,28 +90,4 @@ public class ServerFileStorageService {
         return fileEntity;
     }
 
-//    public FileEntity storeTopicFile(MultipartFile file) {
-//
-//        // Get the original file name
-//        String originalFileName = file.getOriginalFilename();
-//
-//        // Get the file's content type
-//        String contentType = file.getContentType();
-//
-//        // Generate a new file name with the desired name and file extension
-//        String newFilePath = destinationPath + File.separator + newFileName + getFileExtension(originalFileName);
-//
-//        // Create a new File object with the destination path and new file name
-//        File newFile = new File(newFilePath);
-//
-//        // Move the file to the new location
-//        file.transferTo(newFile);
-//
-//        return newFilePath;
-//        file.transferTo();
-//        file.getContentType();
-//        file.getOriginalFilename();
-//
-//        return null;
-//    }
 }

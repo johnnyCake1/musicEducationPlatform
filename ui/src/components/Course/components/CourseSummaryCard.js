@@ -135,8 +135,7 @@ const CourseSummaryCard = ({
             </ul>
             <ul className="lg:flex items-center text-gray-100 mt-3 opacity-90">
               <li>
-                Created by:
-
+                {"Created by: "}
                 <a
                   href="#"
                   className="text-white fond-bold hover:underline hover:text-white"
@@ -145,8 +144,8 @@ const CourseSummaryCard = ({
                 </a>
               </li>
               <span className="lg:block hidden mx-3 text-2xl">·</span>
-              <li> Last updated:
-                {course.lastUpdatedDate ? (new Date(course.lastUpdatedDate)).toLocaleString() : "No shown"}</li>
+              <li> 
+                {`Last updated: ${course.lastUpdatedDate ? (new Date(course.lastUpdatedDate)).toLocaleString() : "Unknown"}`}</li>
             </ul>
           </div>
         </div>
@@ -155,7 +154,7 @@ const CourseSummaryCard = ({
       <div
         className="bg-white border-b z-20 mb-4 overflow-hidden uk-sticky uk-active uk-sticky-fixed"
         uk-sticky="media: 992; offset:70"
-        style={{ position: "sticky", top: 70, width: 1125 }}
+        style={{ position: "sticky", top: 65, width: 1125 }}
       >
         <div className="mcontainer py-0 lg:px-20 flex justify-between items-center">
           <nav className="cd-secondary-nav nav-smal l flex-1">

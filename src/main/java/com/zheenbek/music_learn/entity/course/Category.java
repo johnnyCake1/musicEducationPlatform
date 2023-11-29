@@ -18,6 +18,13 @@ public class Category {
     @OneToOne
     private FileEntity picture;
 
+    public Category(){}
+
+    public Category(String name, FileEntity picture) {
+        this.name = name;
+        this.picture = picture;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

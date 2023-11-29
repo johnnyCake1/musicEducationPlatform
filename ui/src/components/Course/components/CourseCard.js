@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { httpReqAsync } from "../../../services/httpReqAsync";
 import useLocalStorageState from "../../../util/useLocalStorageState";
 import { Link } from "react-router-dom";
-
+import "../../common/Custom.css"
 const CourseCard = ({ course }) => {
   const [showAddToSavedIcon, setShowAddToSavedIcon] = useState(false);
   const [jwt] = useLocalStorageState("", "jwt");

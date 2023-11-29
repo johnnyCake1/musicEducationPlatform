@@ -35,7 +35,7 @@ function Sidebar() {
                         role="img"
                         aria-label="compass"
                       ></ion-icon>
-                      <span> Dashboard</span>
+                      <span> &nbsp;Dashboard</span>
                     </NavLink>
                     
                   </li>
@@ -47,7 +47,7 @@ function Sidebar() {
                         role="img"
                         aria-label="play circle"
                       ></ion-icon>
-                      <span> My courses</span>
+                      <span> &nbsp;My courses</span>
                     </NavLink>
                   </li>
                   <li className={isActive('/courses', 'active')}>
@@ -58,7 +58,7 @@ function Sidebar() {
                         role="img"
                         aria-label="albums"
                       ></ion-icon>
-                      <span> Explore </span>
+                      <span> &nbsp;Explore </span>
                     </NavLink>
                   </li>
                   <li className={isActive('/my-learnings', 'active')}>
@@ -69,7 +69,7 @@ function Sidebar() {
                         role="img"
                         aria-label="book"
                       ></ion-icon>
-                      <span> My learnings </span>
+                      <span> &nbsp;My learnings </span>
                     </NavLink>
                   </li>
                   <li className={isActive('/storage', 'active')}>
@@ -80,7 +80,7 @@ function Sidebar() {
                         role="img"
                         aria-label="newspaper"
                       ></ion-icon>
-                      <span> Storage</span>
+                      <span> &nbsp;Storage</span>
                     </NavLink>
                   </li>
                 </ul>

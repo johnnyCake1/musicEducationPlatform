@@ -207,7 +207,7 @@ const CourseCreationPage = () => {
         const curriculum = [...courseData.curriculum];
         curriculum[moduleIndex].courseTopics[topicIndex].contentData = {
           ...curriculum[moduleIndex].courseTopics[topicIndex].contentData,
-          img_url: result.file_url,
+          file_url: result.file_url,
           file_id: result.id,
         };
         const updatedCourseData = { ...courseData, curriculum };
