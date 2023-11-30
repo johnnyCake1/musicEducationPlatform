@@ -17,7 +17,7 @@ import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEnti
 @Service
 public class DataInitializer {
     @Value("${static-directory}")
-    private String CATEGORIES_PICTURES_DIRECTORY;
+    private String STATIC_FILES_DIRECTORY;
     private final CategoryRepository categoryRepository;
     private final FileRepository fileRepository;
     public DataInitializer(CategoryRepository categoryRepository,
@@ -28,6 +28,8 @@ public class DataInitializer {
 
     @PostConstruct
     public void init() {
+        createProfilePicturePlaceholderIfNotFound("profile_picture_placeholder.png");
+
         createCategoryIfNotFound("String Instruments", "category_string_instruments.png");
         createCategoryIfNotFound("Wind Instruments", "category_wind_instruments.png");
         createCategoryIfNotFound("Percussion Instruments", "category_percussion_instruments.png");
@@ -43,8 +45,16 @@ public class DataInitializer {
         if (categoryRepository.findByName(name) != null) {
             return;
         }
-        Path filePath = Paths.get(CATEGORIES_PICTURES_DIRECTORY, filename);
+        Path filePath = Paths.get(STATIC_FILES_DIRECTORY, filename);
         FileEntity pictureEntity = fileRepository.save(fileEntityFromFile(filePath.toFile(), "image/png"));
         categoryRepository.save(new Category(name, pictureEntity));
+    }
+
+    private void createProfilePicturePlaceholderIfNotFound(final String profilePicturePlaceholderFilename) {
+        if (fileRepository.findByFileName(profilePicturePlaceholderFilename).isPresent()) {
+            return;
+        }
+        Path filePath = Paths.get(STATIC_FILES_DIRECTORY, profilePicturePlaceholderFilename);
+        fileRepository.save(fileEntityFromFile(filePath.toFile(), "image/png"));
     }
 }

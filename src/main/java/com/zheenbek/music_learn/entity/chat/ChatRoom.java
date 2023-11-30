@@ -1,5 +1,7 @@
 package com.zheenbek.music_learn.entity.chat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,15 +25,17 @@ public class ChatRoom {
     private String chatRoomName;
     private Long senderId;
     private Long recipientId;
-
+    @JsonProperty(value = "img_url")
+    private String chatRoomPicturePath;
     public ChatRoom() {
     }
 
-    public ChatRoom(Long senderId, Long recipientId, String chatRoomId, String chatRoomName) {
+    public ChatRoom(Long senderId, Long recipientId, String chatRoomId, String chatRoomName, String chatRoomPicturePath) {
         this.senderId = senderId;
         this.recipientId = recipientId;
         this.chatRoomId = chatRoomId;
         this.chatRoomName = chatRoomName;
+        this.chatRoomPicturePath = chatRoomPicturePath;
     }
 
     public String getChatRoomName() {
@@ -72,5 +76,13 @@ public class ChatRoom {
 
     public Long getId() {
         return id;
+    }
+
+    public String getChatRoomPicturePath() {
+        return chatRoomPicturePath;
+    }
+
+    public void setChatRoomPicturePath(String chatRoomPicture) {
+        this.chatRoomPicturePath = chatRoomPicture;
     }
 }

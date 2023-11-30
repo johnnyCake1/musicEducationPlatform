@@ -1,5 +1,6 @@
 package com.zheenbek.music_learn.service;
 
+import com.zheenbek.music_learn.config.exceptions.ResourceNotFoundException;
 import com.zheenbek.music_learn.dto.course.CategoryDTO;
 import com.zheenbek.music_learn.dto.course.ContentDataDTO;
 import com.zheenbek.music_learn.dto.course.CourseDTO;
@@ -145,7 +146,7 @@ public class CourseService {
     }
 
     public CourseDTO getCourseById(Long courseId) {
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException("Course not found with ID: " + courseId));
         return mapCourseToDto(course);
     }
 

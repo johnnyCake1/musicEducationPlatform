@@ -33,6 +33,9 @@ public class AuthenticationController {
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * Public endpoint for server accessibility testing
+     */
     @GetMapping ResponseEntity<String> helloWorld(){
         return new ResponseEntity<>("Hello World!", HttpStatus.OK);
     }

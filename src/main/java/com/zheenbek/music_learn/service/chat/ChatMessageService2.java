@@ -1,6 +1,7 @@
 package com.zheenbek.music_learn.service.chat;
 
 import com.zheenbek.music_learn.entity.chat.ChatMessage2;
+import com.zheenbek.music_learn.entity.chat.ChatRoom;
 import com.zheenbek.music_learn.repository.chat.ChatMessage2Repository;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,7 @@ public class ChatMessageService2 {
                 .orElse(new ArrayList<>());
     }
 
-    public List<ChatMessage2> findChatRooms(Long userId) {
-
-        return null;
+    public List<ChatRoom> findChatRoomsOfUser(Long userId) {
+        return chatRoomService.getChatRoomsBySenderId(userId);
     }
 }

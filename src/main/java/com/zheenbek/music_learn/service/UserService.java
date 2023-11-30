@@ -68,6 +68,7 @@ public class UserService {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         newUser.setPassword(encoder.encode(password));
         newUser.setStartDate(new Date());
+        newUser.setProfilePic(fileRepository.findByFileName("profile_picture_placeholder.png").orElse(null));
 
         User createdUser = userRepository.save(newUser);
         Role userRole = new Role("ROLE_USER");
