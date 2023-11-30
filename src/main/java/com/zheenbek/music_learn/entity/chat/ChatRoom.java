@@ -1,0 +1,76 @@
+package com.zheenbek.music_learn.entity.chat;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class ChatRoom {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    /**
+     * Each private chatroom will have two instances of chatroom object with two users
+     * If we create a chatroom between user1 and user2, then it will have two instances, and they will have sender as user1 and recipient as user2 and vice-versa sender as user2 and recipient as user1
+     */
+    //
+    //
+    private String chatRoomId;
+    /**
+     * Each room has a name. For a private chatroom the convention is that chatroom will have recipient's username.
+     */
+    private String chatRoomName;
+    private Long senderId;
+    private Long recipientId;
+
+    public ChatRoom() {
+    }
+
+    public ChatRoom(Long senderId, Long recipientId, String chatRoomId, String chatRoomName) {
+        this.senderId = senderId;
+        this.recipientId = recipientId;
+        this.chatRoomId = chatRoomId;
+        this.chatRoomName = chatRoomName;
+    }
+
+    public String getChatRoomName() {
+        return chatRoomName;
+    }
+
+    public void setChatRoomName(String chatRoomName) {
+        this.chatRoomName = chatRoomName;
+    }
+
+    public String getChatRoomId() {
+        return chatRoomId;
+    }
+
+    public void setChatRoomId(String chatRoomId) {
+        this.chatRoomId = chatRoomId;
+    }
+
+    public Long getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+
+    public Long getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(Long recipientId) {
+        this.recipientId = recipientId;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+}

@@ -20,6 +20,7 @@ import MyLearnings from "./components/MyLearnings/MyLearnings";
 import withSidebarAndAuth from "./components/common/withSidebarAndAuth";
 import ContentAndAuth from "./components/common/ContentAndAuth";
 import Homepage from "./components/Homepage/Homepage";
+import ChatComponent from "./components/Chat/ChatComponent";
 
 function App() {
   return (
@@ -65,6 +66,7 @@ function App() {
             path="/my-learnings"
             element={withSidebarAndAuth(MyLearnings)}
           />
+          <Route path="/demoChat" element={withSidebarAndAuth(ChatComponent)} />
           <Route path="/chat" element={withSidebarAndAuth(ChatPage)} />
         </Routes>
       </div>

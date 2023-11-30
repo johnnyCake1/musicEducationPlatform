@@ -20,31 +20,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
-    private final CorsFilter corsFilter;
+//    private final CorsFilter corsFilter;
     private final UserRepository userRepo;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserRepository userRepo, CorsFilter corsFilter) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserRepository userRepo) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userRepo = userRepo;
-        this.corsFilter = corsFilter;
+//        this.corsFilter = corsFilter;
     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors() // Enable CORS integration
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**").permitAll()
                 .antMatchers("/files/**").permitAll()
                 .antMatchers("/storage/**").permitAll()
                 .antMatchers("/chat/**").permitAll()
+                .antMatchers("/ws/**", "/ws/info", "/ws/**/info").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
