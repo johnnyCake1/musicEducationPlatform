@@ -32,4 +32,4 @@ hs_err_pid*
 
 src/main/storage/files/*
 
-*.properties
+src/main/resources/application.properties
