@@ -41,6 +41,15 @@ public class AuthenticationController {
         return new ResponseEntity<>("Hello World!", HttpStatus.OK);
     }
 
+    @GetMapping("/register")
+    public ResponseEntity<?> helloRegister(@RequestParam String username, @RequestParam String password) {
+        System.out.println("SENDING HELLO FROM GET REGISTER");
+        AuthCredsRequest request = new AuthCredsRequest();
+        request.setUsername(username);
+        request.setPassword(password);
+        return authenticate(request);
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerNewUser(@RequestBody AuthCredsRequest request) {
         if (userService.findByUsername(request.getUsername()).isPresent()) {
