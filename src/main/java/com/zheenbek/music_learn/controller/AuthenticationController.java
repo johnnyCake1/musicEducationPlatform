@@ -37,6 +37,7 @@ public class AuthenticationController {
      * Public endpoint for server accessibility testing
      */
     @GetMapping ResponseEntity<String> helloWorld(){
+        System.out.println("SENDING HELLO WORLD MESSAGE");
         return new ResponseEntity<>("Hello World!", HttpStatus.OK);
     }
 
