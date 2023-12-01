@@ -8,38 +8,39 @@ import com.zheenbek.music_learn.dto.course.CourseModuleDTO;
 import com.zheenbek.music_learn.dto.course.CourseTopicDTO;
 import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.Review;
+import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.service.CourseService;
+import com.zheenbek.music_learn.service.PurchaseRecordService;
+import com.zheenbek.music_learn.service.StripeService;
+import com.zheenbek.music_learn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/courses")
 public class CourseController {
     private final CourseService courseService;
-
+    private final UserService userService;
+    private final StripeService stripeService;
+    private final PurchaseRecordService purchaseService;
     @Autowired
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseService courseService, UserService userService, StripeService stripeService, PurchaseRecordService purchaseService) {
         this.courseService = courseService;
+        this.userService = userService;
+        this.stripeService = stripeService;
+        this.purchaseService = purchaseService;
     }
 
     @GetMapping("/recommendations")
@@ -56,9 +57,9 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<CourseDTO> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
-                                               @RequestParam("previewPicture") MultipartFile previewPicture,
-                                               @RequestPart("contentDataFiles") MultipartFile[] topicContentFiles,
-                                               @RequestParam String courseDataJson) throws JsonProcessingException {
+                                                  @RequestParam("previewPicture") MultipartFile previewPicture,
+                                                  @RequestPart("contentDataFiles") MultipartFile[] topicContentFiles,
+                                                  @RequestParam String courseDataJson) throws JsonProcessingException {
         CourseDTO course = new ObjectMapper().readValue(courseDataJson, CourseDTO.class);
         try {
             course = courseService.createCourse(course, promoVideo, previewPicture, topicContentFiles);
@@ -103,7 +104,7 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/convert-to-draft")
-    public ResponseEntity<CourseDTO> convertToDraft (@PathVariable("id") Long courseId) {
+    public ResponseEntity<CourseDTO> convertToDraft(@PathVariable("id") Long courseId) {
         CourseDTO updatedCourse = courseService.convertToDraft(courseId);
         return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
     }
@@ -151,9 +152,31 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/enroll")
-    public ResponseEntity<CourseDTO> enrollUser(@PathVariable Long id, @RequestParam Long userId) {
-        CourseDTO updatedCourse = courseService.enrollUser(id, userId);
-        return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
+    public ResponseEntity<CourseDTO> enrollUser(@PathVariable Long id,
+                                                @RequestParam Long userId,
+                                                @RequestHeader(value = "token", required = false, defaultValue = "") final String token,
+                                                @RequestHeader(value = "amount", required = false, defaultValue = "0.0") final Double amount) {
+        Course course = courseService.findCourseById(id);
+        User user = userService.getUserById(userId);
+        if (course.getPrice() > 0) {
+            if (token == null || token.isEmpty()) {
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Invalid stripe token", userId, user));
+            }
+            if (amount > course.getPrice()) {
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is greater than the actual course price", userId, user));
+            }
+            if (amount < course.getPrice()) {
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is less than the actual course price", userId, user));
+            }
+            try {
+                stripeService.chargeNewCard(token, amount);
+                purchaseService.recordCoursePurchase(user, course, amount, new Date());
+            } catch (Exception e) {
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : charging the card failed: %s", userId, user, e));
+            }
+        }
+
+        return new ResponseEntity<>(courseService.enrollUser(course, user), HttpStatus.OK);
     }
 
     @PostMapping("/{id}/drop")

@@ -47,6 +47,11 @@ public class AuthenticationController {
         AuthCredsRequest request = new AuthCredsRequest();
         request.setUsername(username);
         request.setPassword(password);
+        if (userService.findByUsername(request.getUsername()).isPresent()) {
+            return ResponseEntity.badRequest()
+                    .body("given username is already taken");
+        }
+        userService.createNewUser(request.getUsername(), request.getPassword());
         return authenticate(request);
     }
 

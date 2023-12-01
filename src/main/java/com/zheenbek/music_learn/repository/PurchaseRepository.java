@@ -1,7 +1,0 @@
-package com.zheenbek.music_learn.repository;
-
-import com.zheenbek.music_learn.entity.Purchase;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
-}

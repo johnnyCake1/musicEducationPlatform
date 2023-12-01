@@ -14,10 +14,9 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), Collections.singletonList(ex.getMessage()));
         return buildResponseEntity(apiError);
     }
-
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Object> handleAllExceptions(Exception ex) {
-        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred", Collections.singletonList("An unexpected error occurred"));
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred", Collections.singletonList("An unexpected error occurred: " + ex));
         return buildResponseEntity(apiError);
     }
 

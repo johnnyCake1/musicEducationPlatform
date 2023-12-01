@@ -1,5 +1,6 @@
 package com.zheenbek.music_learn.service;
 
+import com.sun.istack.NotNull;
 import com.zheenbek.music_learn.config.exceptions.ResourceNotFoundException;
 import com.zheenbek.music_learn.dto.course.CategoryDTO;
 import com.zheenbek.music_learn.dto.course.ContentDataDTO;
@@ -76,6 +77,11 @@ public class CourseService {
         this.reviewRepository = reviewRepository;
         this.categoryRepository = categoryRepository;
         this.questionRepository = questionRepository;
+    }
+
+    public Course findCourseById(Long id) {
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found to delete with ID: " + id));
     }
 
     public List<CourseDTO> getAllCourses(boolean onlyPublished) {
@@ -279,7 +285,13 @@ public class CourseService {
             return mapCourseToDto(updatedCourse);
         }
         //create
-        Course createdDraftCourse = saveCourse(mapDtoToCourse(courseDTO));
+        Course courseToSave = mapDtoToCourse(courseDTO);
+        courseToSave.setLastUpdatedDate(new Date());
+        if (courseToSave.getCreationDate() == null) {
+            courseToSave.setCreationDate(new Date());
+        }
+        Course createdDraftCourse = saveCourse(courseToSave);
+        createdDraftCourse.setLastUpdatedDate(new Date());
         //update author
         author.getDraftCourses().add(createdDraftCourse);
         userRepository.save(author);
@@ -374,6 +386,11 @@ public class CourseService {
     public CourseDTO enrollUser(Long courseId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+        return enrollUser(course, user);
+    }
+
+    @Transactional
+    public CourseDTO enrollUser(@NotNull Course course, @NotNull User user) {
         if (!user.getTakenCourses().contains(course)) {
             user.getTakenCourses().add(course);
             userRepository.save(user);

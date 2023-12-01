@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-public class Purchase {
+public class PurchaseRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +25,14 @@ public class Purchase {
     @Column(nullable = false)
     private Date purchaseDate;
 
-    public Purchase() {}
+    public PurchaseRecord() {}
+
+    public PurchaseRecord(User user, Course course, Double amount, Date purchaseDate) {
+        this.user = user;
+        this.course = course;
+        this.amount = amount;
+        this.purchaseDate = purchaseDate;
+    }
 
     public Long getId() {
         return id;
