@@ -21,6 +21,7 @@ import withSidebarAndAuth from "./components/common/withSidebarAndAuth";
 import ContentAndAuth from "./components/common/ContentAndAuth";
 import Homepage from "./components/Homepage/Homepage";
 import ChatComponent from "./components/Chat/ChatComponent";
+import StripePayment from "./components/Payment/StripePayment";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
             element={withSidebarAndAuth(ContentAndAuth)}
           />
           <Route path="/courses" element={withSidebarAndAuth(Courses)} />
+          <Route path="/pay" element={withSidebarAndAuth(StripePayment)} />
           <Route
             path="/courses/create"
             element={withSidebarAndAuth(CourseCreationPage)}

@@ -8,14 +8,13 @@ import Curriculum from "./components/Curriculum";
 import Reviews from "../common/Reviews";
 import { useParams } from "react-router-dom";
 import useLocalStorageState from "../../util/useLocalStorageState";
-import { getFile, httpReqAsync } from "../../services/httpReqAsync";
+import { httpReqAsync } from "../../services/httpReqAsync";
 
 const CourseDescription = () => {
   const { courseId } = useParams();
   const [currentUser] = useLocalStorageState(null, "currentUser");
   const [jwt] = useLocalStorageState("", "jwt");
   const [course, setCourse] = useState(null);
-  const [courseVideoSrc, setCourseVideoSrc] = useState("");
   const [courseReviews, setCourseReviews] = useState(null);
   useEffect(() => {
     //get the course info

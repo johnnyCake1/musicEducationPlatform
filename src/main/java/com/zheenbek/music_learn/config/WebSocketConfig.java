@@ -20,6 +20,10 @@ import java.util.List;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Value("${hostname}")
     private String HOSTNAME;
+
+    @Value("${allowed-origin}")
+    private String allowedOrigin;
+
 //    @Override
 //    public void configureMessageBroker(MessageBrokerRegistry registry) {
 //        registry.enableSimpleBroker("/topic", "/queue");
@@ -43,7 +47,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:3000")
+                .setAllowedOrigins(allowedOrigin)
                 .withSockJS();
     }
 
