@@ -1,6 +1,6 @@
 package com.zheenbek.music_learn.controller;
 
-import com.zheenbek.music_learn.dto.FileDTO;
+import com.zheenbek.music_learn.dto.request_response.FileDTO;
 import com.zheenbek.music_learn.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;

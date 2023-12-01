@@ -1,38 +1,50 @@
 package com.zheenbek.music_learn.controller;
 
-import com.zheenbek.music_learn.dto.chat.PrivateChatDTO;
-import com.zheenbek.music_learn.service.chat.PrivateChatService;
+import com.zheenbek.music_learn.dto.request_response.chat.ChatNotification;
+import com.zheenbek.music_learn.entity.chat.ChatMessage;
+import com.zheenbek.music_learn.entity.chat.ChatRoom;
+import com.zheenbek.music_learn.service.chat.ChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/chats")
+@RequestMapping("/api/v1/")
 public class ChatController {
-    private final PrivateChatService privateChatService;
+    private final ChatMessageService chatMessageService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public ChatController(PrivateChatService privateChatService) {
-        this.privateChatService = privateChatService;
+    public ChatController(ChatMessageService chatMessageService2, SimpMessagingTemplate messagingTemplate) {
+        this.chatMessageService = chatMessageService2;
+        this.messagingTemplate = messagingTemplate;
     }
 
-
-    @GetMapping("/private-chats/{currentUserId}")
-    public ResponseEntity<Set<PrivateChatDTO>> getUserPrivateChats(@PathVariable Long currentUserId) {
-        Set<PrivateChatDTO> privateChatDTO = privateChatService.getUserPrivateChats(currentUserId);
-        return new ResponseEntity<>(privateChatDTO, HttpStatus.CREATED);
+    @MessageMapping("/chat")
+    public void processMessage (@Payload ChatMessage chatMessage) {
+        ChatMessage savedMessage = chatMessageService.save(chatMessage);
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(savedMessage.getRecipientId()), "queue/messages",
+                new ChatNotification(savedMessage.getId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent())
+        );
     }
 
-    @PostMapping("/private-chats/{currentUserId}/{otherUserId}")
-    public ResponseEntity<PrivateChatDTO> createConversation(@PathVariable Long currentUserId, @PathVariable Long otherUserId) throws Exception {
-        PrivateChatDTO privateChatDTO = privateChatService.createNewPrivateChat(currentUserId, otherUserId);
-        return new ResponseEntity<>(privateChatDTO, HttpStatus.CREATED);
+    @GetMapping("/messages/{senderId}/{recipientId}")
+    public ResponseEntity<List<ChatMessage>> findChatMessages (@PathVariable Long senderId, @PathVariable Long recipientId) {
+        return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));
     }
+
+    @GetMapping("/messages/{userId}")
+    public ResponseEntity<List<ChatRoom>> findChatRoomsOfUser (@PathVariable Long userId) {
+        return ResponseEntity.ok(chatMessageService.findChatRoomsOfUser(userId));
+    }
+
 }

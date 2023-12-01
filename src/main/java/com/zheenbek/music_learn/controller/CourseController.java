@@ -2,10 +2,11 @@ package com.zheenbek.music_learn.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zheenbek.music_learn.dto.course.CategoryDTO;
-import com.zheenbek.music_learn.dto.course.CourseDTO;
-import com.zheenbek.music_learn.dto.course.CourseModuleDTO;
-import com.zheenbek.music_learn.dto.course.CourseTopicDTO;
+import com.zheenbek.music_learn.dto.request.course.CourseRequestDTO;
+import com.zheenbek.music_learn.dto.response.course.CategoryResponseDTO;
+import com.zheenbek.music_learn.dto.response.course.CourseResponseDTO;
+import com.zheenbek.music_learn.dto.request_response.course.CourseModuleDTO;
+import com.zheenbek.music_learn.dto.request_response.course.CourseTopicDTO;
 import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.Review;
 import com.zheenbek.music_learn.entity.user.User;
@@ -44,48 +45,50 @@ public class CourseController {
     }
 
     @GetMapping("/recommendations")
-    public ResponseEntity<List<CourseDTO>> getRecommendedCoursesForUser(@RequestParam Long userId) {
-        List<CourseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
+    public ResponseEntity<List<CourseResponseDTO>> getRecommendedCoursesForUser(@RequestParam Long userId) {
+        List<CourseResponseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
         return new ResponseEntity<>(foundCourses, HttpStatus.OK);
     }
 
     @GetMapping("/explore")
-    public ResponseEntity<List<CourseDTO>> exploreCourses(@RequestParam Long userId) {
-        List<CourseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
+    public ResponseEntity<List<CourseResponseDTO>> exploreCourses(@RequestParam Long userId) {
+        List<CourseResponseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
         return new ResponseEntity<>(foundCourses, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<CourseDTO> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
-                                                  @RequestParam("previewPicture") MultipartFile previewPicture,
-                                                  @RequestPart("contentDataFiles") MultipartFile[] topicContentFiles,
-                                                  @RequestParam String courseDataJson) throws JsonProcessingException {
-        CourseDTO course = new ObjectMapper().readValue(courseDataJson, CourseDTO.class);
+    public ResponseEntity<CourseResponseDTO> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
+                                                          @RequestParam("previewPicture") MultipartFile previewPicture,
+                                                          @RequestPart("contentDataFiles") MultipartFile[] topicContentFiles,
+                                                          @RequestParam String courseDataJson) throws JsonProcessingException {
+        CourseRequestDTO request = new ObjectMapper().readValue(courseDataJson, CourseRequestDTO.class);
+        CourseResponseDTO response;
+
         try {
-            course = courseService.createCourse(course, promoVideo, previewPicture, topicContentFiles);
+            response = courseService.createCourse(request, promoVideo, previewPicture, topicContentFiles);
         } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
+            throw new RuntimeException("Couldn't create the course: " + e);
         }
 
-        return new ResponseEntity<>(course, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     /**
-     * Creates/updates a course. The course object must contain {@link CourseDTO#authorId}. <br><br>
-     * If the course object also contains {@link CourseDTO#id} then it will update existing course. Also depending on the value of {@link CourseDTO#isPublished}, it will either publish the course or save as draft course with {@link CourseDTO#authorId} being {@link com.zheenbek.music_learn.dto.user.UserDTO} author <br><br>
-     * Otherwise, with {@link CourseDTO#id} field being {@code null}, it will create a new course entity with {@link CourseDTO#isPublished} being false <br><br>
+     * Creates/updates a course. The course object must contain {@link CourseResponseDTO#authorId}. <br><br>
+     * If the course object also contains {@link CourseResponseDTO#id} then it will update existing course. Also depending on the value of {@link CourseResponseDTO#isPublished}, it will either publish the course or save as draft course with {@link CourseResponseDTO#authorId} being {@link com.zheenbek.music_learn.dto.request_response.user.UserDTO} author <br><br>
+     * Otherwise, with {@link CourseResponseDTO#id} field being {@code null}, it will create a new course entity with {@link CourseResponseDTO#isPublished} being false <br><br>
      *
      * @param course course object that will replace the actual course info
      * @return updated course
      */
     @PutMapping
-    ResponseEntity<CourseDTO> createOrUpdateCourse(@RequestBody CourseDTO course) {
-        CourseDTO createdDraft = courseService.createOrUpdateDraftCourseForUser(course);
+    ResponseEntity<CourseResponseDTO> createOrUpdateCourse(@RequestBody CourseRequestDTO course) {
+        CourseResponseDTO createdDraft = courseService.createOrUpdateDraftCourseForUser(course);
         return new ResponseEntity<>(createdDraft, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseDTO>> getAllCourses(@RequestParam(required = false) Long authorId, @RequestParam(required = false, defaultValue = "false") Boolean onlyPublished) {
+    public ResponseEntity<List<CourseResponseDTO>> getAllCourses(@RequestParam(required = false) Long authorId, @RequestParam(required = false, defaultValue = "false") Boolean onlyPublished) {
         if (authorId == null) {
             return new ResponseEntity<>(courseService.getAllCourses(onlyPublished), HttpStatus.OK);
         }
@@ -93,7 +96,7 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CourseDTO> getCourse(@PathVariable("id") Long courseId) {
+    public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("id") Long courseId) {
         return new ResponseEntity<>(courseService.getCourseById(courseId), HttpStatus.OK);
     }
 
@@ -104,8 +107,8 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/convert-to-draft")
-    public ResponseEntity<CourseDTO> convertToDraft(@PathVariable("id") Long courseId) {
-        CourseDTO updatedCourse = courseService.convertToDraft(courseId);
+    public ResponseEntity<CourseResponseDTO> convertToDraft(@PathVariable("id") Long courseId) {
+        CourseResponseDTO updatedCourse = courseService.convertToDraft(courseId);
         return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
     }
 
@@ -152,10 +155,10 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/enroll")
-    public ResponseEntity<CourseDTO> enrollUser(@PathVariable Long id,
-                                                @RequestParam Long userId,
-                                                @RequestHeader(value = "token", required = false, defaultValue = "") final String token,
-                                                @RequestHeader(value = "amount", required = false, defaultValue = "0.0") final Double amount) {
+    public ResponseEntity<CourseResponseDTO> enrollUser(@PathVariable Long id,
+                                                        @RequestParam Long userId,
+                                                        @RequestHeader(value = "token", required = false, defaultValue = "") final String token,
+                                                        @RequestHeader(value = "amount", required = false, defaultValue = "0.0") final Double amount) {
         Course course = courseService.findCourseById(id);
         User user = userService.getUserById(userId);
         if (course.getPrice() > 0) {
@@ -186,32 +189,32 @@ public class CourseController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        List<CategoryDTO> categories = courseService.getAllCategories();
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
+        List<CategoryResponseDTO> categories = courseService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable Long categoryId) {
-        CategoryDTO category = courseService.getCategoryById(categoryId);
+    public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable Long categoryId) {
+        CategoryResponseDTO category = courseService.getCategoryById(categoryId);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @GetMapping("/categories/{categoryId}/get-courses")
-    public ResponseEntity<List<CourseDTO>> getCoursesByCategory(@PathVariable Long categoryId) {
-        List<CourseDTO> foundCourses = courseService.getAllCategoriesByCategory(categoryId);
+    public ResponseEntity<List<CourseResponseDTO>> getCoursesByCategory(@PathVariable Long categoryId) {
+        List<CourseResponseDTO> foundCourses = courseService.getAllCoursesByCategory(categoryId);
         return new ResponseEntity<>(foundCourses, HttpStatus.OK);
     }
 
     @GetMapping("/draft-courses")
-    public ResponseEntity<List<CourseDTO>> getAllDraftCoursesByAuthor(@RequestParam Long authorId) {
-        List<CourseDTO> draftCourses = courseService.getAllDraftCoursesByAuthorId(authorId);
+    public ResponseEntity<List<CourseResponseDTO>> getAllDraftCoursesByAuthor(@RequestParam Long authorId) {
+        List<CourseResponseDTO> draftCourses = courseService.getAllDraftCoursesByAuthorId(authorId);
         return new ResponseEntity<>(draftCourses, HttpStatus.OK);
     }
 
     @PostMapping("/draft-courses/create-empty")
-    ResponseEntity<CourseDTO> createOrUpdateDraftCourseForUser(@RequestParam Long authorId) {
-        CourseDTO createdDraft = courseService.createEmptyDraftCourseForUser(authorId);
+    ResponseEntity<CourseResponseDTO> createOrUpdateDraftCourseForUser(@RequestParam Long authorId) {
+        CourseResponseDTO createdDraft = courseService.createEmptyDraftCourseForUser(authorId);
         return new ResponseEntity<>(createdDraft, HttpStatus.CREATED);
     }
 
@@ -228,7 +231,7 @@ public class CourseController {
     }
 
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<List<CourseDTO>> searchAllCoursesByKeyword(@PathVariable String keyword) {
+    public ResponseEntity<List<CourseResponseDTO>> searchAllCoursesByKeyword(@PathVariable String keyword) {
         return new ResponseEntity<>(courseService.findCoursesByKeyword(keyword), HttpStatus.OK);
     }
 

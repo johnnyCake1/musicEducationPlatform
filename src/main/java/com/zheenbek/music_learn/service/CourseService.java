@@ -2,11 +2,12 @@ package com.zheenbek.music_learn.service;
 
 import com.sun.istack.NotNull;
 import com.zheenbek.music_learn.config.exceptions.ResourceNotFoundException;
-import com.zheenbek.music_learn.dto.course.CategoryDTO;
-import com.zheenbek.music_learn.dto.course.ContentDataDTO;
-import com.zheenbek.music_learn.dto.course.CourseDTO;
-import com.zheenbek.music_learn.dto.course.CourseModuleDTO;
-import com.zheenbek.music_learn.dto.course.CourseTopicDTO;
+import com.zheenbek.music_learn.dto.request.course.CourseRequestDTO;
+import com.zheenbek.music_learn.dto.response.course.CategoryResponseDTO;
+import com.zheenbek.music_learn.dto.request_response.course.ContentDataDTO;
+import com.zheenbek.music_learn.dto.response.course.CourseResponseDTO;
+import com.zheenbek.music_learn.dto.request_response.course.CourseModuleDTO;
+import com.zheenbek.music_learn.dto.request_response.course.CourseTopicDTO;
 import com.zheenbek.music_learn.entity.course.Category;
 import com.zheenbek.music_learn.entity.course.ContentData;
 import com.zheenbek.music_learn.entity.course.Course;
@@ -22,7 +23,7 @@ import com.zheenbek.music_learn.repository.course.CourseModuleRepository;
 import com.zheenbek.music_learn.repository.course.CourseRepository;
 import com.zheenbek.music_learn.repository.course.CourseTopicRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
-import com.zheenbek.music_learn.repository.QuestionRepository;
+import com.zheenbek.music_learn.repository.course.QuestionRepository;
 import com.zheenbek.music_learn.repository.ReviewRepository;
 import com.zheenbek.music_learn.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,6 @@ public class CourseService {
     private final CategoryRepository categoryRepository;
     private final QuestionRepository questionRepository;
 
-    public static final Long DEFAULT_CATEGORY_ID = 1L;
-
 
     @Autowired
     public CourseService(CourseRepository courseRepository,
@@ -84,16 +83,16 @@ public class CourseService {
                 .orElseThrow(() -> new EntityNotFoundException("Course not found to delete with ID: " + id));
     }
 
-    public List<CourseDTO> getAllCourses(boolean onlyPublished) {
+    public List<CourseResponseDTO> getAllCourses(boolean onlyPublished) {
         return courseRepository.findAll().stream()
                 .filter(course -> !onlyPublished || course.isPublished())
                 .map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
     @Transactional
-    public CourseDTO createCourse(CourseDTO courseDTO, MultipartFile promoVideo, MultipartFile previewPicture, MultipartFile[] orderedTopicContentFiles) throws IOException {
+    public CourseResponseDTO createCourse(CourseRequestDTO courseDTO, MultipartFile promoVideo, MultipartFile previewPicture, MultipartFile[] orderedTopicContentFiles) throws IOException {
         //convert CourseDTO to Course entity
-        Course course = mapDtoToCourse(courseDTO);
+        Course course = mapRequestDtoToCourse(courseDTO);
         //create the files in the system and database and append to the entity
         //save in the system:
         File storedVideoFile = serverFileStorageService.storeFile(promoVideo, course.getCourseName());
@@ -151,7 +150,7 @@ public class CourseService {
         return mapCourseToDto(courseRepository.save(course));
     }
 
-    public CourseDTO getCourseById(Long courseId) {
+    public CourseResponseDTO getCourseById(Long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException("Course not found with ID: " + courseId));
         return mapCourseToDto(course);
     }
@@ -210,7 +209,7 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseDTO createEmptyDraftCourseForUser(Long authorId) {
+    public CourseResponseDTO createEmptyDraftCourseForUser(Long authorId) {
         User author = userRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Author user not found with ID: " + authorId));
         Course newCourse = new Course();
         newCourse.setAuthor(author);
@@ -218,7 +217,6 @@ public class CourseService {
         newCourse.setCourseLongDescription("");
         newCourse.setCourseShortDescription("");
         newCourse.setPrice(0);
-        newCourse.setCategory(categoryRepository.findById(DEFAULT_CATEGORY_ID).orElse(null));
         Course savedCourse = courseRepository.save(newCourse);
         author.getDraftCourses().add(savedCourse);
         userRepository.save(author);
@@ -254,7 +252,7 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseDTO createOrUpdateDraftCourseForUser(CourseDTO courseDTO) {
+    public CourseResponseDTO createOrUpdateDraftCourseForUser(CourseRequestDTO courseDTO) {
         if (courseDTO.getAuthorId() == null) {
             throw new EntityNotFoundException("trying to create/update course with no author");
         }
@@ -269,7 +267,7 @@ public class CourseService {
             }
             boolean oldPublishedStated = course.isPublished();
             //update course with given object
-            Course updatedCourse = saveCourse(mapDtoToCourse(courseDTO));
+            Course updatedCourse = saveCourse(mapRequestDtoToCourse(courseDTO));
             //if it went from published to not published, then we move it to drafts. And if it went from not published to published then we move it to published
             if (updatedCourse.isPublished() != oldPublishedStated) {
                 if (updatedCourse.isPublished()) {
@@ -285,7 +283,7 @@ public class CourseService {
             return mapCourseToDto(updatedCourse);
         }
         //create
-        Course courseToSave = mapDtoToCourse(courseDTO);
+        Course courseToSave = mapRequestDtoToCourse(courseDTO);
         courseToSave.setLastUpdatedDate(new Date());
         if (courseToSave.getCreationDate() == null) {
             courseToSave.setCreationDate(new Date());
@@ -323,29 +321,18 @@ public class CourseService {
         courseTopicRepository.save(courseTopic);
     }
 
-    @Transactional
-    public CourseDTO updateDraftCourseForUser(Long authorId, Long courseId, CourseDTO courseDTO) {
-        User author = userRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Author user not found with ID: " + authorId));
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Draft course not found with ID: " + courseId));
-        if (author.getDraftCourses().contains(course)) {
-            Course updatedCourse = courseRepository.save(mapDtoToCourse(courseDTO));
-            return mapCourseToDto(updatedCourse);
-        }
-        return courseDTO;
-    }
-
-    public List<CourseDTO> getAllDraftCoursesByAuthorId(Long userId) {
+    public List<CourseResponseDTO> getAllDraftCoursesByAuthorId(Long userId) {
         List<Course> courses = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId)).getDraftCourses();
         return courses.stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
-    public List<CourseDTO> getAllCoursesByAuthorId(Long authorId, boolean onlyPublished) {
+    public List<CourseResponseDTO> getAllCoursesByAuthorId(Long authorId, boolean onlyPublished) {
         return courseRepository.findAllByAuthorId(authorId).stream()
                 .filter(e -> onlyPublished && e.isPublished())
                 .map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
-    public List<CourseDTO> findCoursesByKeyword(String keyword) {
+    public List<CourseResponseDTO> findCoursesByKeyword(String keyword) {
         return courseRepository.searchCoursesByKeyword(keyword).stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
@@ -370,7 +357,7 @@ public class CourseService {
         return course.getReviews();
     }
 
-    public CourseDTO convertToDraft(Long courseId) {
+    public CourseResponseDTO convertToDraft(Long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found to convert to draft with ID: " + courseId));
         User author = course.getAuthor();
         if (!author.getDraftCourses().contains(course)) {
@@ -383,14 +370,14 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseDTO enrollUser(Long courseId, Long userId) {
+    public CourseResponseDTO enrollUser(Long courseId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
         return enrollUser(course, user);
     }
 
     @Transactional
-    public CourseDTO enrollUser(@NotNull Course course, @NotNull User user) {
+    public CourseResponseDTO enrollUser(@NotNull Course course, @NotNull User user) {
         if (!user.getTakenCourses().contains(course)) {
             user.getTakenCourses().add(course);
             userRepository.save(user);
@@ -430,11 +417,11 @@ public class CourseService {
         return updatedReviews;
     }
 
-    public List<CategoryDTO> getAllCategories() {
+    public List<CategoryResponseDTO> getAllCategories() {
         return categoryRepository.findAll().stream().map(CourseService::mapCategoryToDto).collect(Collectors.toList());
     }
 
-    private Course mapDtoToCourse(CourseDTO courseDTO) {
+    private Course mapRequestDtoToCourse(CourseRequestDTO courseDTO) {
         Course course = new Course();
         course.setId(courseDTO.getId());
         course.setCourseName(courseDTO.getCourseName());
@@ -448,9 +435,9 @@ public class CourseService {
         course.setCreationDate(courseDTO.getCreationDate());
         course.setLastUpdatedDate(courseDTO.getLastUpdatedDate());
         course.setPublished(courseDTO.isPublished());
-        //category cannot be created by course, so it must have an id
-        if (courseDTO.getCategory() != null) {
-            course.setCategory(mapDtoToCategory(courseDTO.getCategory()));
+        if (courseDTO.getCategoryId() != null) {
+            course.setCategory(categoryRepository.findById(courseDTO.getCategoryId())
+                    .orElseThrow(() -> new EntityNotFoundException("Provided category was not found with ID: " + courseDTO.getCategoryId())));
         }
         if (courseDTO.getAuthorId() != null) {
             course.setAuthor(userRepository.findById(courseDTO.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("Course author not found with ID: " + courseDTO.getAuthorId())));
@@ -509,8 +496,8 @@ public class CourseService {
         return questionDTO;
     }
 
-    public static CourseDTO mapCourseToDto(Course course) {
-        CourseDTO courseDTO = new CourseDTO();
+    public static CourseResponseDTO mapCourseToDto(Course course) {
+        CourseResponseDTO courseDTO = new CourseResponseDTO();
         courseDTO.setId(course.getId());
         if (course.getAuthor() != null) {
             courseDTO.setAuthor(mapUserToDto(course.getAuthor()));
@@ -551,8 +538,8 @@ public class CourseService {
         return courseDTO;
     }
 
-    public static CategoryDTO mapCategoryToDto(Category category) {
-        CategoryDTO categoryDTO = new CategoryDTO();
+    public static CategoryResponseDTO mapCategoryToDto(Category category) {
+        CategoryResponseDTO categoryDTO = new CategoryResponseDTO();
         categoryDTO.setName(category.getName());
         categoryDTO.setId(category.getId());
         if (category.getPicture() != null) {
@@ -598,29 +585,20 @@ public class CourseService {
         return contentDataDTO;
     }
 
-    public Category mapDtoToCategory(CategoryDTO categoryDTO) {
-        //if id is provided then use that category
-        if (categoryDTO.getId() != null) {
-            return categoryRepository.findById(categoryDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Provided category was not found with ID: " + categoryDTO.getId()));
-        }
-        //else use default or nullify
-        return categoryRepository.findById(DEFAULT_CATEGORY_ID).orElse(null);
-    }
-
-    public CategoryDTO getCategoryById(Long categoryId) {
+    public CategoryResponseDTO getCategoryById(Long categoryId) {
         return mapCategoryToDto(categoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException("Category not found to get with ID: " + categoryId)));
     }
 
-    public List<CourseDTO> getAllCategoriesByCategory(Long categoryId) {
+    public List<CourseResponseDTO> getAllCoursesByCategory(Long categoryId) {
         List<Course> foundCourses = courseRepository.findAllByCategoryId(categoryId);
         return foundCourses.stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
-    public List<CourseDTO> getRecommendedCoursesForUser(Long userId) {
+    public List<CourseResponseDTO> getRecommendedCoursesForUser(Long userId) {
         // we recommend by taken courses: type should be same
         // we recommend by saved courses: keywords should be same
         // if no taken courses and no saved items, then same as explore page
-        List<CourseDTO> relatedCourses = new ArrayList<>();
+        List<CourseResponseDTO> relatedCourses = new ArrayList<>();
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         user.getTakenCourses()
                 .forEach((course) -> {
@@ -631,12 +609,12 @@ public class CourseService {
                     relatedCourses.addAll(getRelatedCourses(course));
                 });
         // remove duplicate course objects:
-        Set<CourseDTO> set = new LinkedHashSet<>(relatedCourses);
+        Set<CourseResponseDTO> set = new LinkedHashSet<>(relatedCourses);
         return new ArrayList<>(set);
     }
 
-    private List<CourseDTO> getRelatedCourses(Course course) {
-        List<CourseDTO> relatedCourses = new ArrayList<>(findCoursesByKeyword(course.getAuthor().getUsername()));
+    private List<CourseResponseDTO> getRelatedCourses(Course course) {
+        List<CourseResponseDTO> relatedCourses = new ArrayList<>(findCoursesByKeyword(course.getAuthor().getUsername()));
         Arrays.stream(course.getCourseName().split(" ")).forEach(word -> {
             relatedCourses.addAll(findCoursesByKeyword(word));
         });

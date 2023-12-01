@@ -1,4 +1,4 @@
-package com.zheenbek.music_learn.dto.course;
+package com.zheenbek.music_learn.dto.request_response.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

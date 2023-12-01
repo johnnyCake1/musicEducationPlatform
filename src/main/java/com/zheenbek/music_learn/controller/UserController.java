@@ -1,11 +1,9 @@
 package com.zheenbek.music_learn.controller;
 
-import com.zheenbek.music_learn.dto.course.CourseDTO;
-import com.zheenbek.music_learn.dto.user.UserDTO;
-import com.zheenbek.music_learn.entity.course.Course;
+import com.zheenbek.music_learn.dto.response.course.CourseResponseDTO;
+import com.zheenbek.music_learn.dto.request_response.user.UserDTO;
 import com.zheenbek.music_learn.entity.Review;
 import com.zheenbek.music_learn.service.CourseService;
-import com.zheenbek.music_learn.service.FileService;
 import com.zheenbek.music_learn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -93,8 +91,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/saved-courses")
-    public ResponseEntity<List<CourseDTO>> getAllSavedCourses(@PathVariable Long userId) {
-        List<CourseDTO> savedCourses = userService.getAllSavedCourses(userId);
+    public ResponseEntity<List<CourseResponseDTO>> getAllSavedCourses(@PathVariable Long userId) {
+        List<CourseResponseDTO> savedCourses = userService.getAllSavedCourses(userId);
         return new ResponseEntity<>(savedCourses, HttpStatus.OK);
     }
 
@@ -111,14 +109,14 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/taken-courses")
-    public ResponseEntity<List<CourseDTO>> getAllTakenCourses(@PathVariable Long userId) {
-        List<CourseDTO> takenCourses = userService.getAllTakenCourses(userId);
+    public ResponseEntity<List<CourseResponseDTO>> getAllTakenCourses(@PathVariable Long userId) {
+        List<CourseResponseDTO> takenCourses = userService.getAllTakenCourses(userId);
         return new ResponseEntity<>(takenCourses, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/published-courses")
-    public ResponseEntity<List<CourseDTO>> getAllPublishedCourses(@PathVariable Long userId) {
-        List<CourseDTO> savedCourses = userService.getAllPublishedCourses(userId);
+    public ResponseEntity<List<CourseResponseDTO>> getAllPublishedCourses(@PathVariable Long userId) {
+        List<CourseResponseDTO> savedCourses = userService.getAllPublishedCourses(userId);
         return new ResponseEntity<>(savedCourses, HttpStatus.OK);
     }
 

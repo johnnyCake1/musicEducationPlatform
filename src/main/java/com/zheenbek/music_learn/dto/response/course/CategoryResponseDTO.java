@@ -1,8 +1,8 @@
-package com.zheenbek.music_learn.dto.course;
+package com.zheenbek.music_learn.dto.response.course;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CategoryDTO {
+public class CategoryResponseDTO {
     private Long id;
     private String name;
     @JsonProperty(value = "img_url")

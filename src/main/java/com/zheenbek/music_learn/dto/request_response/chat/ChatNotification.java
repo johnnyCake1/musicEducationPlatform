@@ -1,4 +1,4 @@
-package com.zheenbek.music_learn.dto.chat;
+package com.zheenbek.music_learn.dto.request_response.chat;
 
 public class ChatNotification {
     private Long id;

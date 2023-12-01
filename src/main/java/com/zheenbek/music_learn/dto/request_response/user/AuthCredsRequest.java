@@ -1,4 +1,4 @@
-package com.zheenbek.music_learn.dto.user;
+package com.zheenbek.music_learn.dto.request_response.user;
 
 public class AuthCredsRequest {
     public AuthCredsRequest(){}

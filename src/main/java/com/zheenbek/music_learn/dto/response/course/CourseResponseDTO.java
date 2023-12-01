@@ -1,8 +1,9 @@
-package com.zheenbek.music_learn.dto.course;
+package com.zheenbek.music_learn.dto.response.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zheenbek.music_learn.dto.user.UserDTO;
+import com.zheenbek.music_learn.dto.request_response.course.CourseModuleDTO;
+import com.zheenbek.music_learn.dto.request_response.user.UserDTO;
 import com.zheenbek.music_learn.entity.Review;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CourseDTO {
+public class CourseResponseDTO {
     private Long id;
     private Long authorId;
     private UserDTO author;
@@ -19,7 +20,7 @@ public class CourseDTO {
     private String courseName;
     private String courseShortDescription;
     private String courseLongDescription;
-    private CategoryDTO category;
+    private CategoryResponseDTO category;
     @JsonProperty(value = "video_id")
     private Long promoVideoId;
     @JsonProperty(value = "video_url")
@@ -40,7 +41,7 @@ public class CourseDTO {
     private Date lastUpdatedDate;
     private boolean isPublished;
 
-    public CourseDTO() {
+    public CourseResponseDTO() {
 
     }
 
@@ -230,11 +231,11 @@ public class CourseDTO {
         this.enrolledStudents = enrolledStudents;
     }
 
-    public CategoryDTO getCategory() {
+    public CategoryResponseDTO getCategory() {
         return category;
     }
 
-    public void setCategory(CategoryDTO category) {
+    public void setCategory(CategoryResponseDTO category) {
         this.category = category;
     }
 
@@ -242,7 +243,7 @@ public class CourseDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CourseDTO courseDTO = (CourseDTO) o;
+        CourseResponseDTO courseDTO = (CourseResponseDTO) o;
         return Float.compare(price, courseDTO.price) == 0 && isPublished == courseDTO.isPublished && Objects.equals(id, courseDTO.id) && Objects.equals(authorId, courseDTO.authorId) && Objects.equals(author, courseDTO.author) && Objects.equals(courseName, courseDTO.courseName) && Objects.equals(courseShortDescription, courseDTO.courseShortDescription) && Objects.equals(courseLongDescription, courseDTO.courseLongDescription) && Objects.equals(category, courseDTO.category) && Objects.equals(promoVideoId, courseDTO.promoVideoId) && Objects.equals(promoVideoPath, courseDTO.promoVideoPath) && Objects.equals(previewImageId, courseDTO.previewImageId) && Objects.equals(previewImagePath, courseDTO.previewImagePath) && Objects.equals(enrolledStudentsIds, courseDTO.enrolledStudentsIds) && Objects.equals(savedInStudentsIds, courseDTO.savedInStudentsIds) && Objects.equals(enrolledStudents, courseDTO.enrolledStudents) && Objects.equals(curriculum, courseDTO.curriculum) && Objects.equals(requirements, courseDTO.requirements) && Objects.equals(whatYouWillLearn, courseDTO.whatYouWillLearn) && Objects.equals(tags, courseDTO.tags) && Objects.equals(reviews, courseDTO.reviews) && Objects.equals(creationDate, courseDTO.creationDate) && Objects.equals(lastUpdatedDate, courseDTO.lastUpdatedDate);
     }
 

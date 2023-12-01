@@ -1,1 +1,1 @@
-export const API_URL = 'https://api.melodiousacademy.com';
+export const API_URL = 'http://localhost:8080';

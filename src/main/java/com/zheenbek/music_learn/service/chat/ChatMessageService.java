@@ -1,78 +1,46 @@
 package com.zheenbek.music_learn.service.chat;
 
-import com.zheenbek.music_learn.dto.chat.ChatMessageDTO;
 import com.zheenbek.music_learn.entity.chat.ChatMessage;
-import com.zheenbek.music_learn.entity.chat.PrivateChat;
+import com.zheenbek.music_learn.entity.chat.ChatRoom;
 import com.zheenbek.music_learn.repository.chat.ChatMessageRepository;
-import com.zheenbek.music_learn.repository.chat.PrivateChatRepository;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
-
-import static com.zheenbek.music_learn.service.chat.PrivateChatService.mapChatMessageToDto;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
-    private final PrivateChatRepository privateChatRepository;
+    private final ChatRoomService chatRoomService;
 
-    public ChatMessageService(ChatMessageRepository chatMessageRepository, PrivateChatRepository privateChatRepository) {
-        this.chatMessageRepository = chatMessageRepository;
-        this.privateChatRepository = privateChatRepository;
+    public ChatMessageService(ChatMessageRepository chatMessage2Repository, ChatRoomService chatRoomService) {
+        this.chatMessageRepository = chatMessage2Repository;
+        this.chatRoomService = chatRoomService;
     }
 
-    @Transactional
-    public ChatMessageDTO saveChatMessage(ChatMessage chatMessage, Long privateChatId) {
-        // Fetch the PrivateChat instance first
-        PrivateChat privateChat = privateChatRepository.findById(privateChatId)
-                .orElseThrow(() -> new EntityNotFoundException("Private chat no found with ID " + privateChatId));
-        // Save the ChatMessage
-        chatMessage.setPrivateChat(privateChat);
-        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
-        // Add the ChatMessage to the PrivateChat
-        privateChat.getChatMessages().add(savedMessage);
-        // Save the PrivateChat
-        privateChatRepository.save(privateChat);
-
-
-        return mapChatMessageToDto(savedMessage);
+    public ChatMessage save(ChatMessage chatMessage2) {
+        ChatRoom chatRoom = chatRoomService.getChatRoom(
+                    chatMessage2.getSenderId(),
+                    chatMessage2.getRecipientId(),
+                    true
+                ).orElseThrow();
+        chatMessage2.setChatId(chatMessage2.getChatId());
+        ChatMessage newMessage = chatMessageRepository.save(chatMessage2);
+        chatRoom.setLastMessage(newMessage);
+        chatRoomService.save(chatRoom);
+        return newMessage;
     }
 
-    //chat room
-
-//    @Transactional
-//    public ChatMessageDTO saveChatMessage(ChatMessage chatMessage, Long privateChatId) {
-//        // Fetch the PrivateChat instance first
-//        PrivateChat privateChat = privateChatRepository.findById(privateChatId)
-//                .orElseThrow(() -> new EntityNotFoundException("Private chat no found with ID " + privateChatId));
-//        // Save the ChatMessage
-//        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
-//        // Set the PrivateChat on the saved ChatMessage
-//        savedMessage.setPrivateChat(privateChat);
-//        // Save the ChatMessage again
-//        savedMessage = chatMessageRepository.save(savedMessage);
-//        // Add the ChatMessage to the PrivateChat
-//        privateChat.getChatMessages().add(savedMessage);
-//        // Save the PrivateChat
-//        privateChatRepository.save(privateChat);
-//
-//        return mapChatMessageToDto(savedMessage);
-//    }
-
-
-
-
-
-    public ChatMessage createNewPrivateMessage(ChatMessage chatMessage, Long privateChatId){
-        PrivateChat privateChat = privateChatRepository.findById(privateChatId)
-                .orElseThrow(() -> new EntityNotFoundException(""));
-        ChatMessage savedChatMessage = chatMessageRepository.save(chatMessage);
-        if (!privateChat.getChatMessages().contains(savedChatMessage)){
-            privateChat.getChatMessages().add(savedChatMessage);
-        }
-        privateChatRepository.save(privateChat);
-        return savedChatMessage;
+    public List<ChatMessage> findChatMessages(Long senderId, Long recipientId) {
+        // a little bit dubious
+        return chatRoomService
+                .getChatRoom(senderId, recipientId)
+                .map(ChatRoom::getChatRoomId)
+                .map(chatMessageRepository::findByChatId)
+                .orElse(new ArrayList<>());
     }
 
+    public List<ChatRoom> findChatRoomsOfUser(Long userId) {
+        return chatRoomService.getChatRoomsBySenderId(userId);
+    }
 }

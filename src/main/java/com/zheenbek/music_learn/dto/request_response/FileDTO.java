@@ -1,4 +1,4 @@
-package com.zheenbek.music_learn.dto;
+package com.zheenbek.music_learn.dto.request_response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

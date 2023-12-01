@@ -1,23 +1,17 @@
 package com.zheenbek.music_learn.service;
 
-import com.zheenbek.music_learn.dto.chat.ChatMessageDTO;
-import com.zheenbek.music_learn.dto.chat.PrivateChatDTO;
-import com.zheenbek.music_learn.dto.course.CourseDTO;
-import com.zheenbek.music_learn.dto.user.UserDTO;
+import com.zheenbek.music_learn.dto.response.course.CourseResponseDTO;
+import com.zheenbek.music_learn.dto.request_response.user.UserDTO;
 import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Review;
-import com.zheenbek.music_learn.entity.chat.ChatMessage;
-import com.zheenbek.music_learn.entity.chat.PrivateChat;
 import com.zheenbek.music_learn.entity.course.Course;
 import com.zheenbek.music_learn.entity.user.Role;
 import com.zheenbek.music_learn.entity.user.User;
-import com.zheenbek.music_learn.repository.chat.PrivateChatRepository;
 import com.zheenbek.music_learn.repository.course.CourseRepository;
 import com.zheenbek.music_learn.repository.FileRepository;
 import com.zheenbek.music_learn.repository.ReviewRepository;
 import com.zheenbek.music_learn.repository.user.RoleRepository;
 import com.zheenbek.music_learn.repository.user.UserRepository;
-import com.zheenbek.music_learn.service.chat.PrivateChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,20 +40,17 @@ public class UserService {
     private final FileRepository fileRepository;
     private final ReviewRepository reviewRepository;
     private final ServerFileStorageService serverFileStorageService;
-    private final PrivateChatRepository privateChatRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, FileRepository fileRepository,
                        ServerFileStorageService serverFileStorageService, CourseRepository courseRepository,
-                       ReviewRepository reviewRepository, RoleRepository roleRepository,
-                       PrivateChatRepository privateChatRepository) {
+                       ReviewRepository reviewRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.fileRepository = fileRepository;
         this.serverFileStorageService = serverFileStorageService;
         this.courseRepository = courseRepository;
         this.reviewRepository = reviewRepository;
         this.roleRepository = roleRepository;
-        this.privateChatRepository = privateChatRepository;
     }
 
     public UserDTO createNewUser(String username, String password) {
@@ -222,7 +213,7 @@ public class UserService {
     }
 
     @Transactional
-    public List<CourseDTO> getAllTakenCourses(Long userId) {
+    public List<CourseResponseDTO> getAllTakenCourses(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId))
                 .getTakenCourses()
@@ -230,7 +221,7 @@ public class UserService {
     }
 
     @Transactional
-    public List<CourseDTO> getAllSavedCourses(Long userId) {
+    public List<CourseResponseDTO> getAllSavedCourses(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId))
                 .getSavedCourses()
@@ -238,7 +229,7 @@ public class UserService {
     }
 
     @Transactional
-    public List<CourseDTO> getAllPublishedCourses(Long userId) {
+    public List<CourseResponseDTO> getAllPublishedCourses(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId))
                 .getPublishedCourses()

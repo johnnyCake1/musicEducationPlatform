@@ -1,16 +1,9 @@
 package com.zheenbek.music_learn.entity.chat;
 
-import com.zheenbek.music_learn.entity.FileEntity;
-import com.zheenbek.music_learn.entity.user.User;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import java.util.Date;
 
 @Entity
@@ -19,18 +12,53 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "private_chat_id", referencedColumnName = "id")
-    private PrivateChat privateChat;
-
-    @ManyToOne
-    @JoinColumn(name = "sender_id", referencedColumnName = "id")
-    private User sender;
-
+    private String chatId;
+    private Long senderId;
+    private Long recipientId;
     private String content;
-    private Date createdAt;
-    @OneToOne
-    private FileEntity file;
+    private Date timestamp;
+    public ChatMessage() {}
+
+    public ChatMessage(Long id, String chatId, Long senderId, Long recipientId, String content, Date timestamp) {
+        this.id = id;
+        this.chatId = chatId;
+        this.senderId = senderId;
+        this.recipientId = recipientId;
+        this.content = content;
+        this.timestamp = timestamp;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
+    }
+
+    public Long getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+
+    public Long getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(Long recipientId) {
+        this.recipientId = recipientId;
+    }
 
     public String getContent() {
         return content;
@@ -40,43 +68,11 @@ public class ChatMessage {
         this.content = content;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public FileEntity getFile() {
-        return file;
-    }
-
-    public void setFile(FileEntity file) {
-        this.file = file;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public PrivateChat getPrivateChat() {
-        return privateChat;
-    }
-
-    public void setPrivateChat(PrivateChat privateChat) {
-        this.privateChat = privateChat;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

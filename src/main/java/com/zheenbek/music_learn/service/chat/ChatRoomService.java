@@ -22,17 +22,16 @@ public class ChatRoomService {
         this.userRepository = userRepository;
     }
 
-    public Optional<String> getChatRoomId(Long senderId, Long recipientId) {
-        return getChatRoomId(senderId, recipientId, false);
+    public Optional<ChatRoom> getChatRoom(Long senderId, Long recipientId) {
+        return getChatRoom(senderId, recipientId, false);
     }
 
-    public Optional<String> getChatRoomId(Long senderId, Long recipientId, boolean createRoomIfNotExists) {
+    public Optional<ChatRoom> getChatRoom(Long senderId, Long recipientId, boolean createRoomIfNotExists) {
         return chatRoomRepository.findBySenderIdAndRecipientId(senderId, recipientId)
-                .map(ChatRoom::getChatRoomId)
                 .or(() -> {
                     if (createRoomIfNotExists) {
-                        String chatRoomId = createChatRoom(senderId, recipientId);
-                        return Optional.of(chatRoomId);
+                        ChatRoom chatRoom = createChatRoom(senderId, recipientId);
+                        return Optional.of(chatRoom);
                     }
                     return Optional.empty();
                 });
@@ -43,14 +42,17 @@ public class ChatRoomService {
                 .orElse(new ArrayList<>());
     }
 
-    private String createChatRoom(Long senderId, Long recipientId) {
+    public ChatRoom save (ChatRoom chatRoom) {
+        return chatRoomRepository.save(chatRoom);
+    }
+
+    private ChatRoom createChatRoom(Long senderId, Long recipientId) {
         String chatRoomId = String.format("%s_%s", senderId, recipientId);
         User recipientUser = userRepository.findById(recipientId).orElseThrow();
         User senderUser = userRepository.findById(senderId).orElseThrow();
 
-        chatRoomRepository.save(new ChatRoom(senderId, recipientId, chatRoomId, recipientUser.getUsername(), FILES_SERVING_ENDPOINT + '/' + recipientUser.getProfilePic().getFileName()));
         chatRoomRepository.save(new ChatRoom(recipientId, senderId, chatRoomId, senderUser.getUsername(), FILES_SERVING_ENDPOINT + '/' + senderUser.getProfilePic().getFileName()));
-        return chatRoomId;
+        return chatRoomRepository.save(new ChatRoom(senderId, recipientId, chatRoomId, recipientUser.getUsername(), FILES_SERVING_ENDPOINT + '/' + recipientUser.getProfilePic().getFileName()));
     }
 
 }

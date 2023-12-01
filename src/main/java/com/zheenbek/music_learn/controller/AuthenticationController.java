@@ -1,8 +1,8 @@
 package com.zheenbek.music_learn.controller;
 
 import com.zheenbek.music_learn.config.JwtUtil;
-import com.zheenbek.music_learn.dto.user.AuthCredsRequest;
-import com.zheenbek.music_learn.dto.user.UserDTO;
+import com.zheenbek.music_learn.dto.request_response.user.AuthCredsRequest;
+import com.zheenbek.music_learn.dto.request_response.user.UserDTO;
 import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;

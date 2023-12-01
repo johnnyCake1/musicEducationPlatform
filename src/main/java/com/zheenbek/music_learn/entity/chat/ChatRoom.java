@@ -2,10 +2,8 @@ package com.zheenbek.music_learn.entity.chat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class ChatRoom {
@@ -23,6 +21,8 @@ public class ChatRoom {
      * Each room has a name. For a private chatroom the convention is that chatroom will have recipient's username.
      */
     private String chatRoomName;
+    @ManyToOne
+    private ChatMessage lastMessage;
     private Long senderId;
     private Long recipientId;
     @JsonProperty(value = "img_url")
@@ -36,6 +36,14 @@ public class ChatRoom {
         this.chatRoomId = chatRoomId;
         this.chatRoomName = chatRoomName;
         this.chatRoomPicturePath = chatRoomPicturePath;
+    }
+
+    public ChatMessage getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(ChatMessage lastMessage) {
+        this.lastMessage = lastMessage;
     }
 
     public String getChatRoomName() {
