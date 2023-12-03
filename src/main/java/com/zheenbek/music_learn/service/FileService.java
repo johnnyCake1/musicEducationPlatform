@@ -2,7 +2,9 @@ package com.zheenbek.music_learn.service;
 
 import com.zheenbek.music_learn.dto.request_response.FileDTO;
 import com.zheenbek.music_learn.entity.FileEntity;
+import com.zheenbek.music_learn.entity.user.User;
 import com.zheenbek.music_learn.repository.FileRepository;
+import com.zheenbek.music_learn.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class FileService {
 
     private final FileRepository fileRepository;
     private final ServerFileStorageService serverFileStorageService;
+    private final UserRepository userRepository;
 
     public static String FILES_SERVING_ENDPOINT;
     @Value("${files-endpoint}")
@@ -31,9 +34,10 @@ public class FileService {
 
 
     @Autowired
-    public FileService(FileRepository fileRepository, ServerFileStorageService serverFileStorageService) {
+    public FileService(FileRepository fileRepository, ServerFileStorageService serverFileStorageService, UserRepository userRepository) {
         this.fileRepository = fileRepository;
         this.serverFileStorageService = serverFileStorageService;
+        this.userRepository = userRepository;
     }
 
     public FileDTO createFile(MultipartFile file) throws IOException {
@@ -60,5 +64,27 @@ public class FileService {
         }
         fileDTO.setMediaType(fileEntity.getMediaType());
         return fileDTO;
+    }
+
+    public FileDTO saveFileToUserStorage(Long fileId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Couldn't add file to user storage: User entity not found with ID: " + userId));
+        FileEntity fileEntity = fileRepository.findById(fileId)
+                .orElseThrow(() -> new EntityNotFoundException("Couldn't add file to user storage: File entity not found with ID: " + fileId));
+        if (!user.getStoredFiles().contains(fileEntity)) {
+            user.getStoredFiles().add(fileEntity);
+        }
+        userRepository.save(user);
+        return mapFileEntityToDto(fileEntity);
+    }
+
+    public FileDTO removeFileFromUserStorage(Long fileId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Couldn't remove file from user storage: User entity not found with ID: " + userId));
+        FileEntity fileEntity = fileRepository.findById(fileId)
+                .orElseThrow(() -> new EntityNotFoundException("Couldn't remove file from user storage: File entity not found with ID: " + fileId));
+        user.getStoredFiles().remove(fileEntity);
+        userRepository.save(user);
+        return mapFileEntityToDto(fileEntity);
     }
 }

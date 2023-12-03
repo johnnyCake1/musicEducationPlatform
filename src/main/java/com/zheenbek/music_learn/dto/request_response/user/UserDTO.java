@@ -1,6 +1,8 @@
 package com.zheenbek.music_learn.dto.request_response.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zheenbek.music_learn.dto.request_response.FileDTO;
+import com.zheenbek.music_learn.entity.FileEntity;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -25,7 +27,7 @@ public class UserDTO {
     private List<Long> takenCoursesIds;
     private List<Long> savedCoursesIds;
     private List<Long> draftCoursesIds;
-    private List<Long> storedFilesIds;
+    private List<FileDTO> storedFiles;
     Collection<? extends GrantedAuthority> authorities = new HashSet<>();
 
     public Long getId() {
@@ -145,12 +147,12 @@ public class UserDTO {
         this.tags = tags;
     }
 
-    public List<Long> getStoredFilesIds() {
-        return storedFilesIds;
+    public List<FileDTO> getStoredFiles() {
+        return storedFiles;
     }
 
-    public void setStoredFilesIds(List<Long> storedFilesIds) {
-        this.storedFilesIds = storedFilesIds;
+    public void setStoredFiles(List<FileDTO> storedFiles) {
+        this.storedFiles = storedFiles;
     }
 
     public String getAccessToken() {

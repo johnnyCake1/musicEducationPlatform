@@ -30,7 +30,6 @@ import static com.zheenbek.music_learn.controller.CourseController.getFileSystem
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
-
     private final UserService userService;
     private final CourseService courseService;
 

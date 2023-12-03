@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.zheenbek.music_learn.service.FileService.FILES_SERVING_ENDPOINT;
+import static com.zheenbek.music_learn.service.FileService.mapFileEntityToDto;
 import static com.zheenbek.music_learn.service.ServerFileStorageService.fileEntityFromFile;
 
 @Service
@@ -317,6 +318,7 @@ public class UserService {
         userDTO.setTakenCoursesIds(user.getTakenCourses().stream().map(Course::getId).collect(Collectors.toList()));
         userDTO.setDraftCoursesIds(user.getDraftCourses().stream().map(Course::getId).collect(Collectors.toList()));
         userDTO.setSavedCoursesIds(user.getSavedCourses().stream().map(Course::getId).collect(Collectors.toList()));
+        userDTO.setStoredFiles(user.getStoredFiles().stream().map(FileService::mapFileEntityToDto).collect(Collectors.toList()));
         //  userDTO.setPrivateChats(user.getPrivateChats().stream().map(PrivateChatService::mapPrivateChatToDto).collect(Collectors.toList()));
         //  userDTO.setAuthorities(user.getAuthorities()); //this is causing cyclic relationship
         return userDTO;
