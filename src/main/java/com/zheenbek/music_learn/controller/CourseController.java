@@ -180,6 +180,7 @@ public class CourseController {
                 throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : charging the card failed: %s", userId, user, e));
             }
         }
+        System.out.println("Before RETURNING");
         CourseResponseDTO result = courseService.enrollUser(course, user);
         System.out.println("RETURNING " + result);
         return new ResponseEntity<>(result, HttpStatus.OK);

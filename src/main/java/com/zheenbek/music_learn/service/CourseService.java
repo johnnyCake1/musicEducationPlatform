@@ -378,6 +378,7 @@ public class CourseService {
 
     @Transactional
     public CourseResponseDTO enrollUser(@NotNull Course course, @NotNull User user) {
+        System.out.println("Trying to enroll");
         if (!user.getTakenCourses().contains(course)) {
             user.getTakenCourses().add(course);
             userRepository.save(user);
@@ -386,6 +387,7 @@ public class CourseService {
             course.getEnrolledStudents().add(user);
             courseRepository.save(course);
         }
+        System.out.println("Enroll saved");
         return mapCourseToDto(course);
     }
 
