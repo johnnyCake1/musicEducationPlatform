@@ -3,7 +3,6 @@ package com.zheenbek.music_learn.entity.chat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 public class ChatRoom {

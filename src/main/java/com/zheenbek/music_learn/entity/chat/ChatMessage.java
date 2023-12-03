@@ -19,15 +19,6 @@ public class ChatMessage {
     private Date timestamp;
     public ChatMessage() {}
 
-    public ChatMessage(Long id, String chatId, Long senderId, Long recipientId, String content, Date timestamp) {
-        this.id = id;
-        this.chatId = chatId;
-        this.senderId = senderId;
-        this.recipientId = recipientId;
-        this.content = content;
-        this.timestamp = timestamp;
-    }
-
     public Long getId() {
         return id;
     }

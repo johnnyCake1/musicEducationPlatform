@@ -50,14 +50,7 @@ const ProfilePage = () => {
   }, [jwt, userId, navigate]);
 
   const handleMessage = () => {
-    httpReqAsync(
-      `/api/v1/chats/private-chats/${currentUser.id}/${userId}`,
-      "POST",
-      jwt
-    ).then((convId) => {
-      console.log("conv created!:", convId);
-      navigate(`/chat`);
-    });
+    navigate(`/chat?otherUserId=${userId}`);
   };
 
   console.log("profile card loaded");

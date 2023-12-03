@@ -3,7 +3,6 @@ import "./Dashboard.css";
 import CoursePreviewCard from "../Course/components/CoursePreviewCard";
 import MyCourseCard from "../Course/components/MyCourseCard";
 import SavedItemsPreviewCard from "../Saved/components/SavedItemsPreviewCard";
-import Conversations from "../Chat/components/Conversations";
 import { Link, useNavigate } from "react-router-dom";
 import useLocalStorageState from "../../util/useLocalStorageState";
 import { httpReqAsync } from "../../services/httpReqAsync";
@@ -41,9 +40,7 @@ const Dashboard = () => {
   const [jwt] = useLocalStorageState("", "jwt");
   const [currentUser] = useLocalStorageState(null, "currentUser");
   useEffect(() => {
-    httpReqAsync(`/api/v1/conversations`, "GET", jwt).then((convs) => {
-      setConversations(convs);
-    });
+    
   }, [jwt]);
 
   const navigate = useNavigate();
@@ -111,16 +108,11 @@ const Dashboard = () => {
       <div className="section-container chat">
         <h2>Chats</h2>
         {conversations && conversations.length > 0 ? (
-          <Conversations
-            privateChats={conversations.slice(0, 4)}
-            onClick={(conv) => {
-              navigate("/chat");
-            }}
-          />
+          // place recent conversations here
+          <></>
         ) : (
           <div className="centered">You don't have any conversations yet</div>
         )}
-
         <Link to="/chat" className="see-all-link">
           See all of my chats
         </Link>

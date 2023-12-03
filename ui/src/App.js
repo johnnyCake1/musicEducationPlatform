@@ -7,7 +7,6 @@ import ProfilePage from "./components/Profile/ProfilePage";
 
 import SearchResult from "./components/Search/SearchResult";
 import CourseDescription from "./components/Course/CourseDescription";
-import ChatPage from "./components/Chat/ChatPage";
 import MyCourses from "./components/MyCourses/MyCourses";
 import Courses from "./components/Courses/Courses";
 import Storage from "./components/Saved/Storage";
@@ -68,8 +67,7 @@ function App() {
             path="/my-learnings"
             element={withSidebarAndAuth(MyLearnings)}
           />
-          <Route path="/demoChat" element={withSidebarAndAuth(ChatComponent)} />
-          <Route path="/chat" element={withSidebarAndAuth(ChatPage)} />
+          <Route path="/chat" element={withSidebarAndAuth(ChatComponent)} />
         </Routes>
       </div>
     </div>

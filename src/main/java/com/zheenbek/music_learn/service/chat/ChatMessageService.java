@@ -18,16 +18,22 @@ public class ChatMessageService {
         this.chatRoomService = chatRoomService;
     }
 
-    public ChatMessage save(ChatMessage chatMessage2) {
+    public ChatMessage save(ChatMessage chatMessage) {
         ChatRoom chatRoom = chatRoomService.getChatRoom(
-                    chatMessage2.getSenderId(),
-                    chatMessage2.getRecipientId(),
+                    chatMessage.getSenderId(),
+                    chatMessage.getRecipientId(),
                     true
                 ).orElseThrow();
-        chatMessage2.setChatId(chatMessage2.getChatId());
-        ChatMessage newMessage = chatMessageRepository.save(chatMessage2);
+        ChatRoom chatRoom2 = chatRoomService.getChatRoom(
+                chatMessage.getRecipientId(),
+                chatMessage.getSenderId()
+        ).orElseThrow();
+        chatMessage.setChatId(chatRoom.getChatRoomId());
+        ChatMessage newMessage = chatMessageRepository.save(chatMessage);
         chatRoom.setLastMessage(newMessage);
+        chatRoom2.setLastMessage(newMessage);
         chatRoomService.save(chatRoom);
+        chatRoomService.save(chatRoom2);
         return newMessage;
     }
 

@@ -1,24 +1,34 @@
 // ChatComponent.js
 import React, { useState, useEffect } from 'react';
-import { webSocketService } from './webSocketService';
+import { webSocketService } from '../../services/webSocketService';
 import useLocalStorageState from '../../util/useLocalStorageState';
 import { httpReqAsync } from '../../services/httpReqAsync';
+import { useLocation, useParams } from 'react-router-dom';
+import ChatRoomList from './components/ChatRoomList';
+import "./ChatComponent.css"
 
 const ChatComponent = () => {
+    const location = useLocation();
+    // Get the query string from the location
+    // Parse the query string into an object
+    const queryParams = new URLSearchParams(location.search);
+    // Access the initial active chat through query parameters
+    const otherUserIdQueryParam = queryParams.get('otherUserId');
+
+    const [recipientUserId, setRecipientUserId] = useState(otherUserIdQueryParam);
     const [currentUser] = useLocalStorageState(null, "currentUser");
     const [jwt] = useLocalStorageState("", "jwt");
-
-    console.log("current user:", currentUser);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const otherUserId = currentUser.id === 1 ? 3 : 1; // Send to user 3 if current user is 1, and vice versa
 
     useEffect(() => {
         //retrieve existing messages
-        httpReqAsync(`/api/v1/messages/${currentUser.id}/${otherUserId}`, "GET", jwt).then((result) => {
+        httpReqAsync(`/api/v1/messages/${currentUser.id}/${recipientUserId}`, "GET", jwt).then((result) => {
             console.log("I got the messages:", result);
-            setMessages(result);
-          });
+            setMessages(result ?? []);
+        }).catch(err => {
+            console.log("Couldn't fetch messages for this chatroom")
+        });
 
         //connect to proper web socket
         webSocketService.connect(currentUser.id, (message) => {
@@ -29,14 +39,14 @@ const ChatComponent = () => {
         return () => {
             webSocketService.disconnect();
         };
-    }, [webSocketService, currentUser.id]);
+    }, [currentUser.id, recipientUserId]);
 
     const sendMessage = () => {
         const timestamp = new Date(); // Current time
-        const messageToSend = { 
-            content: newMessage, 
-            senderId: currentUser.id, 
-            recipientId: otherUserId,
+        const messageToSend = {
+            content: newMessage,
+            senderId: currentUser.id,
+            recipientId: recipientUserId,
             timestamp: timestamp.toISOString() // ISO 8601 format
         };
         webSocketService.sendMessage(`/app/chat`, messageToSend);
@@ -45,14 +55,23 @@ const ChatComponent = () => {
     };
 
     return (
-        <div>
-            <ul>
-                {messages.map((msg, index) => (
-                    <li key={index}>{msg.content}</li>
-                ))}
-            </ul>
-            <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
-            <button onClick={sendMessage}>Send</button>
+        <div className="chat-component">
+            <div className="chat-room-list">
+                <ChatRoomList handleSetActiveChatUserId={setRecipientUserId}/>
+            </div>
+            {recipientUserId ?
+                <div className="active-chat">
+                    <ul>
+                        {messages.map((msg, index) => (
+                            <li key={index}>{msg.content}</li>
+                        ))}
+                    </ul>
+                    <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+                    <button onClick={sendMessage}>Send</button>
+                </div> 
+                : 
+                <div className='active-chat'> Chat not chosen</div>
+            }
         </div>
     );
 };

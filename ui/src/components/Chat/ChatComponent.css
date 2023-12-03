@@ -1,0 +1,23 @@
+/* ChatComponent.css */
+.chat-component {
+    display: flex;
+    /* Use flex layout */
+    height: 100vh;
+    /* Set the component height to 100% of the viewport */
+}
+
+.chat-room-list {
+    flex: 1;
+    /* Occupy 1/3 of the available space (adjust as needed) */
+    overflow-y: auto;
+    /* Enable vertical scrolling if the chat list overflows */
+    border-right: 1px solid #ccc;
+    /* Add a border to separate chat list from chat content */
+    padding: 10px;
+}
+
+.active-chat {
+    flex: 2;
+    /* Occupy 2/3 of the available space (adjust as needed) */
+    padding: 10px;
+}
