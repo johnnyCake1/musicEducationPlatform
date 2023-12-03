@@ -23,12 +23,15 @@ const ChatComponent = () => {
 
     useEffect(() => {
         //retrieve existing messages
-        httpReqAsync(`/api/v1/messages/${currentUser.id}/${recipientUserId}`, "GET", jwt).then((result) => {
-            console.log("I got the messages:", result);
-            setMessages(result ?? []);
-        }).catch(err => {
-            console.log("Couldn't fetch messages for this chatroom")
-        });
+        if (recipientUserId){
+            httpReqAsync(`/api/v1/messages/${currentUser.id}/${recipientUserId}`, "GET", jwt).then((result) => {
+                console.log("I got the messages:", result);
+                setMessages(result);
+            }).catch(err => {
+                console.log("Couldn't fetch messages for this chatroom")
+            });
+        }
+        
 
         //connect to proper web socket
         webSocketService.connect(currentUser.id, (message) => {

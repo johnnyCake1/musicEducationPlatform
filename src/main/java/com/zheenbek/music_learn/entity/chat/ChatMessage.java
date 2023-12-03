@@ -1,9 +1,9 @@
 package com.zheenbek.music_learn.entity.chat;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zheenbek.music_learn.entity.FileEntity;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -16,6 +16,8 @@ public class ChatMessage {
     private Long senderId;
     private Long recipientId;
     private String content;
+    @JsonProperty(value = "file_url")
+    private String filePath;
     private Date timestamp;
     public ChatMessage() {}
 
@@ -65,5 +67,13 @@ public class ChatMessage {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

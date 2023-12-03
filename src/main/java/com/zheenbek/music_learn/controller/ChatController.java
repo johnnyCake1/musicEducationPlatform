@@ -33,7 +33,15 @@ public class ChatController {
         ChatMessage savedMessage = chatMessageService.save(chatMessage);
         messagingTemplate.convertAndSendToUser(
                 String.valueOf(savedMessage.getRecipientId()), "queue/messages",
-                new ChatNotification(savedMessage.getId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent())
+                new ChatNotification(
+                        savedMessage.getId(),
+                        savedMessage.getChatId(),
+                        savedMessage.getSenderId(),
+                        savedMessage.getRecipientId(),
+                        savedMessage.getContent(),
+                        savedMessage.getFilePath(),
+                        savedMessage.getTimestamp()
+                )
         );
     }
 
