@@ -38,7 +38,7 @@ public class ChatRoomService {
     }
 
     public List<ChatRoom> getChatRoomsBySenderId(Long senderId) {
-        return chatRoomRepository.findBySenderIdOrderByLastMessageTimestampAsc(senderId)
+        return chatRoomRepository.findBySenderIdOrderByLastMessageTimestampDesc(senderId)
                 .orElse(Collections.emptyList());
     }
 
