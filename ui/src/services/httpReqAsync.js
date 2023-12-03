@@ -22,17 +22,22 @@ export function httpReqAsync(url, reqMethod, jwt, reqBody) {
     }
   }
 
-  return fetch(API_URL + url, fetchData).then((res) => {
-    if (200 <= res.status && res.status < 300) {
-      const contentType = res.headers.get("Content-Type");
-      if (contentType && contentType.includes("application/json")) {
-        return res.json(); // Parse the response body as JSON
-      } else {
-        return res.text(); // Get the response body as text
-      }
-    }
-    console.log("bad request!");
-  });
+  return fetch(API_URL + url, fetchData)
+    .then((res) => {
+      if (200 <= res.status && res.status < 300) {
+        const contentType = res.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          return res.json(); // Parse the response body as JSON
+        } else {
+          return res.text(); // Get the response body as text
+        }
+      } 
+      return res.json();
+    })
+    .catch((error) => {
+      console.error("Error:", error.message); 
+      return Promise.reject("An error occurred while making the request.");
+    });
 }
 
 export function getFile(url, jwt, reqBody) {
