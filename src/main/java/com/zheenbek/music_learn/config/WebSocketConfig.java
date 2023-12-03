@@ -17,23 +17,8 @@ import java.util.List;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    @Value("${hostname}")
-    private String HOSTNAME;
-
     @Value("${allowed-origins}")
     private List<String> allowedOrigins;
-
-//    @Override
-//    public void configureMessageBroker(MessageBrokerRegistry registry) {
-//        registry.enableSimpleBroker("/topic", "/queue");
-//        registry.setApplicationDestinationPrefixes("/app");
-//        registry.setUserDestinationPrefix("/user");
-//    }
-
-//    @Override
-//    public void registerStompEndpoints(StompEndpointRegistry registry) {
-//        registry.addEndpoint("/chat").setAllowedOrigins(HOSTNAME).withSockJS();
-//    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -45,7 +30,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         String[] originsArray = allowedOrigins.toArray(new String[0]);
-
         registry.addEndpoint("/ws")
                 .setAllowedOrigins(originsArray)
                 .withSockJS();

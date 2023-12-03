@@ -1,6 +1,5 @@
 package com.zheenbek.music_learn.controller;
 
-import com.zheenbek.music_learn.dto.request_response.chat.ChatNotification;
 import com.zheenbek.music_learn.entity.chat.ChatMessage;
 import com.zheenbek.music_learn.entity.chat.ChatRoom;
 import com.zheenbek.music_learn.service.chat.ChatMessageService;
@@ -31,17 +30,29 @@ public class ChatController {
     @MessageMapping("/chat")
     public void processMessage (@Payload ChatMessage chatMessage) {
         ChatMessage savedMessage = chatMessageService.save(chatMessage);
+
+        List<ChatMessage> recipientChatMessages = chatMessageService.findChatMessages(savedMessage.getSenderId(), savedMessage.getRecipientId());
+        List<ChatMessage> senderChatMessages = chatMessageService.findChatMessages(savedMessage.getSenderId(), savedMessage.getRecipientId());
+
+        List<ChatRoom> recipientChatRooms = chatMessageService.findChatRoomsOfUser(savedMessage.getRecipientId());
+        List<ChatRoom> senderChatRooms = chatMessageService.findChatRoomsOfUser(savedMessage.getSenderId());
+        //send to recipient
         messagingTemplate.convertAndSendToUser(
                 String.valueOf(savedMessage.getRecipientId()), "queue/messages",
-                new ChatNotification(
-                        savedMessage.getId(),
-                        savedMessage.getChatId(),
-                        savedMessage.getSenderId(),
-                        savedMessage.getRecipientId(),
-                        savedMessage.getContent(),
-                        savedMessage.getFilePath(),
-                        savedMessage.getTimestamp()
-                )
+                recipientChatMessages
+        );
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(savedMessage.getRecipientId()), "queue/chatrooms",
+                recipientChatRooms
+        );
+        //send to sender himself
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(savedMessage.getSenderId()), "queue/messages",
+                senderChatMessages
+        );
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(savedMessage.getSenderId()), "queue/chatrooms",
+                senderChatRooms
         );
     }
 
