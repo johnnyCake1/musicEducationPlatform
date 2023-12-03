@@ -169,10 +169,10 @@ public class CourseController {
                 throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Invalid stripe token", userId, id));
             }
             if (amount > course.getPrice()) {
-                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is greater than the actual course price", userId, id));
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is greater than the actual course price. Amount paid: %s, Actual price: %s", userId, id, amount, course.getPrice()));
             }
             if (amount < course.getPrice()) {
-                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is less than the actual course price", userId, id));
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is less than the actual course price. Amount paid: %s, Actual price: %s", userId, id, amount, course.getPrice()));
             }
             if (Objects.equals(course.getAuthor().getId(), user.getId())){
                 throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : The author cannot enroll to his own course", userId, id));
