@@ -6,7 +6,7 @@ import com.zheenbek.music_learn.repository.chat.ChatRoomRepository;
 import com.zheenbek.music_learn.repository.user.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +38,8 @@ public class ChatRoomService {
     }
 
     public List<ChatRoom> getChatRoomsBySenderId(Long senderId) {
-        return chatRoomRepository.getChatRoomBySenderId(senderId)
-                .orElse(new ArrayList<>());
+        return chatRoomRepository.findBySenderIdOrderByLastMessageTimestampAsc(senderId)
+                .orElse(Collections.emptyList());
     }
 
     public ChatRoom save (ChatRoom chatRoom) {
