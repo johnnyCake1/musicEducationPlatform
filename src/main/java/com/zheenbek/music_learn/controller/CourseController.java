@@ -163,7 +163,7 @@ public class CourseController {
         System.out.println("ENROLLMENT INITIATED: userid: " + userId + " courseid:" + id + " token: " + token + " amount: " + amount);
         Course course = courseService.findCourseById(id);
         User user = userService.getUserById(userId);
-        System.out.println("Course price:" + course + " paid amount:" + amount);
+        System.out.println("Course price:" + course.getPrice() + " paid amount:" + amount);
         if (course.getPrice() > 0) {
             if (token == null || token.isEmpty()) {
                 throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Invalid stripe token", userId, id));
