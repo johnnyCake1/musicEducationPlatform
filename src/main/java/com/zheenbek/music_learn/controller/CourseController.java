@@ -159,7 +159,7 @@ public class CourseController {
                                                         @RequestParam Long userId,
                                                         @RequestHeader(value = "token", required = false, defaultValue = "") final String token,
                                                         @RequestHeader(value = "amount", required = false, defaultValue = "0.0") final Double amount) {
-        System.out.println("ENROLLMENT INITIATED");
+        System.out.println("ENROLLMENT INITIATED: userid: " + userId + " courseid:" + id + " token: " + token + " amount: " + amount);
         Course course = courseService.findCourseById(id);
         User user = userService.getUserById(userId);
         System.out.println("Course and user:" + course + " " + user);
