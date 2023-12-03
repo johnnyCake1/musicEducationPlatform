@@ -5,18 +5,7 @@ import com.zheenbek.music_learn.entity.FileEntity;
 import com.zheenbek.music_learn.entity.Review;
 import com.zheenbek.music_learn.entity.user.User;
 
-import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,7 +40,9 @@ public class Course {
     private List<CourseModule> curriculum = new ArrayList<>();
     private float price;
     private String courseName;
+    @Column(length = 1000)
     private String courseShortDescription;
+    @Column(length = 10000)
     private String courseLongDescription;
     @ManyToOne
     private Category category;
