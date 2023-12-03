@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/courses")
@@ -172,6 +173,9 @@ public class CourseController {
             }
             if (amount < course.getPrice()) {
                 throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is less than the actual course price", userId, user));
+            }
+            if (Objects.equals(course.getAuthor().getId(), user.getId())){
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : The author cannot enroll to his own course", userId, user));
             }
             try {
                 stripeService.chargeNewCard(token, amount);
