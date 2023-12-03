@@ -2,13 +2,14 @@ import React from "react";
 import Stripe from "react-stripe-checkout";
 import axios from "axios";
 import useLocalStorageState from "../../util/useLocalStorageState";
+import { API_URL, STRIPE_KEY } from "../../constants";
 
-const StripePayment = () => {
-  const [jwt] = useLocalStorageState("", "jwt");
-
+const StripePayment = ({ courseId }) => {
+    const [jwt] = useLocalStorageState("", "jwt");
+    const [currentUser] = useLocalStorageState(null, "currentUser");
     async function handleToken(token) {
-        console.log(token);
-        await axios.post("http://localhost:8080/api/v1/payment/charge", "", {
+        await axios.post(`${API_URL}/api/v1/courses/${courseId}/enroll?userId=${currentUser.id}`,
+            "", {
             headers: {
                 token: token.id,
                 amount: 500,
@@ -21,9 +22,9 @@ const StripePayment = () => {
         });
     }
     return (
-        <div className="App">
+        <div className="stripe-payment-div">
             <Stripe
-                stripeKey="pk_test_51OIDEwIuz35fCUd4lNc7DtYv1B116WgS8716JFDM17FWJQyk2yFi1753yJBDvCJCP7KrWxiYzfEfpKByo2dhJh2S00Qyvzdb0X"
+                stripeKey={STRIPE_KEY}
                 token={handleToken}
             />
         </div>
