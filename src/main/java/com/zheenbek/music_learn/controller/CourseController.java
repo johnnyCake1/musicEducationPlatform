@@ -163,25 +163,25 @@ public class CourseController {
         System.out.println("ENROLLMENT INITIATED: userid: " + userId + " courseid:" + id + " token: " + token + " amount: " + amount);
         Course course = courseService.findCourseById(id);
         User user = userService.getUserById(userId);
-        System.out.println("Course and user:" + course + " " + user);
+        System.out.println("Course price:" + course + " paid amount:" + amount);
         if (course.getPrice() > 0) {
             if (token == null || token.isEmpty()) {
-                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Invalid stripe token", userId, user));
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Invalid stripe token", userId, id));
             }
             if (amount > course.getPrice()) {
-                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is greater than the actual course price", userId, user));
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is greater than the actual course price", userId, id));
             }
             if (amount < course.getPrice()) {
-                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is less than the actual course price", userId, user));
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Payment amount is less than the actual course price", userId, id));
             }
             if (Objects.equals(course.getAuthor().getId(), user.getId())){
-                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : The author cannot enroll to his own course", userId, user));
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : The author cannot enroll to his own course", userId, id));
             }
             try {
                 stripeService.chargeNewCard(token, amount);
                 purchaseService.recordCoursePurchase(user, course, amount, new Date());
             } catch (Exception e) {
-                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : charging the card failed: %s", userId, user, e));
+                throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : charging the card failed: %s", userId, id, e));
             }
         }
         System.out.println("Before RETURNING");
