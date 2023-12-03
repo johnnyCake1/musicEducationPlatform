@@ -159,8 +159,10 @@ public class CourseController {
                                                         @RequestParam Long userId,
                                                         @RequestHeader(value = "token", required = false, defaultValue = "") final String token,
                                                         @RequestHeader(value = "amount", required = false, defaultValue = "0.0") final Double amount) {
+        System.out.println("ENROLLMENT INITIATED");
         Course course = courseService.findCourseById(id);
         User user = userService.getUserById(userId);
+        System.out.println("Course and user:" + course + " " + user);
         if (course.getPrice() > 0) {
             if (token == null || token.isEmpty()) {
                 throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : Invalid stripe token", userId, user));
@@ -178,8 +180,9 @@ public class CourseController {
                 throw new RuntimeException(String.format("Can't enroll user with ID %s to course with ID %s : charging the card failed: %s", userId, user, e));
             }
         }
-
-        return new ResponseEntity<>(courseService.enrollUser(course, user), HttpStatus.OK);
+        CourseResponseDTO result = courseService.enrollUser(course, user);
+        System.out.println("RETURNING " + result);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("/{id}/drop")
