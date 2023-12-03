@@ -612,6 +612,16 @@ public class CourseService {
                 });
         // remove duplicate course objects:
         Set<CourseResponseDTO> set = new LinkedHashSet<>(relatedCourses);
+
+        if (set.size() <= 3) {
+            //find some random courses up to 10
+            int n = 10 - set.size();
+            List<CourseResponseDTO> randomCourses = courseRepository.findRandomCourses(n)
+                    .stream()
+                    .map(CourseService::mapCourseToDto)
+                    .collect(Collectors.toList());
+            set.addAll(randomCourses);
+        }
         return new ArrayList<>(set);
     }
 
