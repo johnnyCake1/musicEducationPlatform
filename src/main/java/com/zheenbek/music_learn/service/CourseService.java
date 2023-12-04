@@ -609,6 +609,7 @@ public class CourseService {
     }
 
     public List<CourseResponseDTO> getRecommendedCoursesForUser(Long userId) {
+        System.out.println("Recommended courses initiated for user: " + userId);
         // we recommend by taken courses: type should be same
         // we recommend by saved courses: keywords should be same
         // if no taken courses and no saved items, then same as explore page
@@ -622,6 +623,7 @@ public class CourseService {
                 .forEach((course) -> {
                     relatedCourses.addAll(getRelatedCourses(course));
                 });
+        System.out.println("Related courses size:" + relatedCourses.size());
         // remove duplicate course objects:
         Set<CourseResponseDTO> set = new LinkedHashSet<>(relatedCourses);
 
@@ -632,6 +634,7 @@ public class CourseService {
                     .stream()
                     .map(CourseService::mapCourseToDto)
                     .collect(Collectors.toList());
+            System.out.println("Random courses size: " + randomCourses.size());
             set.addAll(randomCourses);
         }
         return new ArrayList<>(set);

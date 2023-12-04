@@ -48,6 +48,7 @@ public class CourseController {
     @GetMapping("/recommendations")
     public ResponseEntity<List<CourseResponseDTO>> getRecommendedCoursesForUser(@RequestParam Long userId) {
         List<CourseResponseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
+        System.out.println("recommendation result size");
         return new ResponseEntity<>(foundCourses, HttpStatus.OK);
     }
 
@@ -98,7 +99,9 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("id") Long courseId) {
-        return new ResponseEntity<>(courseService.getCourseById(courseId), HttpStatus.OK);
+        CourseResponseDTO courseResponseDTO = courseService.getCourseById(courseId);
+        System.out.println("Returning course with price: " + courseResponseDTO.getPrice());
+        return new ResponseEntity<>(courseResponseDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

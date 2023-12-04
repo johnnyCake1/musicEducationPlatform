@@ -17,7 +17,7 @@ public class CourseResponseDTO {
     private Long id;
     private Long authorId;
     private UserDTO author;
-    private double price;
+    private float price;
     private String courseName;
     private String courseShortDescription;
     private String courseLongDescription;
@@ -62,11 +62,11 @@ public class CourseResponseDTO {
         this.authorId = authorId;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
