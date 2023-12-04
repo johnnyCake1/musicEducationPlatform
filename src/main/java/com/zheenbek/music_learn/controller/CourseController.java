@@ -48,7 +48,7 @@ public class CourseController {
     @GetMapping("/recommendations")
     public ResponseEntity<List<CourseResponseDTO>> getRecommendedCoursesForUser(@RequestParam Long userId) {
         List<CourseResponseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
-        System.out.println("recommendation result size");
+        System.out.println("recommendation result size: " + foundCourses.size());
         return new ResponseEntity<>(foundCourses, HttpStatus.OK);
     }
 

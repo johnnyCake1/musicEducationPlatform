@@ -337,6 +337,10 @@ public class CourseService {
         return courseRepository.searchCoursesByKeyword(keyword).stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
     }
 
+    public List<CourseResponseDTO> findCoursesByKeyword(String keyword, Long userId) {
+        return courseRepository.searchCoursesByKeyword(keyword, userId).stream().map(CourseService::mapCourseToDto).collect(Collectors.toList());
+    }
+
     public File getPreviewPictureByCourseId(Long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
         if (course.getPreviewImage() == null) {
@@ -617,11 +621,11 @@ public class CourseService {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         user.getTakenCourses()
                 .forEach((course) -> {
-                    relatedCourses.addAll(getRelatedCourses(course));
+                    relatedCourses.addAll(getRelatedCourses(course, userId));
                 });
         user.getSavedCourses()
                 .forEach((course) -> {
-                    relatedCourses.addAll(getRelatedCourses(course));
+                    relatedCourses.addAll(getRelatedCourses(course, userId));
                 });
         System.out.println("Related courses size:" + relatedCourses.size());
         // remove duplicate course objects:
@@ -630,7 +634,7 @@ public class CourseService {
         if (set.size() <= 3) {
             //find some random courses up to 10
             int n = 10 - set.size();
-            List<CourseResponseDTO> randomCourses = courseRepository.findRandomCourses(n)
+            List<CourseResponseDTO> randomCourses = courseRepository.findRandomCourses(n, userId)
                     .stream()
                     .map(CourseService::mapCourseToDto)
                     .collect(Collectors.toList());
@@ -640,13 +644,13 @@ public class CourseService {
         return new ArrayList<>(set);
     }
 
-    private List<CourseResponseDTO> getRelatedCourses(Course course) {
+    private List<CourseResponseDTO> getRelatedCourses(Course course, Long userId) {
         List<CourseResponseDTO> relatedCourses = new ArrayList<>(findCoursesByKeyword(course.getAuthor().getUsername()));
         Arrays.stream(course.getCourseName().split(" ")).forEach(word -> {
-            relatedCourses.addAll(findCoursesByKeyword(word));
+            relatedCourses.addAll(findCoursesByKeyword(word, userId));
         });
         course.getTags().forEach(tag -> {
-            relatedCourses.addAll(findCoursesByKeyword(tag));
+            relatedCourses.addAll(findCoursesByKeyword(tag, userId));
         });
 
         return relatedCourses;
