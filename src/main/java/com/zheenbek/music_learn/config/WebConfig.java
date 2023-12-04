@@ -14,11 +14,10 @@ public class WebConfig implements WebMvcConfigurer {
     private List<String> allowedOrigins;
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.
-                addResourceHandler("/files/**").
-                addResourceLocations("file:src/main/storage/files/").
-                addResourceLocations("file:src/main/resources/static/").
-                setCachePeriod(0);
+        registry.addResourceHandler("/files/**")
+                .addResourceLocations("file:src/main/storage/files/")
+                .addResourceLocations("file:src/main/resources/static/")
+                .setCachePeriod(86400); // Set cache period to 86400 seconds (24 hours)
     }
 
 

@@ -159,7 +159,7 @@ public class CourseController {
     public ResponseEntity<CourseResponseDTO> enrollUser(@PathVariable Long id,
                                                         @RequestParam Long userId,
                                                         @RequestHeader(value = "token", required = false, defaultValue = "") final String token,
-                                                        @RequestHeader(value = "amount", required = false, defaultValue = "0.0") final Double amount) {
+                                                        @RequestHeader(value = "amount", required = false, defaultValue = "0.0") final Float amount) {
         System.out.println("ENROLLMENT INITIATED: userid: " + userId + " courseid:" + id + " token: " + token + " amount: " + amount);
         Course course = courseService.findCourseById(id);
         User user = userService.getUserById(userId);

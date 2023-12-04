@@ -24,7 +24,7 @@ public class PurchaseRecordService {
         this.userRepository = userRepository;
     }
 
-    public PurchaseRecord recordCoursePurchase(User user, Course course, Double amount, Date date) {
+    public PurchaseRecord recordCoursePurchase(User user, Course course, Float amount, Date date) {
         return purchaseRecordRepository.save(new PurchaseRecord(user, course, amount, date));
     }
 

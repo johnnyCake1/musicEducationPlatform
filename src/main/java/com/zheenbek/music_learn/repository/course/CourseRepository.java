@@ -26,6 +26,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> searchCoursesByKeyword(@Param("keyword") String keyword);
 
     // Custom method to fetch N random courses (MySQL 8)
-    @Query(nativeQuery = true, value = "SELECT * FROM course_table ORDER BY RAND() LIMIT :limit")
+    @Query(nativeQuery = true, value = "SELECT * FROM Course ORDER BY RAND() LIMIT :limit")
     List<Course> findRandomCourses(@Param("limit") int limit);
 }

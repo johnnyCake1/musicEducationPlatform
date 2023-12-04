@@ -29,7 +29,7 @@ public class StripeService {
     private Customer getCustomer(String id) throws Exception {
         return Customer.retrieve(id);
     }
-    public Charge chargeNewCard(String token, double amount) throws Exception {
+    public Charge chargeNewCard(String token, float amount) throws Exception {
         Map<String, Object> chargeParams = new HashMap<>();
         chargeParams.put("amount", (int)(amount * 100));
         chargeParams.put("currency", "USD");

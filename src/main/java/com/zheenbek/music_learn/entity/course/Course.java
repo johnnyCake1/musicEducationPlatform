@@ -38,7 +38,8 @@ public class Course {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "course_id")
     private List<CourseModule> curriculum = new ArrayList<>();
-    private double price;
+    @Column(precision=10, scale=2)
+    private float price;
     private String courseName;
     @Column(length = 1000)
     private String courseShortDescription;
@@ -147,11 +148,11 @@ public class Course {
         this.requirements = requirements;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 

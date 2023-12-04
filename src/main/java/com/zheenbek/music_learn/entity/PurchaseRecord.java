@@ -19,7 +19,7 @@ public class PurchaseRecord {
     private Course course;
 
     @Column(nullable = false)
-    private Double amount;
+    private Float amount;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
@@ -27,7 +27,7 @@ public class PurchaseRecord {
 
     public PurchaseRecord() {}
 
-    public PurchaseRecord(User user, Course course, Double amount, Date purchaseDate) {
+    public PurchaseRecord(User user, Course course, Float amount, Date purchaseDate) {
         this.user = user;
         this.course = course;
         this.amount = amount;
@@ -58,11 +58,11 @@ public class PurchaseRecord {
         this.course = course;
     }
 
-    public Double getAmount() {
+    public Float getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Float amount) {
         this.amount = amount;
     }
 
