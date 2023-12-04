@@ -27,7 +27,7 @@ line-height: 2rem;
   opacity: 0;
   color: var(--purple);
   cursor: pointer;
-  z-index: 999;
+  z-index: 9;
   font-size: 1.8em;
 }
 .card {
@@ -111,9 +111,6 @@ form > div > label {
     margin-top: 10px;
 }
 
-.course-creation-page select {
-    margin-top: 15px;
-}
 
 .topic-item > button {
     margin-top: 10px;

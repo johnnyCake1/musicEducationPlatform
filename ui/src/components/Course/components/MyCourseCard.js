@@ -8,17 +8,11 @@ const CourseCard = ({ course }) => {
   const [showAddToSavedIcon, setShowAddToSavedIcon] = useState(false);
   const [jwt] = useLocalStorageState('', 'jwt');
   const [currentUser] = useLocalStorageState(null, 'currentUser');
-  const [isSaved, setIsSaved] = useState(false);
-
-  useEffect(() => {
-    //get current user's info
-    httpReqAsync(`/api/v1/users/${currentUser?.id}`, 'GET', jwt).then(
-      (result) => {
-        console.log('result', result);
-        setIsSaved(result.savedCoursesIds.includes(course.id));
-      }
-    );
-  }, [jwt, isSaved, course, currentUser]);
+  const [isSaved, setIsSaved] = useState(
+    course?.savedInStudentsIds
+      ? course?.savedInStudentsIds?.includes(currentUser?.id)
+      : false
+  );
 
   const toggleSaveCourse = (e) => {
     e.preventDefault();

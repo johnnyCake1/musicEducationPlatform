@@ -3,12 +3,30 @@ import { useParams, Link } from 'react-router-dom';
 import useLocalStorageState from '../../util/useLocalStorageState';
 import { httpReqAsync } from '../../services/httpReqAsync';
 import VideoPlayer from './VideoPlayer';
+import Exam from './Quiz';
+
+// fetch('http://212.118.52.67:8080/api/v1/courses', {
+//   headers: {
+//     accept: '*/*',
+//     'accept-language': 'en-US,en;q=0.9',
+//     authorization:
+//       'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNjg1MzYyMjcxLCJpYXQiOjE2ODUyOTAyNzF9.yaxz7RKTdvMU572qNIsuIGqN-Z_FTYG6EYk2xneUvRI',
+//     'content-type': 'application/json',
+//   },
+//   referrer: 'http://localhost:3002/',
+//   referrerPolicy: 'strict-origin-when-cross-origin',
+//   body: '{"id":13,"authorId":1,"author":{"id":1,"accessToken":null,"startDate":"2023-05-25T23:41:55.870+00:00","username":"zheenbek_akimzhanov","firstName":null,"lastName":null,"aboutMe":"jk","tags":[],"followersIds":[3],"followingsIds":[],"publishedCoursesIds":[],"takenCoursesIds":[],"savedCoursesIds":[],"draftCoursesIds":[3,7,13],"storedFilesIds":null,"authorities":[],"img_url":"http://localhost:8080/files/zheenbek_akimzhanov-ac407020-68e3-4863-8451-bb7319ce3f1c.png"},"price":0,"courseName":"Introduction to Guitar","courseShortDescription":"Learn the basics of playing the guitar.","courseLongDescription":"In this course, you will learn the fundamental techniques and concepts of playing the guitar. Whether you\'re a beginner or have some experience, this course will help you develop your skills and become a confident guitarist.","category":null,"promoVideoId":52,"previewImageId":53,"enrolledStudentsIds":[],"savedInStudentsIds":[],"enrolledStudents":[],"curriculum":[{"id":58,"moduleName":"Module 1: Getting Started","courseTopics":[{"id":171,"topicName":"Tuning the Guitar","contentData":{"id":171,"contentType":"FILE","fileId":56,"quiz":null,"file_url":"http://localhost:8080/files/Tuning the Guitar-cdc32c39-cc5b-4f09-9d2e-f8a2ddf2eaa7.png","file":{}}}]},{"id":59,"moduleName":"Module 2: Basic Chords","courseTopics":[{"id":173,"topicName":"Common Chord Progressions","contentData":{"id":173,"contentType":"FILE","fileId":59,"quiz":null,"file_url":"http://localhost:8080/files/Common Chord Progressions-c9976aff-08e9-466e-a909-3f152d10f168.png","file":{}}},{"id":172,"topicName":"Strumming Patterns","contentData":{"id":172,"contentType":"FILE","fileId":58,"quiz":null,"file_url":"http://localhost:8080/files/Strumming Patterns-4da24f5a-3db5-43c0-b48b-bd201b147f9f.png","file":{}}}]},{"id":60,"moduleName":"Module 3: Techniques and Styles","courseTopics":[{"id":174,"topicName":"Fingerpicking","contentData":{"id":174,"contentType":"FILE","fileId":60,"quiz":null,"file_url":"http://localhost:8080/files/Fingerpicking-f707c895-cb8f-4c36-9b22-c01ba32e7458.png","file":{}}},{"id":175,"topicName":"Barre Chords","contentData":{"id":175,"contentType":"FILE","fileId":61,"quiz":null,"file_url":"http://localhost:8080/files/Barre Chords-31ee751a-5d76-4ea2-9a67-8e387cf39c12.png","file":{}}},{"id":176,"topicName":"Playing Rhythm","contentData":{"id":176,"contentType":"FILE","fileId":62,"quiz":null,"file_url":"http://localhost:8080/files/Playing Rhythm-917aaa2d-b8cf-4e42-b021-4a9a6594b398.png","file":{}}},{"id":177,"topicName":"Introduction to Lead Guitar","contentData":{"id":177,"contentType":"FILE","fileId":63,"quiz":null,"file_url":"http://localhost:8080/files/Introduction to Lead Guitar-830fe65d-e4f5-4ef6-ada2-f7cb33e6d624.png","file":{}}}]},{"id":61,"moduleName":"Module 4: Music Theory for Guitarists","courseTopics":[{"id":178,"topicName":"Understanding Scales and Modes","contentData":{"id":178,"contentType":"FILE","fileId":64,"quiz":null,"file_url":"http://localhost:8080/files/Understanding Scales and Modes-98fde38b-525e-408b-b39e-35044a52f710.png","file":{}}},{"id":179,"topicName":"Chord Construction","contentData":{"id":179,"contentType":"FILE","fileId":65,"quiz":null,"file_url":"http://localhost:8080/files/Chord Construction-2b4a6ec4-c6d6-4049-9a28-99a3497d881a.png","file":{}}},{"id":180,"topicName":"Transposing Songs","contentData":{"id":180,"contentType":"FILE","fileId":66,"quiz":null,"file_url":"http://localhost:8080/files/Transposing Songs-85772802-bc8b-4b9b-9adb-6d1f404eb095.png","file":{}}}]},{"id":62,"moduleName":"Module 5: Advanced Techniques","courseTopics":[{"id":181,"topicName":"Guitar Soloing","contentData":{"id":181,"contentType":"FILE","fileId":67,"quiz":null,"file_url":"http://localhost:8080/files/Guitar Soloing-6f8bef14-dbd7-45b4-ac9e-2e69c9663b3b.png","file":{}}},{"id":182,"topicName":"Improvisation","contentData":{"id":182,"contentType":"FILE","fileId":68,"quiz":null,"file_url":"http://localhost:8080/files/Improvisation-c619a94e-e62c-4f79-8d87-9c5d3e2d58c8.png","file":{}}},{"id":183,"topicName":"Advanced Chord Progressions","contentData":{"id":183,"contentType":"FILE","fileId":69,"quiz":null,"file_url":"http://localhost:8080/files/Advanced Chord Progressions-b92d2e78-bc1a-4226-bf21-8f0e108138f3.png","file":{}}},{"id":184,"topicName":"Harmonics","contentData":{"id":184,"contentType":"FILE","fileId":70,"quiz":null,"file_url":"http://localhost:8080/files/Harmonics-7e8ed69f-f6c8-477a-9142-9a0bde23cd40.png","file":{}}}]}],"requirements":["No prior musical experience required","Acoustic or electric guitar"],"whatYouWillLearn":["Identify and play the different parts of a guitar","Tune the guitar using various methods","Play common open chords and strumming patterns","Understand basic music theory for guitarists","Develop fingerpicking and barre chord techniques","Explore different guitar playing styles","Learn scales, modes, and chord construction","Apply advanced techniques such as guitar soloing and improvisation"],"tags":["guitar","beginner","fingerstyle"],"reviews":[],"creationDate":"2023-05-28T11:46:42.953+00:00","lastUpdatedDate":"2023-05-28T11:46:42.953+00:00","published":false,"video_url":"http://localhost:8080/files/Introduction to Guitar-990e30d5-96cd-4a15-a750-572371a5d942.mp4","image_url":"http://localhost:8080/files/Introduction to Guitar-1bd92b9a-7d33-42e2-b061-3a72fc34237b.png","previewImage":{},"promoVideo":{}}',
+//   method: 'PUT',
+//   mode: 'cors',
+//   credentials: 'include',
+// });
 
 const ContentAndAuth = () => {
   const { courseId, moduleId, topicId } = useParams();
   const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [jwt] = useLocalStorageState('', 'jwt');
   const [course, setCourse] = useState(null);
+  const [openClass, setOpenClass] = useState(false);
   const [courseVideoSrc, setCourseVideoSrc] = useState('');
   const [courseReviews, setCourseReviews] = useState(null);
   const [type, setType] = useState(null);
@@ -19,6 +37,9 @@ const ContentAndAuth = () => {
   const [nextTopic, setNextTopic] = useState(null);
   const [isFirstTopic, setIsFirstTopic] = useState(false);
   const [isLastTopic, setIsLastTopic] = useState(false);
+  const sidebarClass = openClass
+    ? 'sidebar sidebarOpen'
+    : 'sidebar sidebarClosed';
   useEffect(() => {
     //get the course info
     httpReqAsync(`/api/v1/courses/${courseId}`, 'GET', jwt).then((result) => {
@@ -98,10 +119,10 @@ const ContentAndAuth = () => {
             setIsFirstTopic(topicId === firstTopicId);
             setIsLastTopic(topicId === lastTopicId);
 
-            setPercentage((coveredTopics * 100) / totalTopics);
+            setPercentage(((coveredTopics * 100) / totalTopics).toFixed(0));
           }
 
-          setPercentage((coveredTopics * 100) / totalTopics);
+          setPercentage(((coveredTopics * 100) / totalTopics).toFixed(0));
         }
       }
     });
@@ -117,26 +138,24 @@ const ContentAndAuth = () => {
     <div>
       <div id="wrapper" className="course-watch">
         {/* sidebar */}
-        <div className="sidebar">
+        <div className={sidebarClass}>
           {/* slide_menu for mobile */}
           <span
+            onClick={() => setOpenClass(!openClass)}
             className="btn-close-mobi right-3 left-auto"
             uk-toggle="target: #wrapper ; cls: is-active"
           />
           {/* back to home link */}
           <div className="flex justify-between lg:-ml-1 mt-1 mr-2">
-            <a
-              href="course-intro.html"
-              className="flex items-center text-blue-500"
-            >
+            <Link to="/dashboard" className="flex items-center text-blue-500">
               <ion-icon
                 name="chevron-back-outline"
                 className="md:text-lg text-2xl md hydrated"
                 role="img"
                 aria-label="chevron back outline"
               />
-              <span className="text-sm md:inline hidden"> back</span>
-            </a>
+              <span className="text-sm md:inline hidden"> Dashboard</span>
+            </Link>
           </div>
           {/* title */}
           <h1 className="lg:text-2xl text-lg font-bold mt-2 line-clamp-2">
@@ -205,6 +224,7 @@ const ContentAndAuth = () => {
                               >
                                 {module.courseTopics.map((topic) => (
                                   <li
+                                    key={topic.id}
                                     className={
                                       topic.id == topicId ? 'uk-active' : ''
                                     }
@@ -225,66 +245,6 @@ const ContentAndAuth = () => {
                           </div>
                         ))}
                       </div>
-                    </div>
-                    <div className="mt-5">
-                      <h3 className="mb-4 text-lg font-semibold"> Quizzes</h3>
-                      <ul>
-                        <li>
-                          <a href="#">
-                            <ion-icon
-                              name="timer-outline"
-                              class="side-icon md hydrated"
-                              role="img"
-                              aria-label="timer outline"
-                            />
-                            Taking small eco-friendly steps
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <ion-icon
-                              name="timer-outline"
-                              class="side-icon md hydrated"
-                              role="img"
-                              aria-label="timer outline"
-                            />
-                            Making your house eco-friendly
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <ion-icon
-                              name="timer-outline"
-                              class="side-icon md hydrated"
-                              role="img"
-                              aria-label="timer outline"
-                            />
-                            Building and renovating for eco-friendly homes
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <ion-icon
-                              name="log-in-outline"
-                              class="side-icon md hydrated"
-                              role="img"
-                              aria-label="log in outline"
-                            />
-                            Taking small eco-friendly
-                          </a>
-                          <ul>
-                            <li>
-                              <a href="#"> Making your house </a>
-                            </li>
-                            <li>
-                              <a href="#"> Building and renovating </a>
-                            </li>
-                            <li>
-                              <a href="#"> Taking small </a>
-                            </li>
-                          </ul>
-                        </li>
-                      </ul>
                     </div>
                   </div>
                 </div>
@@ -370,18 +330,46 @@ const ContentAndAuth = () => {
 
           <div className="container">
             <div
-              className="max-w-2xl mx-auto"
+              className="max-w-2xl mx-auto "
               id="course-tabs"
-              style={{ touchAction: 'pan-y pinch-zoom' }}
+              style={{ touchAction: 'pan-y pinch-zoom', margin: 'auto' }}
             >
               {/*  Overview */}
               <div className="uk-active  " style={{}}>
                 <h4 className="text-2xl font-semibold text-center">
                   {' '}
-                  {course?.courseName}{' '}
+                  {currentTopic?.topicName}{' '}
                 </h4>
 
-                <div className="flex md:gap-6 gap-3 md:mt-10 mt-5 text-center flex justify-center">
+                {currentTopic?.contentData?.contentType == 'TEXT' && (
+                  <div className="relative ">
+                    <div
+                      className="card  p-6"
+                      dangerouslySetInnerHTML={{
+                        __html: currentTopic?.contentData?.text,
+                      }}
+                    ></div>
+                  </div>
+                )}
+
+                {currentTopic?.contentData?.contentType == 'DOC' && (
+                  <div className="relative ">
+                    <div className="card  p-6">
+                      <a href={currentTopic?.contentData?.file_url}>
+                        {currentTopic?.contentData?.file_url}
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {currentTopic?.contentData?.contentType == 'QUIZ' && (
+                  <div className="relative ">
+                    <div className="card  p-6">
+                      <Exam quizData={currentTopic?.contentData?.quiz} />
+                    </div>
+                  </div>
+                )}
+
+                <div className="navss flex md:gap-6 gap-3 md:mt-10 mt-5 text-center flex justify-center">
                   {previousTopic && (
                     <Link
                       to={`/courses/content/${courseId}/${moduleId}/${nextTopic?.id}`}

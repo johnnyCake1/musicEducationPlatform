@@ -6,6 +6,7 @@ import { httpReqAsync } from '../../services/httpReqAsync';
 import useLocalStorageState from '../../util/useLocalStorageState';
 import './MyCourses.css';
 import MyCourseCard from '../Course/components/MyCourseCard';
+import Loader from '../common/Loader';
 
 const MyCourses = () => {
   const navigate = useNavigate();
@@ -75,7 +76,9 @@ const MyCourses = () => {
               </div>
             )
           ) : (
-            <div>Loading ...</div>
+            <div>
+              <Loader />
+            </div>
           )}
         </>
       ),
@@ -110,7 +113,9 @@ const MyCourses = () => {
               </div>
             )
           ) : (
-            <div>Loading ...</div>
+            <div>
+              <Loader />
+            </div>
           )}
         </>
       ),

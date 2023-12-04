@@ -9,6 +9,7 @@ import Reviews from '../common/Reviews';
 import { useParams } from 'react-router-dom';
 import useLocalStorageState from '../../util/useLocalStorageState';
 import { getFile, httpReqAsync } from '../../services/httpReqAsync';
+import Loader from '../common/Loader';
 
 const CourseDescription = () => {
   const { courseId } = useParams();
@@ -148,7 +149,9 @@ const CourseDescription = () => {
       </div>
     </>
   ) : (
-    <div>Loading .... </div>
+    <div>
+      <Loader />
+    </div>
   );
 };
 

@@ -5,6 +5,7 @@ import { httpReqAsync } from '../../services/httpReqAsync';
 import useLocalStorageState from '../../util/useLocalStorageState';
 import './MyLearnings.css';
 import CourseCard from '../Course/components/MyCourseCard';
+import Loader from '../common/Loader';
 
 const MyLearnings = () => {
   //TODO: implement finished courses filter
@@ -67,40 +68,42 @@ const MyLearnings = () => {
           <div>{'Nothing in your taken courses yet :('}</div>
         )
       ) : (
-        <div>Loading ...</div>
+        <div>
+          <Loader />
+        </div>
       ),
     },
-    {
-      name: 'finishedCourses',
-      label: 'Finished courses',
-      content:
-        finishedCourses.length > 0 ? (
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
-            {finishedCourses.map((course) => (
-              <CourseCard
-                course={course}
-                key={course.id}
-                courseId={course.id}
-                authorId={course.author}
-                title={course.courseName}
-                takenCount={course?.enrolledStudents?.length}
-                formattedCreationDate={new Date(
-                  course.creationDate
-                ).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-                price={course.price}
-                tags={course.tags}
-                onClick={() => navigate(`/courses/${course.id}/description`)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div>{'Nothing in your finished courses yet :('}</div>
-        ),
-    },
+    // {
+    //   name: 'finishedCourses',
+    //   label: 'Finished courses',
+    //   content:
+    //     finishedCourses.length > 0 ? (
+    //       <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
+    //         {finishedCourses.map((course) => (
+    //           <CourseCard
+    //             course={course}
+    //             key={course.id}
+    //             courseId={course.id}
+    //             authorId={course.author}
+    //             title={course.courseName}
+    //             takenCount={course?.enrolledStudents?.length}
+    //             formattedCreationDate={new Date(
+    //               course.creationDate
+    //             ).toLocaleDateString('en-US', {
+    //               year: 'numeric',
+    //               month: 'long',
+    //               day: 'numeric',
+    //             })}
+    //             price={course.price}
+    //             tags={course.tags}
+    //             onClick={() => navigate(`/courses/${course.id}/description`)}
+    //           />
+    //         ))}
+    //       </div>
+    //     ) : (
+    //       <div>{'Nothing in your finished courses yet :('}</div>
+    //     ),
+    // },
     {
       name: 'saveCourses',
       label: 'Saved courses',
@@ -132,7 +135,9 @@ const MyLearnings = () => {
           <div>{'Nothing in your saved courses yet :('}</div>
         )
       ) : (
-        <div>Loading ...</div>
+        <div>
+          <Loader />
+        </div>
       ),
     },
     // {

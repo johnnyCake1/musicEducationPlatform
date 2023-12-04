@@ -195,20 +195,7 @@ function Navigation({ toggleSidebar }) {
                 <li>
                   <hr />
                 </li>
-                <li>
-                  <a href="/" id="night-mode" className="btn-night-mode">
-                    <ion-icon
-                      name="moon-outline"
-                      className="is-icon md hydrated"
-                      role="img"
-                      aria-label="moon outline"
-                    />
-                    Night mode
-                    <span className="btn-night-mode-switch">
-                      <span className="uk-switch-button" />
-                    </span>
-                  </a>
-                </li>
+
                 <li>
                   <Link to="/logout">
                     <ion-icon

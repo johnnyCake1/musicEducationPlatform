@@ -15,16 +15,14 @@ const ChatComponent = () => {
   const queryParams = new URLSearchParams(location.search);
   // Access the initial active chat through query parameters
   const otherUserIdQueryParam = queryParams.get('otherUserId');
-
   const [otherUserId, setOtherUserId] = useState(otherUserIdQueryParam);
 
   const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [jwt] = useLocalStorageState('', 'jwt');
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [imgUrl, setImgUrl] = useState(null);
-  const [chatRooms, setChatRooms] = useState([]);
-
+  const [chatRooms, setChatRooms] = useState(null);
   useEffect(() => {
     //connect to the web sockets and subscribe
     webSocketService.connect(
@@ -49,6 +47,13 @@ const ChatComponent = () => {
         })
         .catch((err) => {
           console.log("Couldn't fetch messages for this chatroom");
+        });
+      httpReqAsync(`/api/v1/messages/${currentUser.id}`, 'GET', jwt)
+        .then((result) => {
+          setChatRooms(result || []);
+        })
+        .catch((err) => {
+          console.log('No chats for the current user', err);
         });
     }
 
@@ -89,27 +94,31 @@ const ChatComponent = () => {
   return (
     <div className="chat-component">
       <div className="chat-room-list">
-        {chatRooms.length === 0 && <Loader />}
-        <ChatRoomList
-          chatRooms={chatRooms}
-          handleSetActiveChatUserId={setOtherUserId}
-        />
+        {chatRooms !== null ?
+          <ChatRoomList
+            chatRooms={chatRooms ?? []}
+            handleSetActiveChatUserId={setOtherUserId}
+          />
+          :
+          <Loader />}
+
       </div>
       {otherUserId ? (
         <div className="active-chat flex flex-col h-full">
           <ul className="flex-1 overflow-y-auto p-3 space-y-2">
-            {messages.length === 0 && <Loader />}
-            {messages
-              .filter((msg) => msg.recipientId === otherUserId)
+            {messages !== null ? messages
+              .filter(
+                (msg) => msg.senderId === otherUserId || msg.senderId === currentUser.id
+                        || msg.recipientId === otherUserId || msg.recipientId === currentUser.id
+              )
               .map((msg, index) => (
                 <li
                   key={index}
                   style={{ maxWidth: 'max-content' }}
-                  className={`p-2 rounded-lg ${
-                    msg.senderId === currentUser.id
-                      ? 'bg-blue-200 ml-auto'
-                      : 'bg-gray-200'
-                  }`}
+                  className={`p-2 rounded-lg ${msg.senderId === currentUser.id
+                    ? 'bg-blue-200 ml-auto'
+                    : 'bg-gray-200'
+                    }`}
                 >
                   <p className="text-sm" style={{ maxWidth: 300 }}>
                     {msg.content}
@@ -128,7 +137,7 @@ const ChatComponent = () => {
                     {new Date(msg.timestamp).toLocaleString()}
                   </span>
                 </li>
-              ))}
+              )) : <Loader />}
           </ul>
           {imgUrl && (
             <div className="w-full relative bg-gray-500">

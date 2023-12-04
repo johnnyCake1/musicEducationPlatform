@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
-import "./ProfilePage.css";
+import React, { useEffect, useState } from 'react';
+import './ProfilePage.css';
 
-import ProfileCard from "./components/profile_card/ProfileCard";
-import About from "./components/about_me/About";
-import Reviews from "../common/Reviews";
-import { httpReqAsync } from "../../services/httpReqAsync";
-import useLocalStorageState from "../../util/useLocalStorageState";
-import { useNavigate, useParams } from "react-router-dom";
-import Slider from "../Course/components/Slider";
+import ProfileCard from './components/profile_card/ProfileCard';
+import About from './components/about_me/About';
+import Reviews from '../common/Reviews';
+import { httpReqAsync } from '../../services/httpReqAsync';
+import useLocalStorageState from '../../util/useLocalStorageState';
+import { useNavigate, useParams } from 'react-router-dom';
+import Slider from '../Course/components/Slider';
+import Loader from '../common/Loader';
 
 const ProfilePage = () => {
   const { userId } = useParams();
-  const [jwt] = useLocalStorageState("", "jwt");
-  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const [jwt] = useLocalStorageState('', 'jwt');
+  const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [user, setUser] = useState(null);
   const [reviews, setReviews] = useState(null);
   const [takenCourses, setTakenCourses] = useState([]);
@@ -23,26 +24,26 @@ const ProfilePage = () => {
 
   useEffect(() => {
     //get the basic user info
-    httpReqAsync(`/api/v1/users/${userId}`, "GET", jwt).then((result) => {
+    httpReqAsync(`/api/v1/users/${userId}`, 'GET', jwt).then((result) => {
       setUser(result);
       console.log(result);
     });
   }, [toggleRefresh, jwt, userId]);
   useEffect(() => {
     //get the reviews info
-    httpReqAsync(`/api/v1/users/${userId}/reviews`, "GET", jwt).then(
+    httpReqAsync(`/api/v1/users/${userId}/reviews`, 'GET', jwt).then(
       (result) => {
         setReviews(result);
       }
     );
     //get the taken courses
-    httpReqAsync(`/api/v1/users/${userId}/taken-courses`, "GET", jwt).then(
+    httpReqAsync(`/api/v1/users/${userId}/taken-courses`, 'GET', jwt).then(
       (result) => {
         setTakenCourses(result);
       }
     );
     //get the published courses
-    httpReqAsync(`/api/v1/users/${userId}/published-courses`, "GET", jwt).then(
+    httpReqAsync(`/api/v1/users/${userId}/published-courses`, 'GET', jwt).then(
       (result) => {
         setPublishedCourses(result);
       }
@@ -53,12 +54,12 @@ const ProfilePage = () => {
     navigate(`/chat?otherUserId=${userId}`);
   };
 
-  console.log("profile card loaded");
+  console.log('profile card loaded');
 
   const handleFollow = () => {
     httpReqAsync(
       `/api/v1/users/${currentUser.id}/follow?userIdToFollow=${userId}`,
-      "POST",
+      'POST',
       jwt
     ).then(() => {
       setToggleRefresh(!toggleRefresh);
@@ -68,7 +69,7 @@ const ProfilePage = () => {
   const handleUnfollow = () => {
     httpReqAsync(
       `/api/v1/users/${currentUser.id}/unfollow?userIdToUnfollow=${userId}`,
-      "POST",
+      'POST',
       jwt
     ).then(() => {
       setToggleRefresh(!toggleRefresh);
@@ -85,7 +86,7 @@ const ProfilePage = () => {
                 src={
                   user.img_url
                     ? user.img_url
-                    : "https://t4.ftcdn.net/jpg/02/17/34/67/360_F_217346796_TSg5VcYjsFxZtIDK6Qdctg3yqAapG7Xa.jpg"
+                    : 'https://t4.ftcdn.net/jpg/02/17/34/67/360_F_217346796_TSg5VcYjsFxZtIDK6Qdctg3yqAapG7Xa.jpg'
                 }
                 alt="Profile"
                 className="w-full h-full object-cover"
@@ -148,7 +149,7 @@ const ProfilePage = () => {
                 </div>
               )}
             </div>
-            <div className="card mt-5 p-5 text-left" style={{ width: "100%" }}>
+            <div className="card mt-5 p-5 text-left" style={{ width: '100%' }}>
               <div className="mt-10">
                 <h2 className="text-2xl font-semibold">About Me</h2>
                 <div className="mt-2">
@@ -179,7 +180,7 @@ const ProfilePage = () => {
                       onSubmitReview={(reviewToSubmit) =>
                         httpReqAsync(
                           `/api/v1/users/${userId}/reviews`,
-                          "POST",
+                          'POST',
                           jwt,
                           reviewToSubmit
                         )
@@ -191,7 +192,9 @@ const ProfilePage = () => {
             </div>
           </>
         ) : (
-          <div>Loading ...</div>
+          <div>
+            <Loader />
+          </div>
         )}
       </div>
     </div>

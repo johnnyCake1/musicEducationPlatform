@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from "react";
-import "./Settings.css";
-import { FaCamera, FaLock, FaUser } from "react-icons/fa";
-import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
-import useLocalStorageState from "../../util/useLocalStorageState";
-import { httpReqAsync } from "../../services/httpReqAsync";
-import { API_URL } from "../../constants";
+import React, { useEffect, useState } from 'react';
+import './Settings.css';
+import { FaCamera, FaLock, FaUser } from 'react-icons/fa';
+import ProfilePicture from '../Profile/components/profile_card/ProfilePicture';
+import useLocalStorageState from '../../util/useLocalStorageState';
+import { httpReqAsync } from '../../services/httpReqAsync';
+import { API_URL } from '../../constants';
 
 const Settings = () => {
   const [currentUser, setCurrentUser] = useLocalStorageState(
     null,
-    "currentUser"
+    'currentUser'
   );
   const [userInfo, setUserInfo] = useState(null);
-  const [jwt] = useLocalStorageState("", "jwt");
-  const [profilePictureSrc, setProfilePictureSrc] = useState("");
+  const [jwt] = useLocalStorageState('', 'jwt');
+  const [profilePictureSrc, setProfilePictureSrc] = useState('');
   const [newProfilePicFile, setNewProfilePicFile] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [failMessage, setFailMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState('');
+  const [failMessage, setFailMessage] = useState('');
 
   useEffect(() => {
-    httpReqAsync(`/api/v1/users/${currentUser.id}`, "GET", jwt).then(
+    httpReqAsync(`/api/v1/users/${currentUser.id}`, 'GET', jwt).then(
       (result) => {
         setUserInfo(result);
         setProfilePictureSrc(result.img_url);
@@ -53,6 +53,22 @@ const Settings = () => {
     }
   };
 
+  const handleFileChange = (e, moduleIndex, topicIndex) => {
+    const { type, files } = e.target;
+    if (type === 'file') {
+      httpReqAsync('/api/v1/files', 'POST', jwt, files[0]).then((result) => {
+        console.log('state of result content data after sending file:', result);
+        if (result.file_url) {
+          setUserInfo((prevValue) => ({
+            ...prevValue,
+            img_url: result.file_url,
+          }));
+        }
+      });
+      return;
+    }
+  };
+
   // const handleUsernameChange = (e) => {
   //   setUsername(e.target.value);
   // };
@@ -65,35 +81,39 @@ const Settings = () => {
     e.preventDefault();
     if (newProfilePicFile) {
       const formData = new FormData();
-      formData.append("file", newProfilePicFile);
+      formData.append('file', newProfilePicFile);
 
       fetch(API_URL + `/api/v1/users/${currentUser.id}/profile-picture`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
         body: formData,
       })
+        .then((res) => res.json())
         .then((res) => {
           if (res.status === 200) {
             return res.text();
           }
-          setFailMessage("Changes couldn't be saved");
-          return Promise.reject("Couldn't update profile picture");
+          alert("Changes couldn't be saved");
+          // return Promise.reject("Couldn't update profile picture");
         })
         .then((img_url) => {
           setCurrentUser({ ...currentUser, img_url: img_url });
-          setSuccessMessage("Changes succesfully saved");
+          alert('Changes succesfully saved');
+        })
+        .catch((error) => {
+          console.error('error', error);
         });
     }
 
-    httpReqAsync(`/api/v1/users/${currentUser.id}`, "PUT", jwt, userInfo)
+    httpReqAsync(`/api/v1/users/${currentUser.id}`, 'PUT', jwt, userInfo)
       .then((result) => {
-        console.log("result", result);
-        setSuccessMessage("Changes succesfully saved");
+        console.log('result', result);
+        setSuccessMessage('Changes succesfully saved');
       })
       .catch(() => {
-        console.log("result!");
+        console.log('result!');
         setFailMessage("Changes couldn't be saved");
       });
   };
@@ -124,7 +144,7 @@ const Settings = () => {
           <input
             type="text"
             id="firstName"
-            value={userInfo?.firstName ?? ""}
+            value={userInfo?.firstName ?? ''}
             onChange={handleFirstNameChange}
           />
         </div>
@@ -136,20 +156,29 @@ const Settings = () => {
           <input
             type="text"
             id="lastName"
-            value={userInfo?.lastName ?? ""}
+            value={userInfo?.lastName ?? ''}
             onChange={handleLastNameChange}
           />
         </div>
 
         <div>
           <label htmlFor="aboutMe">About me:</label>
-          <input
+          {/* <input
             type="text"
             id="aboutMe"
             name="aboutMe"
             value={userInfo?.aboutMe ?? ""}
             onChange={handleAboutMeChange}
             className="settings-about-me"
+          /> */}
+          <textarea
+            id="aboutMe"
+            name="aboutMe"
+            value={userInfo?.aboutMe ?? ''}
+            className="mb-3"
+            onChange={handleAboutMeChange}
+            rows="4"
+            cols="50"
           />
         </div>
 
@@ -181,7 +210,7 @@ const Settings = () => {
           Save Changes
         </button>
       </form>
-      <div className={successMessage ? "success" : failMessage ? "fail" : ""}>
+      <div className={successMessage ? 'success' : failMessage ? 'fail' : ''}>
         {successMessage || failMessage}
       </div>
     </div>

@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   margin: 5px;
-  width: 300px;
+  /* width: 300px; */
 }
 
 .user-small-card:hover{

@@ -1,12 +1,12 @@
-import { useNavigate } from "react-router-dom";
-import ProfilePicture from "../../Profile/components/profile_card/ProfilePicture";
-import "./UserCardSmall.css";
+import { useNavigate } from 'react-router-dom';
+import ProfilePicture from '../../Profile/components/profile_card/ProfilePicture';
+import './UserCardSmall.css';
 
 const UserCardSmall = ({ userId, img_url, username, description }) => {
   const navigate = useNavigate();
   return (
     <div
-      className="user-small-card card p-2"
+      className="user-small-card card p-2 w-full"
       onClick={() => navigate(`/${userId}/profile`)}
     >
       <ProfilePicture imageSrc={img_url} size={75} />

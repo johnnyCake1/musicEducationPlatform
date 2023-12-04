@@ -214,38 +214,42 @@ const CourseSummaryCard = ({
               </button>
             )}
 
-            {enrolled ? (
+            {course.authorId !== currentUser.id && (
               <>
-                <Link
-                  to={`/courses/content/${courseId}/${course?.curriculum[0]?.id}/${course?.curriculum[0]?.courseTopics[0]?.id}`}
-                  className="flex items-center justify-center h-9 px-6 rounded-md bg-blue-600 text-white"
-                >
-                  Go to the course
-                </Link>
+                {enrolled ? (
+                  <>
+                    <Link
+                      to={`/courses/content/${courseId}/${course?.curriculum[0]?.id}/${course?.curriculum[0]?.courseTopics[0]?.id}`}
+                      className="flex items-center justify-center h-9 px-6 rounded-md bg-blue-600 text-white"
+                    >
+                      Go to the course
+                    </Link>
 
-                <button
-                  className="flex items-center justify-center h-9 px-6 rounded-md bg-red-600 text-white"
-                  onClick={dropCurrentUserFromCourse}
-                >
-                  (click to drop)
-                </button>
-              </>
-            ) : (
-              <>
-                {price === 0 ? (
-                  <button
-                    className="flex items-center justify-center h-9 px-6 rounded-md bg-blue-600 text-white"
-                    onClick={enrollCurrentUserToCourse}
-                  >
-                    Enroll for free
-                  </button>
+                    <button
+                      className="flex items-center justify-center h-9 px-6 rounded-md bg-red-600 text-white"
+                      onClick={dropCurrentUserFromCourse}
+                    >
+                      (click to drop)
+                    </button>
+                  </>
                 ) : (
-                  <Link
-                    to={`/pay/` + courseId}
-                    className="flex items-center justify-center h-9 px-6 rounded-md bg-blue-600 text-white"
-                  >
-                    <i>{`$${price} - Buy`}</i>
-                  </Link>
+                  <>
+                    {price === 0 ? (
+                      <button
+                        className="flex items-center justify-center h-9 px-6 rounded-md bg-blue-600 text-white"
+                        onClick={enrollCurrentUserToCourse}
+                      >
+                        Enroll for free
+                      </button>
+                    ) : (
+                      <Link
+                        to={`/pay/` + courseId}
+                        className="flex items-center justify-center h-9 px-6 rounded-md bg-blue-600 text-white"
+                      >
+                        <i>{`$${price} - Buy`}</i>
+                      </Link>
+                    )}
+                  </>
                 )}
               </>
             )}

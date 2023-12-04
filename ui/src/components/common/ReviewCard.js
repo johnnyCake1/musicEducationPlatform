@@ -9,7 +9,7 @@ const ReviewCard = ({ review }) => {
   const [jwt] = useLocalStorageState('', 'jwt');
   useEffect(() => {
     if (jwt && review.reviewer) {
-      httpReqAsync(`/api/v1/users/${review.reviewer}`, 'GET', jwt).then(
+      httpReqAsync(`/api/v1/users/${review.reviewer.id}`, 'GET', jwt).then(
         (user) => {
           setReviewer(user);
         }

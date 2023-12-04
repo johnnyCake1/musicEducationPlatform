@@ -1,37 +1,38 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 // import "./CoursePreviewCard.css";
-import ProfilePicture from "../../Profile/components/profile_card/ProfilePicture";
-import { FaBookmark } from "react-icons/fa";
-import { getFile, httpReqAsync } from "../../../services/httpReqAsync";
-import useLocalStorageState from "../../../util/useLocalStorageState";
+import ProfilePicture from '../../Profile/components/profile_card/ProfilePicture';
+import { FaBookmark } from 'react-icons/fa';
+import { getFile, httpReqAsync } from '../../../services/httpReqAsync';
+import useLocalStorageState from '../../../util/useLocalStorageState';
+import Loader from '../../common/Loader';
 
 const CoursePreviewCard = ({
   courseId,
-  img_url = "https://icon-library.com/images/placeholder-image-icon/placeholder-image-icon-21.jpg",
+  img_url = 'https://icon-library.com/images/placeholder-image-icon/placeholder-image-icon-21.jpg',
   authorId,
-  title = "",
+  title = '',
   price = 0.0,
   takenCount = 0,
-  formattedCreationDate = "date",
+  formattedCreationDate = 'date',
   tags,
   progress,
   onClick,
 }) => {
   const [showAddToSavedIcon, setShowAddToSavedIcon] = useState(false);
-  const [jwt] = useLocalStorageState("", "jwt");
+  const [jwt] = useLocalStorageState('', 'jwt');
   const [author, setAuthor] = useState(null);
-  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     //get author's info
-    httpReqAsync(`/api/v1/users/${authorId}`, "GET", jwt).then((result) => {
-      console.log("got the user:", result);
-      setAuthor(result);
-    });
+    // httpReqAsync(`/api/v1/users/${authorId}`, "GET", jwt).then((result) => {
+    //   console.log("got the user:", result);
+    //   setAuthor(result);
+    // });
     //get current user's info
-    httpReqAsync(`/api/v1/users/${currentUser?.id}`, "GET", jwt).then(
+    httpReqAsync(`/api/v1/users/${currentUser?.id}`, 'GET', jwt).then(
       (result) => {
         setIsSaved(result.savedCoursesIds.includes(courseId));
       }
@@ -44,27 +45,31 @@ const CoursePreviewCard = ({
     if (isSaved) {
       httpReqAsync(
         `/api/v1/users/${currentUser.id}/saved-courses/${courseId}`,
-        "DELETE",
+        'DELETE',
         jwt
       ).then((result) => {
-        console.log("course saved value updated to:", !isSaved);
+        console.log('course saved value updated to:', !isSaved);
         setIsSaved(!isSaved);
       });
       // if not saved then save
     } else {
       httpReqAsync(
         `/api/v1/users/${currentUser.id}/saved-courses/${courseId}`,
-        "POST",
+        'POST',
         jwt
       ).then((result) => {
-        console.log("course saved value updated to:", !isSaved);
+        console.log('course saved value updated to:', !isSaved);
         setIsSaved(!isSaved);
       });
     }
   };
 
   if (!author) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   }
 
   return (
@@ -83,8 +88,8 @@ const CoursePreviewCard = ({
           </h3>
           <span className="card-username">{`By ${author?.username}`}</span>
           <span className="card-info">{`${takenCount} taken • ${formattedCreationDate}`}</span>
-          <span className={`card-price ${price === 0 ? "free" : ""}`}>
-            {price === 0 ? "Free" : `$${price}`}
+          <span className={`card-price ${price === 0 ? 'free' : ''}`}>
+            {price === 0 ? 'Free' : `$${price}`}
           </span>
           {tags && (
             <div className="tags-container">
@@ -100,7 +105,7 @@ const CoursePreviewCard = ({
       <FaBookmark
         onClick={toggleSaveCourse}
         className={`add-to-saved-icon ${
-          isSaved || showAddToSavedIcon ? "visible" : ""
+          isSaved || showAddToSavedIcon ? 'visible' : ''
         }`}
       />
       {progress && (

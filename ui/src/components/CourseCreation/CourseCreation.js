@@ -9,10 +9,13 @@ import { ReactSortable } from 'react-sortablejs';
 import QuizCreator from './QuizCreatiion';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import Editor from './Editor';
+
 const CourseCreationPage = () => {
   const { courseId } = useParams();
   const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [jwt] = useLocalStorageState('', 'jwt');
+  const [courseCategories, setCourseCategories] = useState([]);
   const [toggleRefresh, setToggleRefresh] = useState(false);
   const [courseData, setCourseData] = useState({
     id: courseId,
@@ -31,81 +34,19 @@ const CourseCreationPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const isContentTypeFile = (contentType) => {
-    return (
-      contentType === 'IMAGE' ||
-      contentType === 'VIDEO' ||
-      contentType === 'DOC' ||
-      contentType === 'FILE'
-    );
-  };
-
   useEffect(() => {
-    const fetchFiles = async (curriculum) => {
-      const updatedCurriculum = await Promise.all(
-        curriculum.map(async (module) => {
-          const updatedTopics = await Promise.all(
-            module.courseTopics.map(async (topic) => {
-              if (
-                isContentTypeFile(topic.contentData.contentType) &&
-                topic.contentData.fileId
-              ) {
-                const fileData = await getFile(
-                  `/api/v1/files/${topic.contentData.fileId}`,
-                  jwt
-                );
-                if (fileData && fileData instanceof Blob) {
-                  const updatedContentData = {
-                    ...topic.contentData,
-                    file: fileData,
-                  };
-                  return {
-                    ...topic,
-                    contentData: updatedContentData,
-                  };
-                }
-              }
-              return topic;
-            })
-          );
-          return {
-            ...module,
-            courseTopics: updatedTopics,
-          };
-        })
-      );
-      setCourseData((prevCourseData) => ({
-        ...prevCourseData,
-        curriculum: updatedCurriculum,
-      }));
-    };
-
     //fetch the course data
     httpReqAsync(`/api/v1/courses/${courseId}`, 'GET', jwt).then((result) => {
-      // if (
-      //   String(currentUser.id) !== String(result.authorId) ||
-      //   result.published
-      // ) {
-      //   console.log(
-      //     "This user cannot access this page or the course was not a draft"
-      //   );
-      //   // navigate("/my-courses");
-      //   setError(
-      //     "This user cannot access this page or the course was not a draft"
-      //   );
-      //   return;
-      // }
-
       //fill out the data
-      setCourseData(result);
-      console.log('fetch result:', result);
+      setCourseData({ ...result, category_id: result.category?.id });
 
-      //fetch course topics
-      // fetchFiles(result.curriculum);
+      console.log('fetch result:', result);
+    });
+    httpReqAsync(`/api/v1/courses/categories`, 'GET', jwt).then((result) => {
+      //fill out the data
+      setCourseCategories(result);
     });
   }, [jwt, courseId, currentUser, toggleRefresh]);
-
-  console.log('courseData:', courseData);
 
   if (error || !courseData) {
     return <div>{`Error: ${error}`}</div>;
@@ -158,9 +99,7 @@ const CourseCreationPage = () => {
       return newCourseData;
     });
   };
-  const handleTextChange = (e, moduleIndex, topicIndex) => {
-    const { name, value, type, files } = e.target;
-
+  const handleTextChange = (value, moduleIndex, topicIndex) => {
     setCourseData((prevState) => {
       const curriculum = [...prevState.curriculum];
       curriculum[moduleIndex].courseTopics[topicIndex].contentData.text = value;
@@ -197,10 +136,6 @@ const CourseCreationPage = () => {
       console.log('state of course data before sending file:', courseData);
       httpReqAsync('/api/v1/files', 'POST', jwt, files[0])
         .then((result) => {
-          console.log(
-            'state of result content data after sending file:',
-            result
-          );
           const curriculum = [...courseData.curriculum];
           curriculum[moduleIndex].courseTopics[topicIndex].contentData = {
             ...curriculum[moduleIndex].courseTopics[topicIndex].contentData,
@@ -209,14 +144,7 @@ const CourseCreationPage = () => {
           };
           const updatedCourseData = { ...courseData, curriculum };
           setCourseData(updatedCourseData);
-          httpReqAsync(`/api/v1/courses`, 'PUT', jwt, updatedCourseData)
-            .then((result) => {
-              console.log('saved:', result);
-              setCourseData(result);
-            })
-            .catch((err) => {
-              console.log('error:', err);
-            });
+          updateCourse(jwt, updatedCourseData);
         })
         .catch((err) => {
           console.log('error:', err);
@@ -281,67 +209,98 @@ const CourseCreationPage = () => {
   const handlePreviewPictureChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
-    httpReqAsync('/api/v1/files', 'POST', jwt, file).then((result) => {
-      const updatedCourseData = {
-        ...courseData,
-        img_url: result.file_url,
-        img_id: result.id,
-      };
-      setCourseData(updatedCourseData);
-      httpReqAsync(`/api/v1/courses`, 'PUT', jwt, updatedCourseData).then(
-        (result) => {
-          console.log('saved:', result);
-          setCourseData(result);
-        }
-      );
-    });
+    httpReqAsync('/api/v1/files', 'POST', jwt, file)
+      .then((result) => {
+        const updatedCourseData = {
+          ...courseData,
+          img_url: result.file_url,
+          img_id: result.id,
+        };
+        setCourseData(updatedCourseData);
+        updateCourse(jwt, updatedCourseData);
+      })
+      .catch((err) => {
+        console.log('error:', err);
+      });
   };
 
   const handlePromoVideoChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
-    httpReqAsync('/api/v1/files', 'POST', jwt, file).then((result) => {
-      const updatedCourseData = {
-        ...courseData,
-        video_url: result.file_url,
-        video_id: result.id,
-      };
-      setCourseData(updatedCourseData);
-      httpReqAsync(`/api/v1/courses`, 'PUT', jwt, updatedCourseData).then(
-        (result) => {
-          console.log('saved:', result);
-          setCourseData(result);
-        }
-      );
-    });
+    httpReqAsync('/api/v1/files', 'POST', jwt, file)
+      .then((result) => {
+        const updatedCourseData = {
+          ...courseData,
+          video_url: result.file_url,
+          video_id: result.id,
+        };
+        setCourseData(updatedCourseData);
+        updateCourse(jwt, updatedCourseData);
+      })
+      .catch((err) => {
+        console.log('error:', err);
+      });
   };
 
   const handlePublishCourse = (e) => {
     e.preventDefault();
-    console.log('final data sent:', courseData);
+
+    if (!courseData.img_url) {
+      alert('Please upload a preview picture');
+      return;
+    }
+    if (!courseData.video_url) {
+      alert('Please upload a promo video');
+      return;
+    }
+    if (!courseData.courseName) {
+      alert('Please enter a course name');
+      return;
+    }
+    if (!courseData.courseShortDescription) {
+      alert('Please enter a short description');
+      return;
+    }
+    // Confirmation dialog
+    const isConfirmed = window.confirm(
+      'Are you sure you want to publish this course?'
+    );
+    if (!isConfirmed) {
+      return; // If user cancels, exit the function
+    }
+
     courseData.published = true;
-    httpReqAsync(`/api/v1/courses`, 'PUT', jwt, courseData).then((result) => {
-      console.log('saved:', result);
-      if (result.published) {
-        navigate(`/courses/${courseId}/description`);
-        return;
-      } else {
-        alert('Error on the server');
-      }
-    });
+    httpReqAsync(`/api/v1/courses`, 'PUT', jwt, courseData)
+      .then((result) => {
+        console.log('saved:', result);
+        if (result.published) {
+          alert('Successfully published course');
+          navigate(`/courses/${courseId}/description`);
+          return;
+        } else {
+          alert('Error on the server');
+        }
+      })
+      .catch((err) => {
+        console.log('error:', err);
+      });
   };
 
   const handleSaveAsDraft = (e) => {
     e.preventDefault();
     courseData.published = false;
-    httpReqAsync(`/api/v1/courses`, 'PUT', jwt, courseData).then((result) => {
-      console.log('saved:', result);
-      setCourseData(result);
-      if (result.id) {
-        alert('Successfully saved as draft');
-      }
-      // setToggleRefresh(!toggleRefresh);
-    });
+    httpReqAsync(`/api/v1/courses`, 'PUT', jwt, courseData)
+      .then((result) => {
+        console.log('saved:', result);
+        setCourseData(result);
+        if (result.id) {
+          alert('Successfully saved as draft');
+        }
+        // setToggleRefresh(!toggleRefresh);
+      })
+      .catch((err) => {
+        console.log('error:', err);
+      });
   };
 
   const handleDeleteCourse = (e) => {
@@ -356,16 +315,6 @@ const CourseCreationPage = () => {
       navigate(`/my-courses`);
   };
 
-  const handleRequirementsSort = (newOrder) => {
-    console.log('newOrder', newOrder);
-    const newRequirements = newOrder.map(
-      (index) => courseData.requirements[index]
-    );
-    setCourseData((prevState) => ({
-      ...prevState,
-      requirements: newRequirements,
-    }));
-  };
   return (
     <div className="course-creation-page">
       <h1>Create a Course</h1>
@@ -376,7 +325,7 @@ const CourseCreationPage = () => {
       >
         <div>
           <label htmlFor="courseName">
-            Course Name <span style={{ color: 'red' }}>*</span>
+            Course Name: <span className="text-red-500">* (Required)</span>
           </label>
           <input
             type="text"
@@ -384,6 +333,41 @@ const CourseCreationPage = () => {
             name="courseName"
             value={courseData.courseName}
             onChange={handleInputChange}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="previewImage">
+            Preview Picture:<span className="text-red-500">* (Required)</span>
+          </label>
+          {courseData?.img_url && (
+            <img
+              src={courseData.img_url}
+              alt="uploaded file"
+              style={{ maxWidth: '600px' }}
+            />
+          )}
+          <input
+            type="file"
+            id="previewImage"
+            name="previewImage"
+            accept="image/*"
+            onChange={handlePreviewPictureChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="promoVideo">
+            Promo Video:<span className="text-red-500">* (Required)</span>
+          </label>
+          {courseData?.video_url && (
+            <VideoPlayer videoSrc={courseData.video_url} />
+          )}
+          <input
+            type="file"
+            id="promoVideo"
+            name="promoVideo"
+            accept="video/*"
+            onChange={handlePromoVideoChange}
           />
         </div>
 
@@ -401,7 +385,35 @@ const CourseCreationPage = () => {
         </div>
 
         <div>
-          <label htmlFor="courseShortDescription">Short Description:</label>
+          <label htmlFor="courseCategory">Course Category:</label>
+          <select
+            name="courseCategory"
+            id="category_id"
+            defaultValue={courseData?.category?.id}
+            onChange={(e) => {
+              setCourseData((prev) => ({
+                ...prev,
+                category_id: e.target.value,
+              }));
+            }}
+          >
+            {courseCategories.map((category) => (
+              <option
+                key={category.id}
+                selected={courseData?.category?.id === category.id}
+                value={category.id}
+              >
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="courseShortDescription">
+            Short Description:{' '}
+            <span className="text-red-500">* (Required)</span>
+          </label>
           <input
             maxLength={250}
             id="courseShortDescription"
@@ -413,15 +425,8 @@ const CourseCreationPage = () => {
 
         <div>
           <label htmlFor="courseLongDescription">Long Description:</label>
-          {/* <textarea
-            id="courseLongDescription"
-            name="courseLongDescription"
-            value={courseData.courseLongDescription}
-            onChange={handleInputChange}
-          /> */}
-          <ReactQuill
-            theme="snow"
-            value={courseData.courseLongDescription}
+          <Editor
+            data={courseData.courseLongDescription}
             onChange={(content) => {
               setCourseData((prevState) => ({
                 ...prevState,
@@ -479,7 +484,7 @@ const CourseCreationPage = () => {
               }))
             }
           >
-            Add Requirement
+            <ion-icon name="add-circle-outline" /> Add Requirement
           </button>
           <hr />
         </div>
@@ -534,7 +539,7 @@ const CourseCreationPage = () => {
               }))
             }
           >
-            Add Item
+            <ion-icon name="add-circle-outline" /> Add Item
           </button>
           <hr />
         </div>
@@ -611,6 +616,9 @@ const CourseCreationPage = () => {
                     >
                       Remove topic
                     </button>
+                    <label htmlFor="contentType" className="mt-2">
+                      Content Type:
+                    </label>
                     <select
                       value={topic.contentData.contentType}
                       onChange={(e) =>
@@ -697,17 +705,16 @@ const CourseCreationPage = () => {
                       )}
                       {topic.contentData.contentType === 'TEXT' && (
                         <>
-                          <textarea
-                            onChange={(e) =>
-                              handleTextChange(e, moduleIndex, topicIndex)
-                            }
-                            id="about"
-                            name="about"
-                            rows="3"
-                            className="with-border"
-                          >
-                            {topic.contentData.text}
-                          </textarea>
+                          <Editor
+                            data={topic.contentData.text}
+                            onChange={(content) => {
+                              handleTextChange(
+                                content,
+                                moduleIndex,
+                                topicIndex
+                              );
+                            }}
+                          />
                         </>
                       )}
                     </>
@@ -729,7 +736,7 @@ const CourseCreationPage = () => {
                     })
                   }
                 >
-                  Add Topic{' '}
+                  <ion-icon name="add-circle-outline" /> Add Topic{' '}
                   {module?.moduleName ? `for ` + module?.moduleName : ''}
                 </button>
               </span>
@@ -755,31 +762,33 @@ const CourseCreationPage = () => {
               }))
             }
           >
-            Add New Module
+            <ion-icon name="add-circle-outline" /> Add New Module
           </button>
           <hr />
         </div>
 
-        <label htmlFor="tags">Tags:</label>
-        {courseData.tags.map((item, index) => (
-          <div key={index} className="item">
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              key={index}
-              value={item}
-              onChange={(e) => handleTagChange(e, index)}
-            />
-            <button
-              type="button"
-              onClick={() => handleRemoveTag(index)}
-              className="remove-button remove_button"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
+        <div>
+          <label htmlFor="tags">Tags:</label>
+          {courseData.tags.map((item, index) => (
+            <div key={index} className="item">
+              <input
+                type="text"
+                id="tags"
+                name="tags"
+                key={index}
+                value={item}
+                onChange={(e) => handleTagChange(e, index)}
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveTag(index)}
+                className="remove-button remove_button"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
         {courseData.tags.length < 3 && (
           <button
             type="button"
@@ -790,57 +799,36 @@ const CourseCreationPage = () => {
               }));
             }}
           >
-            Add Tag
+            <ion-icon name="add-circle-outline" /> Add Tag
           </button>
         )}
         <hr />
-        <div>
-          <label htmlFor="previewImage">Preview Picture (Mandatory):</label>
-          {courseData?.img_url && (
-            <img
-              src={courseData.img_url}
-              alt="uploaded file"
-              style={{ maxWidth: '600px' }}
-            />
-          )}
-          <input
-            type="file"
-            id="previewImage"
-            name="previewImage"
-            accept="image/*"
-            onChange={handlePreviewPictureChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="promoVideo">Promo Video (Mandatory):</label>
-          {courseData?.video_url && (
-            <VideoPlayer videoSrc={courseData.video_url} />
-          )}
-          <input
-            type="file"
-            id="promoVideo"
-            name="promoVideo"
-            accept="video/*"
-            onChange={handlePromoVideoChange}
-          />
-        </div>
 
-        <div className="flex justify-flex">
-          <button type="submit" onClick={handlePublishCourse}>
-            Publish course
+        <div className="flex justify-flex mt-4">
+          <button
+            type="submit"
+            className="save_draft"
+            onClick={handleSaveAsDraft}
+          >
+            Save as a Draft
           </button>
-          <button type="submit" onClick={handleSaveAsDraft}>
-            Save draft
+
+          <button
+            type="submit"
+            className="ml-5 save_publish"
+            onClick={handlePublishCourse}
+          >
+            Publish this course
           </button>
         </div>
 
-        <div className="flex p-3">
+        <div className="flex mt-16">
           <span
             type="button"
-            className="p-2 rounded-md hover:bg-gray-200 flex items-center space-x-1 bg-red-500 text-white"
+            className="p-2 rounded-md hover:bg-red-800 flex items-center space-x-1 bg-red-500 text-white cursor-pointer"
             onClick={handleDeleteCourse}
           >
-            Delete course
+            <ion-icon name="trash" /> Delete this course
           </span>
         </div>
       </form>
@@ -848,4 +836,13 @@ const CourseCreationPage = () => {
   );
 };
 
+const updateCourse = (jwt, updatedCourseData) => {
+  httpReqAsync(`/api/v1/courses`, 'PUT', jwt, updatedCourseData)
+    .then((result) => {
+      console.log('saved:', result);
+    })
+    .catch((err) => {
+      console.log('error:', err);
+    });
+};
 export default CourseCreationPage;

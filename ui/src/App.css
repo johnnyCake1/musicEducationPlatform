@@ -13920,13 +13920,17 @@ Simplebar  Styles
 }
 
 .simplebar-wrapper {
-  overflow: hidden;
+  /* overflow: hidden; */
   width: inherit;
   height: inherit;
   max-width: inherit;
   max-height: inherit;
 }
-
+#curriculum {
+  overflow: scroll;
+    height: calc(100vh - 130px);
+    padding-bottom: 100px;
+}
 .simplebar-mask {
   direction: inherit;
   /* position: absolute; */
@@ -18752,7 +18756,7 @@ template {
     margin-left: 80px;
   }
 }
-.sidebar #logo,.sidebar #logo .sidebar_toggle  {
+.sidebar #logo,.sidebar .sidebar_toggle  {
   display: none;
 }
 .sidebar_toggle {
@@ -20963,7 +20967,9 @@ header .header_inner,
   }
 }
 
-
+.save_publish {
+  background-color: #FF5F15 !important;
+}
 @media (max-width: 1024px) {
   .dashboard-wrapper {
     display: block;
@@ -21001,6 +21007,28 @@ header .header_inner,
     top: 0;
     left: 0;
     margin-left: -350px;
+  }
+  .navss {
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+  }
+  .navss > a {
+    width: 100%;
+  }
+  .course-watch .sidebar.sidebarOpen .sidebar_inner {
+    width: 350px;
+    height: 100% !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin-left: 0px;
+  }
+  #curriculum {
+      overflow: scroll;
+      height: calc(100vh);
+      padding-bottom: 0;
+      padding-top: 30px;
   }
   .course-watch.is-active .sidebar_inner {
     margin-left: 0px;
