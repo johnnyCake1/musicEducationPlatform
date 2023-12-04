@@ -3,6 +3,7 @@ package com.zheenbek.music_learn.service;
 import com.sun.istack.NotNull;
 import com.zheenbek.music_learn.config.exceptions.ResourceNotFoundException;
 import com.zheenbek.music_learn.dto.request.course.CourseRequestDTO;
+import com.zheenbek.music_learn.dto.request_response.ReviewDTO;
 import com.zheenbek.music_learn.dto.response.course.CategoryResponseDTO;
 import com.zheenbek.music_learn.dto.request_response.course.ContentDataDTO;
 import com.zheenbek.music_learn.dto.response.course.CourseResponseDTO;
@@ -512,7 +513,7 @@ public class CourseService {
         courseDTO.setWhatYouWillLearn(course.getWhatYouWillLearn());
         courseDTO.setRequirements(course.getRequirements());
         courseDTO.setTags(course.getTags());
-        courseDTO.setReviews(course.getReviews());
+        courseDTO.setReviews(course.getReviews().stream().map(CourseService::mapReviewToDto).collect(Collectors.toList()));
         courseDTO.setCreationDate(course.getCreationDate());
         courseDTO.setLastUpdatedDate(course.getLastUpdatedDate());
         courseDTO.setPublished(course.isPublished());
@@ -585,6 +586,17 @@ public class CourseService {
             contentDataDTO.setText(contentData.getText());
         }
         return contentDataDTO;
+    }
+
+    public static ReviewDTO mapReviewToDto(Review review) {
+        ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setId(review.getId());
+        reviewDTO.setRating(review.getRating());
+        reviewDTO.setReviewMessage(review.getReviewMessage());
+        if (review.getReviewer() != null){
+            reviewDTO.setReviewer(mapUserToDto(review.getReviewer()));
+        }
+        return reviewDTO;
     }
 
     public CategoryResponseDTO getCategoryById(Long categoryId) {

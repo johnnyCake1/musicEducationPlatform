@@ -2,6 +2,7 @@ package com.zheenbek.music_learn.dto.response.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zheenbek.music_learn.dto.request_response.ReviewDTO;
 import com.zheenbek.music_learn.dto.request_response.course.CourseModuleDTO;
 import com.zheenbek.music_learn.dto.request_response.user.UserDTO;
 import com.zheenbek.music_learn.entity.Review;
@@ -36,7 +37,7 @@ public class CourseResponseDTO {
     private List<String> requirements = new ArrayList<>();
     private List<String> whatYouWillLearn = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
-    private List<Review> reviews = new ArrayList<>();
+    private List<ReviewDTO> reviews = new ArrayList<>();
     private Date creationDate;
     private Date lastUpdatedDate;
     private boolean isPublished;
@@ -159,11 +160,11 @@ public class CourseResponseDTO {
         this.tags = tags;
     }
 
-    public List<Review> getReviews() {
+    public List<ReviewDTO> getReviews() {
         return reviews;
     }
 
-    public void setReviews(List<Review> reviews) {
+    public void setReviews(List<ReviewDTO> reviews) {
         this.reviews = reviews;
     }
 

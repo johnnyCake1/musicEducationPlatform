@@ -2,13 +2,12 @@ package com.zheenbek.music_learn.dto.request_response.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zheenbek.music_learn.dto.request_response.FileDTO;
+import com.zheenbek.music_learn.dto.request_response.ReviewDTO;
 import com.zheenbek.music_learn.entity.FileEntity;
+import com.zheenbek.music_learn.entity.Review;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class UserDTO {
     private Long id;
@@ -28,6 +27,8 @@ public class UserDTO {
     private List<Long> savedCoursesIds;
     private List<Long> draftCoursesIds;
     private List<FileDTO> storedFiles;
+    private List<ReviewDTO> reviews;
+
     Collection<? extends GrantedAuthority> authorities = new HashSet<>();
 
     public Long getId() {
@@ -177,5 +178,13 @@ public class UserDTO {
 
     public void setDraftCoursesIds(List<Long> draftCoursesIds) {
         this.draftCoursesIds = draftCoursesIds;
+    }
+
+    public List<ReviewDTO> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<ReviewDTO> reviews) {
+        this.reviews = reviews;
     }
 }

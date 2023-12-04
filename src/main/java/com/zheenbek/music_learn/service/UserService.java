@@ -319,6 +319,7 @@ public class UserService {
         userDTO.setDraftCoursesIds(user.getDraftCourses().stream().map(Course::getId).collect(Collectors.toList()));
         userDTO.setSavedCoursesIds(user.getSavedCourses().stream().map(Course::getId).collect(Collectors.toList()));
         userDTO.setStoredFiles(user.getStoredFiles().stream().map(FileService::mapFileEntityToDto).collect(Collectors.toList()));
+        userDTO.setReviews(user.getReviews().stream().map(CourseService::mapReviewToDto).collect(Collectors.toList()));
         //  userDTO.setPrivateChats(user.getPrivateChats().stream().map(PrivateChatService::mapPrivateChatToDto).collect(Collectors.toList()));
         //  userDTO.setAuthorities(user.getAuthorities()); //this is causing cyclic relationship
         return userDTO;
