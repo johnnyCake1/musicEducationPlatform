@@ -42,7 +42,7 @@ public class Course {
     private String courseName;
     @Column(length = 1000)
     private String courseShortDescription;
-    @Column(length = 10000)
+    @Lob
     private String courseLongDescription;
     @ManyToOne
     private Category category;

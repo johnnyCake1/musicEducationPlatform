@@ -28,7 +28,7 @@ public class ContentData {
     private FileEntity file;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> quiz;
-    @Column(length = 10000)
+    @Lob
     private String text;
 
     public void setId(Long id) {
