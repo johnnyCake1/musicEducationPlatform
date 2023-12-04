@@ -18,6 +18,8 @@ public class ChatMessage {
     private String content;
     @JsonProperty(value = "file_url")
     private String filePath;
+    @JsonProperty(value = "file_id")
+    private String fileId;
     private Date timestamp;
     public ChatMessage() {}
 
@@ -75,5 +77,13 @@ public class ChatMessage {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 }

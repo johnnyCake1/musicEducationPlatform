@@ -1,51 +1,71 @@
 // WebSocketService.js
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { API_URL } from '../constants';
 
 class WebSocketService {
-    constructor() {
-        this.stompClient = null;
-    }
+  constructor() {
+    this.stompClient = null;
+  }
 
-    connect(userId, onMessageReceived) {
-        console.log("trying to connect...")
-        const socket = new SockJS('http://localhost:8080/ws');
-        this.stompClient = new Client({
-            webSocketFactory: () => socket,
-            onConnect: () => {
-                console.log("Connected!")
-                this.subscribe(userId, onMessageReceived);
-            },
-            onStompError: () => {
-                console.log("Stomp error!")
-            },
-            onWebSocketError: () => {
-                console.log("WebSocket error!")
-            }
-        });
-        this.stompClient.activate();
-    }
-
-    subscribe(userId, onMessageReceived) {
-        this.stompClient.subscribe(`/user/${userId}/queue/messages`, (message) => {
-            console.log("message received from subscription:", message)
-            onMessageReceived(JSON.parse(message.body));
-        });
-    }
-
-    sendMessage(destination, message) {
-        if (this.stompClient && this.stompClient.connected) {
-            this.stompClient.publish({ destination, body: JSON.stringify(message) });
+  connect(recipientId, senderId, onMessageReceived, onRoomsReceived) {
+    console.log('Trying to connect...');
+    const socket = new SockJS(`${API_URL}/ws`);
+    this.stompClient = new Client({
+      webSocketFactory: () => socket,
+      onConnect: () => {
+        this.subscribeToChatrooms(recipientId, onRoomsReceived);
+        if (senderId) {
+          this.subscribeToMessages(recipientId, senderId, onMessageReceived);
         }
-    }
+        console.log('Connected!');
+      },
+      onStompError: () => {
+        console.log('Stomp error!');
+      },
+      onWebSocketError: () => {
+        console.log('WebSocket error!');
+      },
+    });
+    this.stompClient.activate();
+  }
 
-    disconnect() {
-        console.log("Disconnected!")
+  subscribeToMessages(recipientId, senderId, onMessageReceived) {
+    console.log('Subscribing to messages...', senderId, recipientId);
+    this.stompClient.subscribe(
+      `/user/${recipientId}/queue/messages`,
+      (messages) => {
+        console.log('Messages received:', JSON.parse(messages.body));
+        onMessageReceived(JSON.parse(messages.body));
+      },
+      { senderId: senderId, recipientId: recipientId }
+    );
+  }
 
-        if (this.stompClient) {
-            this.stompClient.deactivate();
-        }
+  subscribeToChatrooms(recipientId, onRoomsReceived) {
+    this.stompClient.subscribe(
+      `/user/${recipientId}/queue/chatrooms`,
+      (chatrooms) => {
+        onRoomsReceived(JSON.parse(chatrooms.body));
+        console.log('Chatrooms received:', JSON.parse(chatrooms.body));
+      },
+      { recipientId: recipientId }
+    );
+  }
+
+  sendMessage(destination, message) {
+    if (this.stompClient && this.stompClient.connected) {
+      this.stompClient.publish({ destination, body: JSON.stringify(message) });
     }
+  }
+
+  disconnect() {
+    console.log('Disconnected!');
+
+    if (this.stompClient) {
+      this.stompClient.deactivate();
+    }
+  }
 }
 
 export const webSocketService = new WebSocketService();

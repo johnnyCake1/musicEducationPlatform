@@ -1,22 +1,27 @@
-import PrivateRoute from "./PrivateRoute";
-import Navigation from "./Navigation";
-import Sidebar from "./Sidebar";
-import '../../App.css'
+import React, { useState } from 'react';
+import PrivateRoute from './PrivateRoute';
+import Navigation from './Navigation';
+import Sidebar from './Sidebar';
+import '../../App.css';
 
-function withSidebarAndAuth(PageComponent) {
-    return (
-        <PrivateRoute>
-            <div className="">
-                <Navigation />
+function WithSidebarAndAuth(PageComponent) {
+  const [isOpen, setIsOpen] = useState(false);
 
-                <div className="main_content">
-                    {/* <Navigation_old /> */}
-                    <PageComponent />
-                </div>
-                <Sidebar />
-            </div>
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
 
-        </PrivateRoute>
-    );
+  return (
+    <PrivateRoute>
+      <div className="">
+        <Navigation toggleSidebar={toggleSidebar} />
+        <div className="main_content">
+          <PageComponent />
+        </div>
+        <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
+      </div>
+    </PrivateRoute>
+  );
 }
-export default withSidebarAndAuth;
+
+export default WithSidebarAndAuth;

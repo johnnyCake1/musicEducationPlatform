@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
-import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
-import { httpReqAsync } from "../../services/httpReqAsync";
-import useLocalStorageState from "../../util/useLocalStorageState";
-import "./ReviewCard.css";
+import { useEffect, useState } from 'react';
+import ProfilePicture from '../Profile/components/profile_card/ProfilePicture';
+import { httpReqAsync } from '../../services/httpReqAsync';
+import useLocalStorageState from '../../util/useLocalStorageState';
+import './ReviewCard.css';
 
 const ReviewCard = ({ review }) => {
   const [reviewer, setReviewer] = useState(null);
-  const [jwt] = useLocalStorageState("", "jwt");
+  const [jwt] = useLocalStorageState('', 'jwt');
   useEffect(() => {
-    httpReqAsync(`/api/v1/users/${review.reviewer}`, "GET", jwt).then(
-      (user) => {
-        setReviewer(user);
-      }
-    );
-  });
+    if (jwt && review.reviewer) {
+      httpReqAsync(`/api/v1/users/${review.reviewer}`, 'GET', jwt).then(
+        (user) => {
+          setReviewer(user);
+        }
+      );
+    }
+  }, [jwt, review.reviewer]);
   return (
     <div className="review-card">
       <div className="review-profile-picture profile-picture-wrapper">

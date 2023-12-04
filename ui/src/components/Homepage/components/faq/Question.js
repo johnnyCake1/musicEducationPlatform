@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import "./Question.css";
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import React, { useState } from 'react';
+import './Question.css';
+import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 
 const Question = ({ title, children }) => {
   const [showChildren, setShowChildren] = useState(false);
@@ -10,7 +10,7 @@ const Question = ({ title, children }) => {
   };
 
   return (
-    <div className="container question">
+    <div className="p-4 question w-full">
       <div className="question-title">
         <h4>{title}</h4>
         <button className="question-icons" onClick={handleClick}>
@@ -21,9 +21,7 @@ const Question = ({ title, children }) => {
           )}
         </button>
       </div>
-      <div className="question-answer">
-        {showChildren && <>{children}</>}
-      </div>
+      <div className="question-answer">{showChildren && <>{children}</>}</div>
     </div>
   );
 };

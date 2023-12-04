@@ -1,34 +1,50 @@
-import React, { useState } from "react";
-// import "./Navigation.css";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import logo from './assets/MelodiousLogo.svg';
 
-function Sidebar() {
+// import "./Navigation.css";
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+
+function Sidebar(props) {
+  const { isOpen, toggleSidebar } = props;
   function isActive(match, activeClass) {
     return window.location.pathname === match ? activeClass : '';
   }
+  const sidebarClass = isOpen ? 'sidebar sidebarOpen' : 'sidebar sidebarClosed';
   return (
-    <div className="sidebar">
+    <div className={sidebarClass}>
       <div className="sidebar_inner" data-simplebar="init">
-        <div className="simplebar-wrapper" style={{ margin: "-72px -12px 0px" }}>
+        <div id="logo">
+          <Link to="/">
+            <img
+              src={logo}
+              alt="Melodious logo"
+              className="logo"
+              style={{ filter: 'invert(1)' }}
+            />
+          </Link>
+        </div>
+        <div className="sidebar_toggle" onClick={toggleSidebar}>
+          <ion-icon
+            name="close"
+            class="sidebar_toggle_icon"
+            role="img"
+            size="large"
+            aria-label="chevron back"
+          ></ion-icon>
+        </div>
+        <div className="simplebar-wrapper">
           <div className="simplebar-height-auto-observer-wrapper">
             <div className="simplebar-height-auto-observer" />
           </div>
           <div className="simplebar-mask">
             <div
               className="simplebar-offset"
-              style={{ right: "-15px", bottom: 0 }}
+              style={{ right: '-15px', bottom: 0 }}
             >
-              <div
-                className="simplebar-content"
-                style={{
-                  padding: "72px 12px 0px",
-                  height: "100%",
-                  overflow: "hidden scroll"
-                }}
-              >
+              <div className="simplebar-content">
                 <ul className="side-colored">
                   <li className={isActive('/dashboard', 'active')}>
-                    <NavLink to="/dashboard" >
+                    <NavLink to="/dashboard">
                       <ion-icon
                         name="compass"
                         className="bg-gradient-to-br from-purple-300 p-1 rounded-md side-icon text-opacity-80 text-white to-blue-500 md hydrated"
@@ -37,10 +53,9 @@ function Sidebar() {
                       ></ion-icon>
                       <span> &nbsp;Dashboard</span>
                     </NavLink>
-                    
                   </li>
                   <li className={isActive('/my-courses', 'active')}>
-                    <NavLink to="/my-courses" >
+                    <NavLink to="/my-courses">
                       <ion-icon
                         name="play-circle"
                         className="bg-gradient-to-br from-yellow-300 p-1 rounded-md side-icon text-opacity-80 text-white to-red-500 md hydrated"
@@ -51,7 +66,7 @@ function Sidebar() {
                     </NavLink>
                   </li>
                   <li className={isActive('/courses', 'active')}>
-                    <NavLink to="/courses" >
+                    <NavLink to="/courses">
                       <ion-icon
                         name="albums"
                         className="bg-gradient-to-br from-green-300 p-1 rounded-md side-icon text-opacity-80 text-white to-green-500 md hydrated"
@@ -62,7 +77,7 @@ function Sidebar() {
                     </NavLink>
                   </li>
                   <li className={isActive('/my-learnings', 'active')}>
-                    <NavLink to="/my-learnings" >
+                    <NavLink to="/my-learnings">
                       <ion-icon
                         name="book"
                         className="bg-gradient-to-br from-yellow-300 p-1 rounded-md side-icon text-opacity-80 text-white to-red-500 md hydrated"
@@ -73,7 +88,7 @@ function Sidebar() {
                     </NavLink>
                   </li>
                   <li className={isActive('/storage', 'active')}>
-                    <NavLink to="/storage" >
+                    <NavLink to="/storage">
                       <ion-icon
                         name="newspaper"
                         className="bg-gradient-to-br from-purple-300 p-1 rounded-md side-icon text-opacity-80 text-white to-blue-500 md hydrated"
@@ -84,7 +99,6 @@ function Sidebar() {
                     </NavLink>
                   </li>
                 </ul>
-                
               </div>
             </div>
           </div>
@@ -95,26 +109,26 @@ function Sidebar() {
         </div>
         <div
           className="simplebar-track simplebar-horizontal"
-          style={{ visibility: "hidden" }}
+          style={{ visibility: 'hidden' }}
         >
           <div
             className="simplebar-scrollbar"
             style={{
-              transform: "translate3d(0px, 0px, 0px)",
-              visibility: "hidden"
+              transform: 'translate3d(0px, 0px, 0px)',
+              visibility: 'hidden',
             }}
           />
         </div>
         <div
           className="simplebar-track simplebar-vertical"
-          style={{ visibility: "visible" }}
+          style={{ visibility: 'visible' }}
         >
           <div
             className="simplebar-scrollbar"
             style={{
               height: 205,
-              transform: "translate3d(0px, 0px, 0px)",
-              visibility: "visible"
+              transform: 'translate3d(0px, 0px, 0px)',
+              visibility: 'visible',
             }}
           />
         </div>

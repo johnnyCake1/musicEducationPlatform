@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 // import "./CoursePreviewCard.css";
-import { httpReqAsync } from "../../../services/httpReqAsync";
-import useLocalStorageState from "../../../util/useLocalStorageState";
-import { Link } from "react-router-dom";
+import { httpReqAsync } from '../../../services/httpReqAsync';
+import useLocalStorageState from '../../../util/useLocalStorageState';
+import { Link } from 'react-router-dom';
 
 const CourseCard = ({ course }) => {
   const [showAddToSavedIcon, setShowAddToSavedIcon] = useState(false);
-  const [jwt] = useLocalStorageState("", "jwt");
-  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const [jwt] = useLocalStorageState('', 'jwt');
+  const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     //get current user's info
-    httpReqAsync(`/api/v1/users/${currentUser?.id}`, "GET", jwt).then(
+    httpReqAsync(`/api/v1/users/${currentUser?.id}`, 'GET', jwt).then(
       (result) => {
-        console.log("result", result);
+        console.log('result', result);
         setIsSaved(result.savedCoursesIds.includes(course.id));
       }
     );
@@ -26,20 +26,20 @@ const CourseCard = ({ course }) => {
     if (isSaved) {
       httpReqAsync(
         `/api/v1/users/${currentUser.id}/saved-courses/${course.id}`,
-        "DELETE",
+        'DELETE',
         jwt
       ).then((result) => {
-        console.log("course saved value updated to:", !isSaved);
+        console.log('course saved value updated to:', !isSaved);
         setIsSaved(!isSaved);
       });
       // if not saved then save
     } else {
       httpReqAsync(
         `/api/v1/users/${currentUser.id}/saved-courses/${course.id}`,
-        "POST",
+        'POST',
         jwt
       ).then((result) => {
-        console.log("course saved value updated to:", !isSaved);
+        console.log('course saved value updated to:', !isSaved);
         setIsSaved(!isSaved);
       });
     }
@@ -49,22 +49,22 @@ const CourseCard = ({ course }) => {
     <div
       onMouseEnter={() => setShowAddToSavedIcon(true)}
       onMouseLeave={() => setShowAddToSavedIcon(false)}
-      className="card uk-transition-toggle"
+      className="course_card card uk-transition-toggle"
     >
       <Link to={`/courses/${course.id}/description`}>
         <ion-icon
           onClick={toggleSaveCourse}
-          className={`add-to-saved-icon ${
-            isSaved || showAddToSavedIcon ? "visible" : ""
+          class={`add-to-saved-icon ${
+            isSaved || showAddToSavedIcon ? 'visible' : ''
           }`}
-          name={isSaved ? "bookmark" : "bookmark-outline"}
+          name={isSaved ? 'bookmark' : 'bookmark-outline'}
         ></ion-icon>
         <div className="card-media h-40">
           <img
             src={
               course.img_url
                 ? course.img_url
-                : "https://icon-library.com/images/placeholder-image-icon/placeholder-image-icon-21.jpg"
+                : 'https://icon-library.com/images/placeholder-image-icon/placeholder-image-icon-21.jpg'
             }
             alt=""
             className=""
@@ -72,9 +72,9 @@ const CourseCard = ({ course }) => {
         </div>
         <div className="card-body p-4">
           <div className="font-semibold line-clamp-2">
-            {course.courseName == "" ? "NO NAME" : course.courseName}
+            {course.courseName == '' ? 'NO NAME' : course.courseName}
           </div>
-          <div className="flex space-x-2 items-center text-sm pt-3">
+          <div className="flex space-x-2 items-center text-sm pt-3 short-desc">
             <div> {course.courseShortDescription} </div>
           </div>
           <div className="pt-1 flex items-center justify-between">
@@ -85,9 +85,9 @@ const CourseCard = ({ course }) => {
           </div>
         </div>
       </Link>
-      <div className="p-2 flex justify-end">
+      <div className="px-2 flex justify-end">
         <Link
-          to={"/my-courses/drafts/" + course.id}
+          to={'/my-courses/drafts/' + course.id}
           href="#"
           className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >

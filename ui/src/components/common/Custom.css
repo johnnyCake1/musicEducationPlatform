@@ -143,3 +143,16 @@ ion-icon.md.hydrated {}
 .sortable-chosen {
     background: #dfdfdf;
 }
+
+.short-desc {
+    /* max height with dots make 3 lines max */
+    max-height: 3.6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+    -webkit-box-orient: vertical;
+
+
+    
+}

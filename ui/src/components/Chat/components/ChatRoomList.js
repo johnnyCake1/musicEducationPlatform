@@ -1,31 +1,28 @@
 // ChatRoomList.js
-import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { httpReqAsync } from '../../../services/httpReqAsync';
-import useLocalStorageState from '../../../util/useLocalStorageState';
-
-const ChatRoomList = ({ handleSetActiveChatUserId }) => {
-  const [currentUser] = useLocalStorageState(null, "currentUser");
-  const [jwt] = useLocalStorageState("", "jwt");
-  const [chatRooms, setChatRooms] = useState([]);
-
-  useEffect(() => {
-    // Fetch the list of chat rooms for the current user
-    httpReqAsync(`/api/v1/messages/${currentUser.id}`, 'GET', jwt)
-      .then((result) => {
-        setChatRooms(result || []);
-        console.log("Chatroom list of current user:", result);
-      }).catch((err) => {
-        console.log("No chats for the current user")
-      });
-  }, [currentUser.id, jwt]);
-
+const ChatRoomList = ({ handleSetActiveChatUserId, chatRooms }) => {
   return (
-    <ul>
+    <ul className="divide-y divide-gray-200">
       {chatRooms.map((room) => (
-        <li key={room.id}>
-          <Link onClick={() => { handleSetActiveChatUserId(room.recipientId) }}>
-            {room.chatRoomName}
+        <li key={room.id} className="p-3 hover:bg-gray-100 cursor-pointer">
+          <Link
+            to={`/chat?otherUserId=${room.recipientId}`}
+            onClick={() => handleSetActiveChatUserId(room.recipientId)}
+            className="flex items-center space-x-3"
+          >
+            <img
+              src={room.img_url}
+              alt={`${room.chatRoomName}`}
+              className="h-10 w-10 rounded-full"
+            />
+            <div>
+              <p className="text-sm font-medium text-gray-900">
+                {room.chatRoomName}
+              </p>
+              <p className="text-sm text-gray-500">
+                {room.lastMessage.content}
+              </p>
+            </div>
           </Link>
         </li>
       ))}

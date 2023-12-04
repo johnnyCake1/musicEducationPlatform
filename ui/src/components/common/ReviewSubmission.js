@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import "./ReviewSubmission.css";
-import { FaStar, FaRegStar } from "react-icons/fa";
-import useLocalStorageState from "../../util/useLocalStorageState";
+import React, { useState } from 'react';
+import './ReviewSubmission.css';
+import { FaStar, FaRegStar } from 'react-icons/fa';
+import useLocalStorageState from '../../util/useLocalStorageState';
 
 const ReviewSubmission = ({ onSubmit }) => {
   const [ratingStars, setRatingStars] = useState(0);
   const [rating, setRating] = useState(0);
-  const [reviewMessage, setReviewMessage] = useState("");
-  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const [reviewMessage, setReviewMessage] = useState('');
+  const [currentUser] = useLocalStorageState(null, 'currentUser');
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -16,7 +16,7 @@ const ReviewSubmission = ({ onSubmit }) => {
     };
     onSubmit({ rating, reviewMessage, reviewer });
     setRatingStars(0);
-    setReviewMessage("");
+    setReviewMessage('');
   };
 
   return (
@@ -27,7 +27,7 @@ const ReviewSubmission = ({ onSubmit }) => {
           <span
             key={i}
             className={`review-submission__star ${
-              ratingStars >= i ? "review-submission__star--filled" : ""
+              ratingStars >= i ? 'review-submission__star--filled' : ''
             }`}
             onMouseEnter={() => setRatingStars(i)}
             onMouseLeave={() => setRatingStars(rating)}
@@ -37,16 +37,21 @@ const ReviewSubmission = ({ onSubmit }) => {
           </span>
         ))}
       </div>
-      <div className="review-submission__comment">
-        <textarea
-          placeholder="Write a review..."
-          value={reviewMessage}
-          onChange={(e) => setReviewMessage(e.target.value)}
-        />
-      </div>
-      <button type="submit" className="review-submission__submit-button">
-        Submit
-      </button>
+      {rating > 0 && (
+        <>
+          <div className="review-submission__comment">
+            <textarea
+              placeholder="Write a review..."
+              value={reviewMessage}
+              rows="3"
+              onChange={(e) => setReviewMessage(e.target.value)}
+            />
+          </div>
+          <button type="submit" className="review-submission__submit-button">
+            Submit
+          </button>
+        </>
+      )}
     </form>
   );
 };

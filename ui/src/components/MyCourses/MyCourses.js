@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import CoursePreviewCard from "../Course/components/CoursePreviewCard";
-import TabbedPage from "../common/TabbedPage";
-import { Link, useNavigate } from "react-router-dom";
-import { httpReqAsync } from "../../services/httpReqAsync";
-import useLocalStorageState from "../../util/useLocalStorageState";
-import "./MyCourses.css";
-import MyCourseCard from "../Course/components/MyCourseCard";
+import React, { useEffect, useState } from 'react';
+import CoursePreviewCard from '../Course/components/CoursePreviewCard';
+import TabbedPage from '../common/TabbedPage';
+import { Link, useNavigate } from 'react-router-dom';
+import { httpReqAsync } from '../../services/httpReqAsync';
+import useLocalStorageState from '../../util/useLocalStorageState';
+import './MyCourses.css';
+import MyCourseCard from '../Course/components/MyCourseCard';
 
 const MyCourses = () => {
   const navigate = useNavigate();
-  const [jwt] = useLocalStorageState("", "jwt");
-  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const [jwt] = useLocalStorageState('', 'jwt');
+  const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [publishedCourses, setPublishedCourses] = useState(null);
   const [draftCourses, setDraftCourses] = useState(null);
   useEffect(() => {
     //get published courses
     httpReqAsync(
       `/api/v1/users/${currentUser.id}/published-courses`,
-      "GET",
+      'GET',
       jwt
     ).then((result) => {
       setPublishedCourses(result);
@@ -25,10 +25,10 @@ const MyCourses = () => {
     //get saved courses
     httpReqAsync(
       `/api/v1/courses/draft-courses?authorId=${currentUser.id}`,
-      "GET",
+      'GET',
       jwt
     ).then((result) => {
-      console.log("drafts:", result);
+      console.log('drafts:', result);
       setDraftCourses(result);
     });
   }, [jwt, currentUser]);
@@ -36,19 +36,27 @@ const MyCourses = () => {
   const handleDraftCreation = () => {
     httpReqAsync(
       `/api/v1/courses/draft-courses/create-empty?authorId=${currentUser.id}`,
-      "POST",
+      'POST',
       jwt
     ).then((emptyCourseData) => {
-      console.log("here is result:!", emptyCourseData);
+      console.log('here is result:!', emptyCourseData);
       navigate(`/my-courses/drafts/${emptyCourseData.id}`);
     });
   };
   const tabs = [
     {
-      name: "publishedCourses",
-      label: "Published courses",
+      name: 'publishedCourses',
+      label: 'Published courses',
       content: (
         <>
+          <div className="mb-4">
+            <button
+              onClick={handleDraftCreation}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Click here to create a new course
+            </button>
+          </div>
           {publishedCourses ? (
             publishedCourses.length > 0 ? (
               <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
@@ -63,30 +71,28 @@ const MyCourses = () => {
               </div>
             ) : (
               <div className="flex">
-                {"Nothing in your published courses yet :("}
+                {'Nothing in your published courses yet :('}
               </div>
             )
           ) : (
             <div>Loading ...</div>
           )}
-          <br />
-          <button
-            onClick={handleDraftCreation}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Click here to create a new course
-          </button>
-          {/* <Link to="/courses/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Click here to create a new course
-          </Link> */}
         </>
       ),
     },
     {
-      name: "draftCourses",
-      label: "Draft courses",
+      name: 'draftCourses',
+      label: 'Draft courses',
       content: (
         <>
+          <div className="mb-4">
+            <button
+              onClick={handleDraftCreation}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Click here to create a new course
+            </button>
+          </div>
           {draftCourses ? (
             draftCourses.length > 0 ? (
               <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
@@ -100,23 +106,12 @@ const MyCourses = () => {
               </div>
             ) : (
               <div className="flex">
-                {"Nothing in your published courses yet :("}
+                {'Nothing in your published courses yet :('}
               </div>
             )
           ) : (
             <div>Loading ...</div>
           )}
-          <br />
-
-          <button
-            onClick={handleDraftCreation}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Click here to create a new course
-          </button>
-          {/* <Link to="/courses/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Click here to create a new course
-          </Link> */}
         </>
       ),
     },

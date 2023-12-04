@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 // import "./Navigation.css";
-import Logo from "./Logo";
-import ProfilePicture from "../Profile/components/profile_card/ProfilePicture";
-import { Link, useNavigate } from "react-router-dom";
-import useLocalStorageState from "../../util/useLocalStorageState";
-import logo from "./assets/MelodiousLogo.svg";
+import Logo from './Logo';
+import ProfilePicture from '../Profile/components/profile_card/ProfilePicture';
+import { Link, useNavigate } from 'react-router-dom';
+import useLocalStorageState from '../../util/useLocalStorageState';
+import logo from './assets/MelodiousLogo.svg';
 
-function Navigation() {
+function Navigation({ toggleSidebar }) {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchBarContent, setSearchBarContent] = useState("");
-  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const [searchBarContent, setSearchBarContent] = useState('');
+  const [currentUser] = useLocalStorageState(null, 'currentUser');
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -48,10 +48,10 @@ function Navigation() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      searchBarContent != ""
+    if (e.key === 'Enter') {
+      searchBarContent != ''
         ? navigate(`/search/${searchBarContent}`)
-        : alert("Search could not be empty");
+        : alert('Search could not be empty');
     }
   };
 
@@ -59,7 +59,7 @@ function Navigation() {
     <header
       className="is-transparent border-b backdrop-filter backdrop-blur-2xl uk-sticky uk-sticky-fixed"
       uk-sticky="cls-inactive: is-dark is-transparent border-b"
-      style={{ position: "sticky", top: "0px"}}
+      style={{ position: 'sticky', top: '0px' }}
     >
       <div className="header_inner">
         <div className="left-side">
@@ -70,12 +70,13 @@ function Navigation() {
                 src={logo}
                 alt="Melodious logo"
                 className="logo"
-                style={{ filter: "invert(1)" }}
+                style={{ filter: 'invert(1)' }}
               />
             </Link>
           </div>
           {/* icon menu for mobile */}
           <div
+            onClick={() => toggleSidebar()}
             className="triger"
             uk-toggle="target: #wrapper ; cls: is-active"
           ></div>
@@ -83,7 +84,7 @@ function Navigation() {
         <div className="right-side">
           {/* Header search box  */}
           <div className="header_search">
-            <i style={{ fontSize: "16px" }}>
+            <i style={{ fontSize: '16px' }}>
               <ion-icon name="search" />
             </i>
             <input
@@ -96,9 +97,9 @@ function Navigation() {
             />
             <button
               onClick={() => {
-                searchBarContent != ""
+                searchBarContent != ''
                   ? navigate(`/search/${searchBarContent}`)
-                  : alert("Search could not be empty");
+                  : alert('Search could not be empty');
               }}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
@@ -112,28 +113,29 @@ function Navigation() {
                 name="mail-outline"
                 className="is-icon md hydrated"
                 role="img"
+                size="large"
                 aria-label="notifications outline"
               />
-              <span> 2 </span>
             </Link>
 
             {/* profile */}
             <span
               onClick={() => toggleMenu()}
               aria-expanded="false"
-              className={isMenuOpen ? "uk-open" : ""}
+              className={isMenuOpen ? 'uk-open' : ''}
             >
               <ProfilePicture
                 imageSrc={currentUser.img_url}
                 onClick={() => {}}
+                size={30}
               />
             </span>
             <div
               uk-drop="mode: click;offset:5"
               className={
                 isMenuOpen
-                  ? "header_dropdown profile_dropdown uk-drop  uk-open"
-                  : "header_dropdown profile_dropdown uk-drop "
+                  ? 'header_dropdown profile_dropdown uk-drop  uk-open'
+                  : 'header_dropdown profile_dropdown uk-drop '
               }
             >
               <ul>

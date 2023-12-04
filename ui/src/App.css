@@ -11826,9 +11826,13 @@ body .button i.icon-material-outline-arrow-right-alt {
   margin: 0 auto;
 }
 
-.card {
-  width: 20rem;
+.course_card {
+  width: auto;
   height: 21rem;
+}
+.card {
+  /* width: 20rem; */
+  
   background-color: white;
   border-radius: 8px;
   overflow: hidden;
@@ -13925,7 +13929,7 @@ Simplebar  Styles
 
 .simplebar-mask {
   direction: inherit;
-  position: absolute;
+  /* position: absolute; */
   overflow: hidden;
   padding: 0;
   margin: 0;
@@ -13943,7 +13947,7 @@ Simplebar  Styles
   -webkit-box-sizing: inherit !important;
   box-sizing: inherit !important;
   resize: none !important;
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   left: 0;
   bottom: 0;
@@ -18192,7 +18196,7 @@ template {
 
 .sidebar .sidebar_inner {
   padding: 0 12px;
-  height: calc(100% - -30px);
+  height: calc(100% - 30px);
   padding-top: 72px;
   /*footer links */
 }
@@ -18748,13 +18752,26 @@ template {
     margin-left: 80px;
   }
 }
-
+.sidebar #logo,.sidebar #logo .sidebar_toggle  {
+  display: none;
+}
+.sidebar_toggle {
+  position: absolute;
+    right: 10px;
+    top: 10px;
+}
 @media (max-width: 1200px) {
   .sidebar {
     margin-left: -300px;
     padding: 0;
     z-index: 1099;
     background: transparent;
+  }
+  .sidebarOpen {
+    margin-left: 0 !important;
+  }
+  .sidebar #logo, .sidebar_toggle  {
+    display: block;
   }
   .sidebar .sidebar_inner {
     width: 300px;
@@ -19728,9 +19745,10 @@ header .header_inner,
     height: 25px;
   }
   header .header_inner .right-side {
-    position: absolute;
+    /* position: absolute;
     right: 15px;
-    top: 10px;
+    top: 10px; */
+    margin-right: 15px;
   }
   header .header_inner .right-side .header_widgets {
     padding: 7px;
@@ -19757,6 +19775,8 @@ header .header_inner,
     display: -webkit-box !important;
     display: -ms-flexbox !important;
     display: flex !important;
+    align-items: center;
+    justify-content: center;
   }
   .header_menu > ul {
     -webkit-box-orient: vertical;
@@ -20898,10 +20918,16 @@ header .header_inner,
   transform: translate(-50%, -50%);
   position: absolute;
 }
-
+.dashboard-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.dashboard-wrapper > div {
+  width: 49%;
+}
 @media (min-width: 1024px) {
   .course-watch .sidebar {
-    width: 360px;
+    /* width: 360px; */
     -webkit-box-shadow: inset -36px 0 40px -32px rgba(0, 0, 0, 0.05);
     box-shadow: inset -36px 0 40px -32px rgba(0, 0, 0, 0.05);
     margin: 0;
@@ -20933,11 +20959,22 @@ header .header_inner,
     border-radius: 100%;
   }
   .course-watch .main_content {
-    margin-left: 360px;
+    margin-left: 0px;
   }
 }
 
+
 @media (max-width: 1024px) {
+  .dashboard-wrapper {
+    display: block;
+    justify-content: space-between;
+  }
+  .dashboard-wrapper > div {
+    width: 100%;
+  }
+  .dashboard-wrapper .chat {
+    margin-top: 20px;
+  }
   .course-watch .sidebar {
     height: auto;
     width: 100%;

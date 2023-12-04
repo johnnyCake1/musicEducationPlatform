@@ -1,24 +1,26 @@
-import React, { useEffect, useState } from "react";
-import "./CourseCreationPage.css";
-import { FaBook, FaCheck } from "react-icons/fa";
-import useLocalStorageState from "../../util/useLocalStorageState";
-import { useNavigate, useParams } from "react-router-dom";
-import { getFile, httpReqAsync } from "../../services/httpReqAsync";
-import VideoPlayer from "../common/VideoPlayer";
-import { ReactSortable } from "react-sortablejs";
-import QuizCreator from "./QuizCreatiion";
+import React, { useEffect, useState } from 'react';
+import './CourseCreationPage.css';
+import { FaBook, FaCheck } from 'react-icons/fa';
+import useLocalStorageState from '../../util/useLocalStorageState';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getFile, httpReqAsync } from '../../services/httpReqAsync';
+import VideoPlayer from '../common/VideoPlayer';
+import { ReactSortable } from 'react-sortablejs';
+import QuizCreator from './QuizCreatiion';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 const CourseCreationPage = () => {
   const { courseId } = useParams();
-  const [currentUser] = useLocalStorageState(null, "currentUser");
-  const [jwt] = useLocalStorageState("", "jwt");
+  const [currentUser] = useLocalStorageState(null, 'currentUser');
+  const [jwt] = useLocalStorageState('', 'jwt');
   const [toggleRefresh, setToggleRefresh] = useState(false);
   const [courseData, setCourseData] = useState({
     id: courseId,
     authorId: currentUser.id,
-    courseName: "",
+    courseName: '',
     price: 0,
-    courseShortDescription: "",
-    courseLongDescription: "",
+    courseShortDescription: '',
+    courseLongDescription: '',
     requirements: [],
     whatYouWillLearn: [],
     curriculum: [],
@@ -31,10 +33,10 @@ const CourseCreationPage = () => {
 
   const isContentTypeFile = (contentType) => {
     return (
-      contentType === "IMAGE" ||
-      contentType === "VIDEO" ||
-      contentType === "DOC" ||
-      contentType === "FILE"
+      contentType === 'IMAGE' ||
+      contentType === 'VIDEO' ||
+      contentType === 'DOC' ||
+      contentType === 'FILE'
     );
   };
 
@@ -79,7 +81,7 @@ const CourseCreationPage = () => {
     };
 
     //fetch the course data
-    httpReqAsync(`/api/v1/courses/${courseId}`, "GET", jwt).then((result) => {
+    httpReqAsync(`/api/v1/courses/${courseId}`, 'GET', jwt).then((result) => {
       // if (
       //   String(currentUser.id) !== String(result.authorId) ||
       //   result.published
@@ -96,14 +98,14 @@ const CourseCreationPage = () => {
 
       //fill out the data
       setCourseData(result);
-      console.log("fetch result:", result);
+      console.log('fetch result:', result);
 
       //fetch course topics
       // fetchFiles(result.curriculum);
     });
   }, [jwt, courseId, currentUser, toggleRefresh]);
 
-  console.log("courseData:", courseData);
+  console.log('courseData:', courseData);
 
   if (error || !courseData) {
     return <div>{`Error: ${error}`}</div>;
@@ -111,16 +113,7 @@ const CourseCreationPage = () => {
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
-    console.log("sas", name, value);
-
-    if (name === "price") {
-      // Remove non-digit characters
-      value = value.replace(/[^0-9.]/g, "");
-
-      // Add decimal places
-      value = parseFloat(value).toFixed(2);
-      console.log("sas2", name, value);
-    }
+    console.log('sas', name, value);
     setCourseData((prevState) => ({ ...prevState, [name]: value }));
   };
 
@@ -144,7 +137,7 @@ const CourseCreationPage = () => {
 
   const handleCurriculumChange = (e, moduleIndex, topicIndex) => {
     const { name, value, type, files } = e.target;
-    console.log("log", value);
+    console.log('log', value);
     setCourseData((prevState) => {
       const curriculum = [...prevState.curriculum];
       curriculum[moduleIndex].courseTopics[topicIndex].contentData.contentType =
@@ -172,7 +165,7 @@ const CourseCreationPage = () => {
       const curriculum = [...prevState.curriculum];
       curriculum[moduleIndex].courseTopics[topicIndex].contentData.text = value;
       curriculum[moduleIndex].courseTopics[topicIndex].contentData.contentType =
-        "TEXT";
+        'TEXT';
 
       const newCourseData = { ...prevState, curriculum };
       return newCourseData;
@@ -187,7 +180,7 @@ const CourseCreationPage = () => {
     setCourseData((prevState) => {
       const curriculum = [...prevState.curriculum];
       console.log(
-        "sdfsdf",
+        'sdfsdf',
         curriculum[moduleIndex].courseTopics[topicIndex].contentData
       );
       curriculum[moduleIndex].courseTopics[topicIndex].contentData.quiz =
@@ -200,25 +193,34 @@ const CourseCreationPage = () => {
   const handleUpload = (e, moduleIndex, topicIndex) => {
     const { name, value, type, files } = e.target;
 
-    if (type === "file") {
-      console.log("state of course data before sending file:", courseData);
-      httpReqAsync("/api/v1/files", "POST", jwt, files[0]).then((result) => {
-        console.log("state of result content data after sending file:", result);
-        const curriculum = [...courseData.curriculum];
-        curriculum[moduleIndex].courseTopics[topicIndex].contentData = {
-          ...curriculum[moduleIndex].courseTopics[topicIndex].contentData,
-          file_url: result.file_url,
-          file_id: result.id,
-        };
-        const updatedCourseData = { ...courseData, curriculum };
-        setCourseData(updatedCourseData);
-        httpReqAsync(`/api/v1/courses`, "PUT", jwt, updatedCourseData).then(
-          (result) => {
-            console.log("saved:", result);
-            setCourseData(result);
-          }
-        );
-      });
+    if (type === 'file') {
+      console.log('state of course data before sending file:', courseData);
+      httpReqAsync('/api/v1/files', 'POST', jwt, files[0])
+        .then((result) => {
+          console.log(
+            'state of result content data after sending file:',
+            result
+          );
+          const curriculum = [...courseData.curriculum];
+          curriculum[moduleIndex].courseTopics[topicIndex].contentData = {
+            ...curriculum[moduleIndex].courseTopics[topicIndex].contentData,
+            file_url: result.file_url,
+            file_id: result.id,
+          };
+          const updatedCourseData = { ...courseData, curriculum };
+          setCourseData(updatedCourseData);
+          httpReqAsync(`/api/v1/courses`, 'PUT', jwt, updatedCourseData)
+            .then((result) => {
+              console.log('saved:', result);
+              setCourseData(result);
+            })
+            .catch((err) => {
+              console.log('error:', err);
+            });
+        })
+        .catch((err) => {
+          console.log('error:', err);
+        });
 
       return;
     }
@@ -279,16 +281,16 @@ const CourseCreationPage = () => {
   const handlePreviewPictureChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
-    httpReqAsync("/api/v1/files", "POST", jwt, file).then((result) => {
+    httpReqAsync('/api/v1/files', 'POST', jwt, file).then((result) => {
       const updatedCourseData = {
         ...courseData,
         img_url: result.file_url,
         img_id: result.id,
       };
       setCourseData(updatedCourseData);
-      httpReqAsync(`/api/v1/courses`, "PUT", jwt, updatedCourseData).then(
+      httpReqAsync(`/api/v1/courses`, 'PUT', jwt, updatedCourseData).then(
         (result) => {
-          console.log("saved:", result);
+          console.log('saved:', result);
           setCourseData(result);
         }
       );
@@ -298,16 +300,16 @@ const CourseCreationPage = () => {
   const handlePromoVideoChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
-    httpReqAsync("/api/v1/files", "POST", jwt, file).then((result) => {
+    httpReqAsync('/api/v1/files', 'POST', jwt, file).then((result) => {
       const updatedCourseData = {
         ...courseData,
         video_url: result.file_url,
         video_id: result.id,
       };
       setCourseData(updatedCourseData);
-      httpReqAsync(`/api/v1/courses`, "PUT", jwt, updatedCourseData).then(
+      httpReqAsync(`/api/v1/courses`, 'PUT', jwt, updatedCourseData).then(
         (result) => {
-          console.log("saved:", result);
+          console.log('saved:', result);
           setCourseData(result);
         }
       );
@@ -316,32 +318,46 @@ const CourseCreationPage = () => {
 
   const handlePublishCourse = (e) => {
     e.preventDefault();
-    console.log("final data sent:", courseData);
+    console.log('final data sent:', courseData);
     courseData.published = true;
-    httpReqAsync(`/api/v1/courses`, "PUT", jwt, courseData).then((result) => {
-      console.log("saved:", result);
-      navigate(`/courses/${courseId}/description`);
+    httpReqAsync(`/api/v1/courses`, 'PUT', jwt, courseData).then((result) => {
+      console.log('saved:', result);
+      if (result.published) {
+        navigate(`/courses/${courseId}/description`);
+        return;
+      } else {
+        alert('Error on the server');
+      }
     });
   };
 
   const handleSaveAsDraft = (e) => {
     e.preventDefault();
     courseData.published = false;
-    httpReqAsync(`/api/v1/courses`, "PUT", jwt, courseData).then((result) => {
-      console.log("saved:", result);
+    httpReqAsync(`/api/v1/courses`, 'PUT', jwt, courseData).then((result) => {
+      console.log('saved:', result);
       setCourseData(result);
+      if (result.id) {
+        alert('Successfully saved as draft');
+      }
       // setToggleRefresh(!toggleRefresh);
     });
   };
 
   const handleDeleteCourse = (e) => {
     e.preventDefault();
-    httpReqAsync(`/api/v1/courses/${courseData.id}`, "DELETE", jwt, courseData);
-    navigate(`/my-courses`);
+    window.confirm('Are you sure you want to delete student?') &&
+      httpReqAsync(
+        `/api/v1/courses/${courseData.id}`,
+        'DELETE',
+        jwt,
+        courseData
+      ) &&
+      navigate(`/my-courses`);
   };
 
   const handleRequirementsSort = (newOrder) => {
-    console.log("newOrder", newOrder);
+    console.log('newOrder', newOrder);
     const newRequirements = newOrder.map(
       (index) => courseData.requirements[index]
     );
@@ -360,7 +376,7 @@ const CourseCreationPage = () => {
       >
         <div>
           <label htmlFor="courseName">
-            Course Name <span style={{ color: "red" }}>*</span>
+            Course Name <span style={{ color: 'red' }}>*</span>
           </label>
           <input
             type="text"
@@ -386,7 +402,8 @@ const CourseCreationPage = () => {
 
         <div>
           <label htmlFor="courseShortDescription">Short Description:</label>
-          <textarea
+          <input
+            maxLength={250}
             id="courseShortDescription"
             name="courseShortDescription"
             value={courseData.courseShortDescription}
@@ -396,11 +413,21 @@ const CourseCreationPage = () => {
 
         <div>
           <label htmlFor="courseLongDescription">Long Description:</label>
-          <textarea
+          {/* <textarea
             id="courseLongDescription"
             name="courseLongDescription"
             value={courseData.courseLongDescription}
             onChange={handleInputChange}
+          /> */}
+          <ReactQuill
+            theme="snow"
+            value={courseData.courseLongDescription}
+            onChange={(content) => {
+              setCourseData((prevState) => ({
+                ...prevState,
+                courseLongDescription: content,
+              }));
+            }}
           />
         </div>
 
@@ -422,7 +449,7 @@ const CourseCreationPage = () => {
               <div key={index} className="item">
                 <ion-icon
                   name="list-outline"
-                  style={{ fontSize: 20, cursor: "move" }}
+                  style={{ fontSize: 20, cursor: 'move' }}
                 />
                 &nbsp;
                 <FaBook className="what-youll-learn__tick" />
@@ -448,7 +475,7 @@ const CourseCreationPage = () => {
             onClick={() =>
               setCourseData((prevState) => ({
                 ...prevState,
-                requirements: [...prevState.requirements, ""],
+                requirements: [...prevState.requirements, ''],
               }))
             }
           >
@@ -475,8 +502,8 @@ const CourseCreationPage = () => {
               <div key={index} className="item">
                 <ion-icon
                   name="list-outline"
-                  style={{ fontSize: 20, cursor: "move" }}
-                ></ion-icon>{" "}
+                  style={{ fontSize: 20, cursor: 'move' }}
+                ></ion-icon>{' '}
                 &nbsp;
                 <FaCheck className="what-youll-learn__tick" />
                 <span>
@@ -503,7 +530,7 @@ const CourseCreationPage = () => {
             onClick={() =>
               setCourseData((prevState) => ({
                 ...prevState,
-                whatYouWillLearn: [...prevState.whatYouWillLearn, ""],
+                whatYouWillLearn: [...prevState.whatYouWillLearn, ''],
               }))
             }
           >
@@ -562,8 +589,8 @@ const CourseCreationPage = () => {
                   <div className="topic-item" key={topicIndex}>
                     <ion-icon
                       name="list-outline"
-                      style={{ fontSize: 20, cursor: "move" }}
-                    ></ion-icon>{" "}
+                      style={{ fontSize: 20, cursor: 'move' }}
+                    ></ion-icon>{' '}
                     &nbsp;
                     <label htmlFor={`topic-${moduleIndex}-${topicIndex}`}>
                       Topic Name:
@@ -601,15 +628,15 @@ const CourseCreationPage = () => {
                     </select>
                     <>
                       <>
-                        {topic.contentData.contentType === "IMAGE" && (
+                        {topic.contentData.contentType === 'IMAGE' && (
                           <>
                             <img
                               src={
                                 topic.contentData.file_url ??
-                                "https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-default-placeholder.png"
+                                'https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-default-placeholder.png'
                               }
                               alt="topic"
-                              style={{ maxWidth: "300px" }}
+                              style={{ maxWidth: '300px' }}
                             />
                             <input
                               type="file"
@@ -621,7 +648,7 @@ const CourseCreationPage = () => {
                             />
                           </>
                         )}
-                        {topic.contentData.contentType === "VIDEO" && (
+                        {topic.contentData.contentType === 'VIDEO' && (
                           <>
                             {topic.contentData.file_url && (
                               <VideoPlayer
@@ -638,13 +665,13 @@ const CourseCreationPage = () => {
                             />
                           </>
                         )}
-                        {topic.contentData.contentType === "DOC" && (
+                        {topic.contentData.contentType === 'DOC' && (
                           <>
                             <iframe
                               src={topic.contentData.file_url}
                               title="title"
                             >
-                              Presss me:{" "}
+                              Presss me:{' '}
                               <a href="./resources/crayola.pdf">Download PDF</a>
                             </iframe>
                             <input
@@ -658,7 +685,7 @@ const CourseCreationPage = () => {
                           </>
                         )}
                       </>
-                      {topic.contentData.contentType === "QUIZ" && (
+                      {topic.contentData.contentType === 'QUIZ' && (
                         <>
                           <QuizCreator
                             handleQuizUpdate={handleQuizUpdate}
@@ -668,7 +695,7 @@ const CourseCreationPage = () => {
                           />
                         </>
                       )}
-                      {topic.contentData.contentType === "TEXT" && (
+                      {topic.contentData.contentType === 'TEXT' && (
                         <>
                           <textarea
                             onChange={(e) =>
@@ -695,14 +722,15 @@ const CourseCreationPage = () => {
                     setCourseData((prevState) => {
                       const curriculum = [...prevState.curriculum];
                       curriculum[moduleIndex].courseTopics.push({
-                        topicName: "",
-                        contentData: { file: null, contentType: "VIDEO" },
+                        topicName: '',
+                        contentData: { file: null, contentType: 'VIDEO' },
                       });
                       return { ...prevState, curriculum };
                     })
                   }
                 >
-                  Add Topic
+                  Add Topic{' '}
+                  {module?.moduleName ? `for ` + module?.moduleName : ''}
                 </button>
               </span>
             </div>
@@ -715,11 +743,11 @@ const CourseCreationPage = () => {
                 curriculum: [
                   ...prevState.curriculum,
                   {
-                    moduleName: "",
+                    moduleName: '',
                     courseTopics: [
                       {
-                        topicName: "",
-                        contentData: { file: null, contentType: "VIDEO" },
+                        topicName: '',
+                        contentData: { file: null, contentType: 'VIDEO' },
                       },
                     ],
                   },
@@ -727,7 +755,7 @@ const CourseCreationPage = () => {
               }))
             }
           >
-            Add Module
+            Add New Module
           </button>
           <hr />
         </div>
@@ -758,7 +786,7 @@ const CourseCreationPage = () => {
             onClick={() => {
               setCourseData((prevState) => ({
                 ...prevState,
-                tags: [...prevState.tags, ""],
+                tags: [...prevState.tags, ''],
               }));
             }}
           >
@@ -772,7 +800,7 @@ const CourseCreationPage = () => {
             <img
               src={courseData.img_url}
               alt="uploaded file"
-              style={{ maxWidth: "600px" }}
+              style={{ maxWidth: '600px' }}
             />
           )}
           <input
@@ -804,9 +832,16 @@ const CourseCreationPage = () => {
           <button type="submit" onClick={handleSaveAsDraft}>
             Save draft
           </button>
-          <button type="button" onClick={handleDeleteCourse}>
-            Delete course (no confirmation!)
-          </button>
+        </div>
+
+        <div className="flex p-3">
+          <span
+            type="button"
+            className="p-2 rounded-md hover:bg-gray-200 flex items-center space-x-1 bg-red-500 text-white"
+            onClick={handleDeleteCourse}
+          >
+            Delete course
+          </span>
         </div>
       </form>
     </div>

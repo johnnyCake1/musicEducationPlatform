@@ -3,15 +3,7 @@ package com.zheenbek.music_learn.entity.course;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.zheenbek.music_learn.entity.FileEntity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -36,7 +28,7 @@ public class ContentData {
     private FileEntity file;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> quiz;
-
+    @Column(length = 10000)
     private String text;
 
     public void setId(Long id) {
