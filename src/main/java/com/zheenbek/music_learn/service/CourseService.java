@@ -199,10 +199,10 @@ public class CourseService {
         ContentData contentData = courseTopicToDelete.getContentData();
         if (contentData != null) {
             if (contentData.getFile() != null) {
-                //delete old file from the file system
-                serverFileStorageService.deleteProfilePicture(contentData.getFile().getFileName());
-                //delete old file from the database
-                fileRepository.delete(contentData.getFile());
+//                //delete old file from the file system
+//                serverFileStorageService.deleteProfilePicture(contentData.getFile().getFileName());
+//                //delete old file from the database
+//                fileRepository.delete(contentData.getFile());
             }
             contentDataRepository.delete(courseTopicToDelete.getContentData());
         }

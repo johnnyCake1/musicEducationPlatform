@@ -121,12 +121,12 @@ public class UserService {
         //update user
         user.setProfilePic(newProfilePic);
         userRepository.save(user);
-        if (oldProfilePic != null) {
-            //delete old profile picture from the file system
-            serverFileStorageService.deleteProfilePicture(oldProfilePic.getFileName());
-            //delete old profile picture from the database
-            fileRepository.delete(oldProfilePic);
-        }
+//        if (oldProfilePic != null) {
+//            //delete old profile picture from the file system
+//            serverFileStorageService.deleteProfilePicture(oldProfilePic.getFileName());
+//            //delete old profile picture from the database
+//            fileRepository.delete(oldProfilePic);
+//        }
         return mapUserToDto(user).getProfilePicturePath();
     }
 
@@ -139,10 +139,10 @@ public class UserService {
         //update user
         user.setProfilePic(null);
         userRepository.save(user);
-        //delete old profile picture from the file system
-        serverFileStorageService.deleteProfilePicture(oldProfilePic.getFileName());
-        //delete old profile picture from the database
-        fileRepository.delete(oldProfilePic);
+//        //delete old profile picture from the file system
+//        serverFileStorageService.deleteProfilePicture(oldProfilePic.getFileName());
+//        //delete old profile picture from the database
+//        fileRepository.delete(oldProfilePic);
     }
 
     public File addStoredFile(MultipartFile file, Long userId) throws IOException {
