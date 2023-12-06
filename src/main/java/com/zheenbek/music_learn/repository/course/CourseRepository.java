@@ -26,13 +26,14 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> searchCoursesByKeyword(@Param("keyword") String keyword);
 
     @Query("SELECT c FROM Course c WHERE " +
+            "c.author.id != :userId AND (" +
             "LOWER(c.courseName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.username) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.firstName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.lastName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.courseShortDescription) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.courseLongDescription) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
-            "EXISTS (SELECT element FROM c.whatYouWillLearn element WHERE c.author.id != :userId AND LOWER(element) LIKE CONCAT('%', LOWER(:keyword), '%'))")
+            "EXISTS (SELECT element FROM c.whatYouWillLearn element WHERE LOWER(element) LIKE CONCAT('%', LOWER(:keyword), '%')))")
     List<Course> searchCoursesByKeyword(@Param("keyword") String keyword, @Param("userId") Long userId);
 
     // Custom method to fetch N random courses (MySQL 8)

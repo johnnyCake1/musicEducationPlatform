@@ -19,9 +19,21 @@ public class PurchaseRecordController {
         this.purchaseRecordService = purchaseRecordService;
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<PurchaseRecord>> getPurchaseRecordHistoryForUser(@PathVariable Long userId) {
-        List<PurchaseRecord> purchaseHistory = purchaseRecordService.getPurchaseRecordHistoryForUser(userId);
+    @GetMapping("/buyer/{buyerId}")
+    public ResponseEntity<List<PurchaseRecord>> getPurchaseRecordHistoryForUser(@PathVariable Long buyerId) {
+        List<PurchaseRecord> purchaseHistory = purchaseRecordService.getPurchaseRecordHistoryForUser(buyerId);
+        return ResponseEntity.ok(purchaseHistory);
+    }
+
+    @GetMapping("/seller/{sellerId}")
+    public ResponseEntity<List<PurchaseRecord>> getPurchaseRecordHistoryForSellerUser(@PathVariable Long sellerId) {
+        List<PurchaseRecord> purchaseHistory = purchaseRecordService.getPurchaseRecordHistoryForSellerUser(sellerId);
+        return ResponseEntity.ok(purchaseHistory);
+    }
+
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<List<PurchaseRecord>> getPurchaseRecordHistoryCourse(@PathVariable Long courseId) {
+        List<PurchaseRecord> purchaseHistory = purchaseRecordService.getPurchaseRecordHistoryForCourse(courseId);
         return ResponseEntity.ok(purchaseHistory);
     }
 }

@@ -2,6 +2,7 @@ package com.zheenbek.music_learn.config;
 
 import com.zheenbek.music_learn.repository.user.UserRepository;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -41,6 +42,15 @@ public class SecurityConfig {
                 .antMatchers("/storage/**").permitAll()
                 .antMatchers("/chat/**").permitAll()
                 .antMatchers("/ws/**", "/ws/info", "/ws/**/info").permitAll()
+                // mark those endpoints which do not require authorisation
+                .antMatchers(HttpMethod.GET, "/api/v1/courses").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/courses/{id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/courses/categories/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/courses/categories/{categoryId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/courses/categories/{categoryId}/get-courses").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/courses/search/{keyword}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/courses/{id}/reviews").permitAll() // If reviews can be added without authentication
+                // ... add any other unauthenticated endpoints here ...
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

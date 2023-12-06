@@ -242,7 +242,6 @@ public class CourseResponseDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CourseResponseDTO courseDTO = (CourseResponseDTO) o;
         return Double.compare(price, courseDTO.price) == 0 && isPublished == courseDTO.isPublished && Objects.equals(id, courseDTO.id) && Objects.equals(authorId, courseDTO.authorId) && Objects.equals(author, courseDTO.author) && Objects.equals(courseName, courseDTO.courseName) && Objects.equals(courseShortDescription, courseDTO.courseShortDescription) && Objects.equals(courseLongDescription, courseDTO.courseLongDescription) && Objects.equals(category, courseDTO.category) && Objects.equals(promoVideoId, courseDTO.promoVideoId) && Objects.equals(promoVideoPath, courseDTO.promoVideoPath) && Objects.equals(previewImageId, courseDTO.previewImageId) && Objects.equals(previewImagePath, courseDTO.previewImagePath) && Objects.equals(enrolledStudentsIds, courseDTO.enrolledStudentsIds) && Objects.equals(savedInStudentsIds, courseDTO.savedInStudentsIds) && Objects.equals(enrolledStudents, courseDTO.enrolledStudents) && Objects.equals(curriculum, courseDTO.curriculum) && Objects.equals(requirements, courseDTO.requirements) && Objects.equals(whatYouWillLearn, courseDTO.whatYouWillLearn) && Objects.equals(tags, courseDTO.tags) && Objects.equals(reviews, courseDTO.reviews) && Objects.equals(creationDate, courseDTO.creationDate) && Objects.equals(lastUpdatedDate, courseDTO.lastUpdatedDate);

@@ -2,6 +2,7 @@ package com.zheenbek.music_learn.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zheenbek.music_learn.config.JwtUtil;
 import com.zheenbek.music_learn.dto.request.course.CourseRequestDTO;
 import com.zheenbek.music_learn.dto.response.course.CategoryResponseDTO;
 import com.zheenbek.music_learn.dto.response.course.CourseResponseDTO;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,6 +39,7 @@ public class CourseController {
     private final UserService userService;
     private final StripeService stripeService;
     private final PurchaseRecordService purchaseService;
+    private final JwtUtil jwtUtil = new JwtUtil();
     @Autowired
     public CourseController(CourseService courseService, UserService userService, StripeService stripeService, PurchaseRecordService purchaseService) {
         this.courseService = courseService;
@@ -45,20 +48,14 @@ public class CourseController {
         this.purchaseService = purchaseService;
     }
 
-    @GetMapping("/recommendations")
+    @GetMapping("/recommendations") // must be authorised
     public ResponseEntity<List<CourseResponseDTO>> getRecommendedCoursesForUser(@RequestParam Long userId) {
         List<CourseResponseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
         System.out.println("recommendation result size: " + foundCourses.size());
         return new ResponseEntity<>(foundCourses, HttpStatus.OK);
     }
 
-    @GetMapping("/explore")
-    public ResponseEntity<List<CourseResponseDTO>> exploreCourses(@RequestParam Long userId) {
-        List<CourseResponseDTO> foundCourses = courseService.getRecommendedCoursesForUser(userId);
-        return new ResponseEntity<>(foundCourses, HttpStatus.OK);
-    }
-
-    @PostMapping
+    @PostMapping // must be authorised
     public ResponseEntity<CourseResponseDTO> createCourse(@RequestParam("promoVideo") MultipartFile promoVideo,
                                                           @RequestParam("previewPicture") MultipartFile previewPicture,
                                                           @RequestPart("contentDataFiles") MultipartFile[] topicContentFiles,
@@ -83,82 +80,82 @@ public class CourseController {
      * @param course course object that will replace the actual course info
      * @return updated course
      */
-    @PutMapping
+    @PutMapping // must be authorised
     ResponseEntity<CourseResponseDTO> createOrUpdateCourse(@RequestBody CourseRequestDTO course) {
         CourseResponseDTO createdDraft = courseService.createOrUpdateDraftCourseForUser(course);
         return new ResponseEntity<>(createdDraft, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<CourseResponseDTO>> getAllCourses(@RequestParam(required = false) Long authorId, @RequestParam(required = false, defaultValue = "false") Boolean onlyPublished) {
+    @GetMapping // can be unauthorised
+    public ResponseEntity<List<CourseResponseDTO>> getAllCourses(@RequestParam(required = false) Long authorId) {
         if (authorId == null) {
-            return new ResponseEntity<>(courseService.getAllCourses(onlyPublished), HttpStatus.OK);
+            return new ResponseEntity<>(courseService.getAllCourses(true), HttpStatus.OK);
         }
-        return new ResponseEntity<>(courseService.getAllCoursesByAuthorId(authorId, onlyPublished), HttpStatus.OK);
+        return new ResponseEntity<>(courseService.getAllCoursesByAuthorId(authorId, true), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("id") Long courseId) {
-        CourseResponseDTO courseResponseDTO = courseService.getCourseById(courseId);
-        System.out.println("Returning course with price: " + courseResponseDTO.getPrice());
-        return new ResponseEntity<>(courseResponseDTO, HttpStatus.OK);
+    @GetMapping("/{id}") // can be unauthorised
+    public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("id") Long courseId,
+                                                       @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        CourseResponseDTO courseNoContentResponseDTO = courseService.getCourseById(courseId, false);
+        // Extract the JWT token from the Authorization header
+        String jwtToken;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            jwtToken = authorizationHeader.substring(7);
+            String username = jwtUtil.extractUsername(jwtToken);
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+            if (courseNoContentResponseDTO.getEnrolledStudentsIds().contains(user.getId())) {
+                // if authenticated and enrolled then show full content:
+                return new ResponseEntity<>(courseService.getCourseById(courseId, true), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(courseNoContentResponseDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // must be authorised
     public ResponseEntity<Void> deleteCourse(@PathVariable("id") Long courseId) {
         courseService.deleteCourse(courseId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/{id}/convert-to-draft")
+    @PostMapping("/{id}/convert-to-draft") // must be authorised
     public ResponseEntity<CourseResponseDTO> convertToDraft(@PathVariable("id") Long courseId) {
         CourseResponseDTO updatedCourse = courseService.convertToDraft(courseId);
         return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/{courseModuleId}")
+    @DeleteMapping("/{id}/{courseModuleId}") // must be authorised
     public ResponseEntity<Void> deleteCourseModule(@PathVariable("id") Long courseId, @PathVariable Long courseModuleId) {
         courseService.deleteCourseModule(courseId, courseModuleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{id}/{courseModuleId}/{topicId}")
+    @DeleteMapping("/{id}/{courseModuleId}/{topicId}") // must be authorised
     public ResponseEntity<Void> deleteCourseTopic(@PathVariable("id") Long courseId, @PathVariable Long courseModuleId, @PathVariable Long topicId) {
         courseService.deleteCourseTopic(courseId, courseModuleId, topicId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/{id}/preview-picture")
-    public ResponseEntity<FileSystemResource> getCoursePreviewPicture(@PathVariable Long id) {
-        File file = courseService.getPreviewPictureByCourseId(id);
-        return getFileSystemResourceResponseEntity(file);
-    }
-
-    @GetMapping("/{id}/course-video")
-    public ResponseEntity<FileSystemResource> getCourseVideo(@PathVariable Long id) {
-        File file = courseService.getCourseVideoByCourseId(id);
-        return getFileSystemResourceResponseEntity(file);
-    }
-
-    @GetMapping("/{id}/reviews")
+    @GetMapping("/{id}/reviews") // can be unauthorised
     public ResponseEntity<List<Review>> getCourseReviews(@PathVariable Long id) {
         List<Review> reviews = courseService.getCourseReviews(id);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
-    @PostMapping("/{id}/reviews")
+    @PostMapping("/{id}/reviews") // must be authorised
     public ResponseEntity<List<Review>> addReview(@PathVariable Long id, @RequestBody Review review) {
         List<Review> updatedReviews = courseService.addReviewToCourse(id, review);
         return new ResponseEntity<>(updatedReviews, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/reviews/{reviewId}")
+    @DeleteMapping("/{id}/reviews/{reviewId}") // must be authorised
     public ResponseEntity<List<Review>> removeReview(@PathVariable Long id, @PathVariable Long reviewId) {
         List<Review> updatedReviews = courseService.removeReviewFromCourse(id, reviewId);
         return new ResponseEntity<>(updatedReviews, HttpStatus.OK);
     }
 
-    @PostMapping("/{id}/enroll")
+    @PostMapping("/{id}/enroll") // must be authorised
     public ResponseEntity<CourseResponseDTO> enrollUser(@PathVariable Long id,
                                                         @RequestParam Long userId,
                                                         @RequestHeader(value = "token", required = false, defaultValue = "") final String token,
@@ -193,55 +190,55 @@ public class CourseController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/{id}/drop")
+    @PostMapping("/{id}/drop") // must be authorised
     public ResponseEntity<Course> dropUser(@PathVariable Long id, @RequestParam Long userId) {
         Course updatedCourse = courseService.dropUser(id, userId);
         return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
     }
 
-    @GetMapping("/categories")
+    @GetMapping("/categories") // can be unauthorised
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
         List<CategoryResponseDTO> categories = courseService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @GetMapping("/categories/{categoryId}")
+    @GetMapping("/categories/{categoryId}") // can be unauthorised
     public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable Long categoryId) {
         CategoryResponseDTO category = courseService.getCategoryById(categoryId);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
-    @GetMapping("/categories/{categoryId}/get-courses")
+    @GetMapping("/categories/{categoryId}/get-courses") // can be unauthorised
     public ResponseEntity<List<CourseResponseDTO>> getCoursesByCategory(@PathVariable Long categoryId) {
         List<CourseResponseDTO> foundCourses = courseService.getAllCoursesByCategory(categoryId);
         return new ResponseEntity<>(foundCourses, HttpStatus.OK);
     }
 
-    @GetMapping("/draft-courses")
+    @GetMapping("/draft-courses") // must be authorised
     public ResponseEntity<List<CourseResponseDTO>> getAllDraftCoursesByAuthor(@RequestParam Long authorId) {
         List<CourseResponseDTO> draftCourses = courseService.getAllDraftCoursesByAuthorId(authorId);
         return new ResponseEntity<>(draftCourses, HttpStatus.OK);
     }
 
-    @PostMapping("/draft-courses/create-empty")
+    @PostMapping("/draft-courses/create-empty") // must be authorised
     ResponseEntity<CourseResponseDTO> createOrUpdateDraftCourseForUser(@RequestParam Long authorId) {
         CourseResponseDTO createdDraft = courseService.createEmptyDraftCourseForUser(authorId);
         return new ResponseEntity<>(createdDraft, HttpStatus.CREATED);
     }
 
-    @PostMapping("/draft-courses/{draftCourseId}/create-empty-module")
+    @PostMapping("/draft-courses/{draftCourseId}/create-empty-module") // must be authorised
     ResponseEntity<CourseModuleDTO> createEmptyModule(@PathVariable Long draftCourseId) {
         CourseModuleDTO createdModule = courseService.createEmptyModule(draftCourseId);
         return new ResponseEntity<>(createdModule, HttpStatus.CREATED);
     }
 
-    @PostMapping("/draft-courses/{draftCourseId}/{moduleId}/create-empty-topic")
+    @PostMapping("/draft-courses/{draftCourseId}/{moduleId}/create-empty-topic") // must be authorised
     ResponseEntity<CourseTopicDTO> createEmptyTopic(@PathVariable Long draftCourseId, @PathVariable Long moduleId) {
         CourseTopicDTO createdTopic = courseService.createEmptyTopic(draftCourseId, moduleId);
         return new ResponseEntity<>(createdTopic, HttpStatus.CREATED);
     }
 
-    @GetMapping("/search/{keyword}")
+    @GetMapping("/search/{keyword}") // can be unauthorised
     public ResponseEntity<List<CourseResponseDTO>> searchAllCoursesByKeyword(@PathVariable String keyword) {
         return new ResponseEntity<>(courseService.findCoursesByKeyword(keyword), HttpStatus.OK);
     }

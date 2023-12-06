@@ -87,7 +87,8 @@ public class CourseService {
     public List<CourseResponseDTO> getAllCourses(boolean onlyPublished) {
         return courseRepository.findAll().stream()
                 .filter(course -> !onlyPublished || course.isPublished())
-                .map(CourseService::mapCourseToDto).collect(Collectors.toList());
+                .map(CourseService::mapCourseToDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -152,8 +153,12 @@ public class CourseService {
     }
 
     public CourseResponseDTO getCourseById(Long courseId) {
+        return getCourseById(courseId, false);
+    }
+
+    public CourseResponseDTO getCourseById(Long courseId, boolean includeContent) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException("Course not found with ID: " + courseId));
-        return mapCourseToDto(course);
+        return mapCourseToDto(course, includeContent);
     }
 
     @Transactional
@@ -221,7 +226,7 @@ public class CourseService {
         Course savedCourse = courseRepository.save(newCourse);
         author.getDraftCourses().add(savedCourse);
         userRepository.save(author);
-        return mapCourseToDto(savedCourse);
+        return mapCourseToDto(savedCourse, true);
     }
 
     @Transactional
@@ -232,7 +237,7 @@ public class CourseService {
         CourseModule savedModule = courseModuleRepository.save(newModule);
         draftCourse.getCurriculum().add(newModule);
         courseRepository.save(draftCourse);
-        return mapCourseModuleToDto(savedModule);
+        return mapCourseModuleToDto(savedModule, true);
     }
 
     @Transactional
@@ -249,7 +254,7 @@ public class CourseService {
         CourseTopic savedTopic = courseTopicRepository.save(newTopic);
         courseModule.getCourseTopics().add(newTopic);
         courseModuleRepository.save(courseModule);
-        return mapCourseTopicToDto(savedTopic);
+        return mapCourseTopicToDto(savedTopic, true);
     }
 
     @Transactional
@@ -281,7 +286,7 @@ public class CourseService {
                 //update user
                 userRepository.save(author);
             }
-            return mapCourseToDto(updatedCourse);
+            return mapCourseToDto(updatedCourse, true);
         }
         //create
         Course courseToSave = mapRequestDtoToCourse(courseDTO);
@@ -330,7 +335,8 @@ public class CourseService {
     public List<CourseResponseDTO> getAllCoursesByAuthorId(Long authorId, boolean onlyPublished) {
         return courseRepository.findAllByAuthorId(authorId).stream()
                 .filter(e -> onlyPublished && e.isPublished())
-                .map(CourseService::mapCourseToDto).collect(Collectors.toList());
+                .map(course -> CourseService.mapCourseToDto(course, false))
+                .collect(Collectors.toList());
     }
 
     public List<CourseResponseDTO> findCoursesByKeyword(String keyword) {
@@ -371,7 +377,7 @@ public class CourseService {
         author.getPublishedCourses().remove(course);
         userRepository.save(author);
         course.setPublished(false);
-        return mapCourseToDto(courseRepository.save(course));
+        return mapCourseToDto(courseRepository.save(course), true);
     }
 
     @Transactional
@@ -393,7 +399,7 @@ public class CourseService {
             courseRepository.save(course);
         }
         System.out.println("Enroll saved");
-        return mapCourseToDto(course);
+        return mapCourseToDto(course, true);
     }
 
     public Course dropUser(Long courseId, Long userId) {
@@ -504,6 +510,10 @@ public class CourseService {
     }
 
     public static CourseResponseDTO mapCourseToDto(Course course) {
+        return mapCourseToDto(course, false);
+    }
+
+    public static CourseResponseDTO mapCourseToDto(Course course, boolean includeContentData) {
         CourseResponseDTO courseDTO = new CourseResponseDTO();
         courseDTO.setId(course.getId());
         if (course.getAuthor() != null) {
@@ -540,7 +550,12 @@ public class CourseService {
             courseDTO.setEnrolledStudents(course.getEnrolledStudents().stream().map(UserService::mapUserToDto).collect(Collectors.toList()));
         }
         if (course.getCurriculum() != null) {
-            courseDTO.setCurriculum(course.getCurriculum().stream().map(CourseService::mapCourseModuleToDto).collect(Collectors.toList()));
+            courseDTO.setCurriculum(
+                    course.getCurriculum()
+                    .stream()
+                    .map(module -> CourseService.mapCourseModuleToDto(module, includeContentData))
+                    .collect(Collectors.toList())
+            );
         }
         return courseDTO;
     }
@@ -556,20 +571,32 @@ public class CourseService {
     }
 
     public static CourseModuleDTO mapCourseModuleToDto(CourseModule courseModule) {
+        return mapCourseModuleToDto(courseModule, false);
+    }
+
+    public static CourseModuleDTO mapCourseModuleToDto(CourseModule courseModule, boolean includeContentData) {
         CourseModuleDTO courseModuleDTO = new CourseModuleDTO();
         courseModuleDTO.setId(courseModule.getId());
         courseModuleDTO.setModuleName(courseModule.getModuleName());
         if (courseModule.getCourseTopics() != null) {
-            courseModuleDTO.setCourseTopics(courseModule.getCourseTopics().stream().map(CourseService::mapCourseTopicToDto).collect(Collectors.toList()));
+            courseModuleDTO.setCourseTopics(
+                    courseModule.getCourseTopics()
+                            .stream()
+                            .map(topic -> CourseService.mapCourseTopicToDto(topic, includeContentData))
+                            .collect(Collectors.toList()));
         }
         return courseModuleDTO;
     }
 
     public static CourseTopicDTO mapCourseTopicToDto(CourseTopic courseTopic) {
+        return mapCourseTopicToDto(courseTopic, false);
+    }
+
+    public static CourseTopicDTO mapCourseTopicToDto(CourseTopic courseTopic, boolean includeContentData) {
         CourseTopicDTO courseTopicDTO = new CourseTopicDTO();
         courseTopicDTO.setId(courseTopic.getId());
         courseTopicDTO.setTopicName(courseTopic.getTopicName());
-        if (courseTopic.getContentData() != null) {
+        if (courseTopic.getContentData() != null && includeContentData) {
             courseTopicDTO.setContentData(mapContentDataToDto(courseTopic.getContentData()));
         }
         return courseTopicDTO;
@@ -618,7 +645,8 @@ public class CourseService {
         // we recommend by saved courses: keywords should be same
         // if no taken courses and no saved items, then same as explore page
         List<CourseResponseDTO> relatedCourses = new ArrayList<>();
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         user.getTakenCourses()
                 .forEach((course) -> {
                     relatedCourses.addAll(getRelatedCourses(course, userId));
@@ -645,7 +673,7 @@ public class CourseService {
     }
 
     private List<CourseResponseDTO> getRelatedCourses(Course course, Long userId) {
-        List<CourseResponseDTO> relatedCourses = new ArrayList<>(findCoursesByKeyword(course.getAuthor().getUsername()));
+        List<CourseResponseDTO> relatedCourses = new ArrayList<>(findCoursesByKeyword(course.getAuthor().getUsername(), userId));
         Arrays.stream(course.getCourseName().split(" ")).forEach(word -> {
             relatedCourses.addAll(findCoursesByKeyword(word, userId));
         });
