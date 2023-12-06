@@ -183,7 +183,10 @@ const ProfilePage = () => {
                           'POST',
                           jwt,
                           reviewToSubmit
-                        )
+                        ).then(() => {
+                          alert('Review submitted successfully!');
+                          setToggleRefresh(!toggleRefresh);
+                        })
                       }
                     />
                   )}

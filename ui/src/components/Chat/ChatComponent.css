@@ -2,7 +2,7 @@
 .chat-component {
     display: flex;
     /* Use flex layout */
-    height: 100vh;
+    height: calc(100vh - 72px);
     /* Set the component height to 100% of the viewport */
 }
 

@@ -19,10 +19,13 @@ const ChatComponent = () => {
 
   const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [jwt] = useLocalStorageState('', 'jwt');
-  const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [imgUrl, setImgUrl] = useState(null);
-  const [chatRooms, setChatRooms] = useState(null);
+  const [chatRooms, setChatRooms] = useState([]);
+  const [otherUser, setOtherUser] = useState(null);
+  const [roomsLoading, setRoomsLoading] = useState(true);
+  const [chatLoading, setChatLoading] = useState(true);
   useEffect(() => {
     //connect to the web sockets and subscribe
     webSocketService.connect(
@@ -36,6 +39,13 @@ const ChatComponent = () => {
       }
     );
     if (otherUserId && jwt) {
+      httpReqAsync(`/api/v1/users/${otherUserId}`, 'GET', jwt)
+        .then((user) => {
+          setOtherUser(user);
+        })
+        .catch((err) => {
+          console.log("Couldn't fetch messages for this chatroom");
+        });
       httpReqAsync(
         `/api/v1/messages/${currentUser.id}/${otherUserId}`,
         'GET',
@@ -44,18 +54,20 @@ const ChatComponent = () => {
         .then((result) => {
           console.log('I got the messages:', result);
           setMessages(result);
+          setChatLoading(false);
         })
         .catch((err) => {
           console.log("Couldn't fetch messages for this chatroom");
         });
-      httpReqAsync(`/api/v1/messages/${currentUser.id}`, 'GET', jwt)
-        .then((result) => {
-          setChatRooms(result || []);
-        })
-        .catch((err) => {
-          console.log('No chats for the current user', err);
-        });
     }
+    httpReqAsync(`/api/v1/messages/${currentUser.id}`, 'GET', jwt)
+      .then((result) => {
+        setChatRooms(result || []);
+        setRoomsLoading(false);
+      })
+      .catch((err) => {
+        console.log('No chats for the current user', err);
+      });
 
     return () => {
       webSocketService.disconnect();
@@ -94,19 +106,37 @@ const ChatComponent = () => {
   return (
     <div className="chat-component">
       <div className="chat-room-list">
-        {chatRooms !== null ?
-          <ChatRoomList
-            chatRooms={chatRooms ?? []}
-            handleSetActiveChatUserId={setOtherUserId}
-          />
-          :
-          <Loader />}
-
+        {roomsLoading && <Loader />}
+        {chatRooms.length === 0 && !roomsLoading && (
+          <div className="flex justify-center items-center h-full">
+            No chats yet
+          </div>
+        )}
+        <ChatRoomList
+          chatRooms={chatRooms}
+          handleSetActiveChatUserId={setOtherUserId}
+        />
       </div>
       {otherUserId ? (
-        <div className="active-chat flex flex-col h-full">
-          <ul className="flex-1 overflow-y-auto p-3 space-y-2">
-            {messages !== null ? messages
+        <div className="active-chat flex flex-col ">
+          <div className="flex items-center p-3 border-b border-gray-300">
+            <img
+              src={otherUser?.img_url}
+              alt="profile"
+              className="w-10 h-10 rounded-full object-cover object-center"
+            />
+            <div className="ml-2">
+              <p className="text-lg font-semibold">{otherUser?.username}</p>
+            </div>
+          </div>
+          <ul className="flex-1 overflow-y-auto p-3 space-y-2 relative">
+            {chatLoading && <Loader />}
+            {messages.length > 0 && !chatLoading && (
+              <div className="flex justify-center items-center h-full">
+                No messages yet, start chatting!
+              </div>
+            )}
+            {messages
               .filter(
                 (msg) => msg.senderId === otherUserId || msg.senderId === currentUser.id
                         || msg.recipientId === otherUserId || msg.recipientId === currentUser.id
@@ -115,10 +145,11 @@ const ChatComponent = () => {
                 <li
                   key={index}
                   style={{ maxWidth: 'max-content' }}
-                  className={`p-2 rounded-lg ${msg.senderId === currentUser.id
-                    ? 'bg-blue-200 ml-auto'
-                    : 'bg-gray-200'
-                    }`}
+                  className={`p-2 rounded-lg ${
+                    msg.senderId === currentUser.id
+                      ? 'bg-blue-200 ml-auto'
+                      : 'bg-gray-200'
+                  }`}
                 >
                   <p className="text-sm" style={{ maxWidth: 300 }}>
                     {msg.content}
@@ -137,7 +168,7 @@ const ChatComponent = () => {
                     {new Date(msg.timestamp).toLocaleString()}
                   </span>
                 </li>
-              )) : <Loader />}
+              ))}
           </ul>
           {imgUrl && (
             <div className="w-full relative bg-gray-500">

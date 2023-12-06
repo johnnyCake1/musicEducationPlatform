@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import "./Navigation.css";
-import Logo from './Logo';
 import ProfilePicture from '../Profile/components/profile_card/ProfilePicture';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useLocalStorageState from '../../util/useLocalStorageState';
 import logo from './assets/MelodiousLogo.svg';
 
 function Navigation({ toggleSidebar }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchBarContent, setSearchBarContent] = useState('');
   const [currentUser] = useLocalStorageState(null, 'currentUser');
 
@@ -16,44 +17,17 @@ function Navigation({ toggleSidebar }) {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const getNavLinks = (linkClass) => {
-    return (
-      <>
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/my-courses">My courses</Link>
-        <Link to="/my-learnings">My learnings</Link>
-        <Link to="/courses">Explore</Link>
-        <Link to="/chat">Chats</Link>
-        <Link to="/storage">Storage</Link>
-      </>
-    );
-  };
-
-  const getProfileLinks = (linkClass) => {
-    return (
-      <>
-        <ul>
-          <li>
-            <Link to={`/${currentUser.id}/profile`}>My profile</Link>
-          </li>
-          <li>
-            <Link to="/settings">Settings</Link>
-          </li>
-          <li>
-            <Link to="/logout">Log out</Link>
-          </li>
-        </ul>
-      </>
-    );
-  };
-
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      searchBarContent != ''
+      searchBarContent !== ''
         ? navigate(`/search/${searchBarContent}`)
         : alert('Search could not be empty');
     }
   };
+  // setSearchBarContent('') if routes changed
+  useEffect(() => {
+    setSearchBarContent('');
+  }, [location]);
 
   return (
     <header
@@ -83,7 +57,11 @@ function Navigation({ toggleSidebar }) {
         </div>
         <div className="right-side">
           {/* Header search box  */}
-          <div className="header_search">
+          <div
+            className={
+              isSearchOpen ? 'header_search opened_search' : 'header_search'
+            }
+          >
             <i style={{ fontSize: '16px' }}>
               <ion-icon name="search" />
             </i>
@@ -91,13 +69,14 @@ function Navigation({ toggleSidebar }) {
               onChange={(e) => setSearchBarContent(e.target.value)}
               onKeyDown={handleKeyDown}
               type="text"
+              value={searchBarContent}
               className="form-control"
               placeholder="Search"
               autoComplete="off"
             />
             <button
               onClick={() => {
-                searchBarContent != ''
+                searchBarContent !== ''
                   ? navigate(`/search/${searchBarContent}`)
                   : alert('Search could not be empty');
               }}
@@ -107,6 +86,18 @@ function Navigation({ toggleSidebar }) {
             </button>
           </div>
           <div>
+            <span
+              className="header_widgets search_button"
+              onClick={() => setIsSearchOpen(true)}
+            >
+              <ion-icon
+                name="search-outline"
+                className="is-icon md hydrated"
+                role="img"
+                size="large"
+                aria-label="notifications outline"
+              />
+            </span>
             {/* messages */}
             <Link className="header_widgets" to="/chat">
               <ion-icon

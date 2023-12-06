@@ -63,6 +63,10 @@ function App() {
           />
           <Route path="/courses" element={withSidebarAndAuth(Courses)} />
           <Route
+            path="/courses/categories/:categoryId"
+            element={withSidebarAndAuth(Courses)}
+          />
+          <Route
             path="/pay/:courseId"
             element={withSidebarAndAuth(StripePayment)}
           />

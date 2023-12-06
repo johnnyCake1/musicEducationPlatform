@@ -572,6 +572,7 @@ const CourseCreationPage = () => {
                 className="sortable-list"
                 animation="200"
                 easing="ease-out"
+                handle=".drag-handle" // Class name for the drag handle
                 list={module.courseTopics}
                 setList={(newState) => {
                   setCourseData((prevState) => {
@@ -594,6 +595,7 @@ const CourseCreationPage = () => {
                   <div className="topic-item" key={topicIndex}>
                     <ion-icon
                       name="list-outline"
+                      class="drag-handle"
                       style={{ fontSize: 20, cursor: 'move' }}
                     ></ion-icon>{' '}
                     &nbsp;

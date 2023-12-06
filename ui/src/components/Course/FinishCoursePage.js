@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useLocalStorageState from '../../util/useLocalStorageState';
 import { httpReqAsync } from '../../services/httpReqAsync';
 import Loader from '../common/Loader';
@@ -60,20 +60,22 @@ const FinishCoursePage = () => {
   return course ? (
     <>
       <div className="course-description-container">
-        <div className="bg-gray-100 p-6 rounded-lg shadow-lg transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
+        <div className="card bg-white-100 p-12 rounded-lg shadow-lg transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
           <div className="text-center">
             <h1 className="text-2xl font-semibold text-gray-800 mb-2 transition duration-300 ease-in-out hover:text-gray-600">
               Congratulations on finishing {course.courseName}!
             </h1>
             <h2 className="text-xl text-gray-700 mb-4">
-              By <br />
+              Course By <br />
               <div className="flex items-center justify-center relative">
-                <ProfilePicture
-                  imageSrc={course.author?.img_url}
-                  size={50}
-                  borderColor="#fff"
-                />
-                {course.author.username}
+                <Link to={'/' + course.authorId + '/profile'}>
+                  <ProfilePicture
+                    imageSrc={course.author?.img_url}
+                    size={50}
+                    borderColor="#fff"
+                  />
+                  {course.author.username}
+                </Link>
               </div>
             </h2>
             <h3 className="text-lg text-gray-600 mb-6">

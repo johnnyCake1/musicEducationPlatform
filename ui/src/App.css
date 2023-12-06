@@ -9519,7 +9519,7 @@
   }
 }
 /* Desktop and bigger */
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .uk-hidden\@l {
     display: none !important;
   }
@@ -9724,7 +9724,7 @@
   margin-top: 20px;
 }
 /* Desktop and bigger */
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   /* Horizontal */
   .uk-grid {
     margin-left: -25px;
@@ -9802,7 +9802,7 @@
   margin-top: 40px;
 }
 /* Desktop and bigger */
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   /* Horizontal */
   .uk-grid-large,
   .uk-grid-column-large {
@@ -9882,7 +9882,7 @@
   left: 60px;
 }
 /* Desktop and bigger */
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   /* Horizontal */
   .uk-grid-divider {
     margin-left: -80px;
@@ -9996,7 +9996,7 @@
   left: 80px;
 }
 /* Desktop and bigger */
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   /* Horizontal */
   .uk-grid-divider.uk-grid-large,
   .uk-grid-divider.uk-grid-column-large {
@@ -10145,7 +10145,7 @@
   }
 }
 /* Desktop and bigger */
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .uk-child-width-1-1\@l > * {
     width: 100%;
   }
@@ -10415,7 +10415,7 @@
   }
 }
 /* Desktop and bigger */
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   /* Whole */
   .uk-width-1-1\@l {
     width: 100%;
@@ -11050,7 +11050,7 @@
   }
 }
 /* Desktop and bigger */
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .uk-flex-left\@l {
     justify-content: flex-start;
   }
@@ -16651,7 +16651,7 @@ html {
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .col-xl {
     -ms-flex-preferred-size: 0;
     flex-basis: 0;
@@ -16994,7 +16994,7 @@ html {
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .d-xl-none {
     display: none !important;
   }
@@ -17644,7 +17644,7 @@ html {
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .flex-xl-row {
     -webkit-box-orient: horizontal !important;
     -webkit-box-direction: normal !important;
@@ -18554,7 +18554,7 @@ template {
   display: none !important;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .is-collapse .sidebar {
     width: 80px;
     background-color: white;
@@ -18764,7 +18764,7 @@ template {
     right: 10px;
     top: 10px;
 }
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
   .sidebar {
     margin-left: -300px;
     padding: 0;
@@ -18774,8 +18774,26 @@ template {
   .sidebarOpen {
     margin-left: 0 !important;
   }
-  .sidebar #logo, .sidebar_toggle  {
+  .sidebar #logo, .sidebar .sidebar_toggle  {
     display: block;
+  }
+  .header_search {
+    width: 100%;
+    background: #FFF;
+    z-index: 999;
+    margin-left: 10px;
+    left: 0;
+    padding: 20px;
+    display: none !important;
+  }
+  .header_search > i {
+    background: #f2f2f2;
+    min-width: auto;
+    position: relative;
+  }
+  header .header_search input {
+    background: #f2f2f2;
+    min-width: auto;
   }
   .sidebar .sidebar_inner {
     width: 300px;
@@ -19463,7 +19481,11 @@ header.is_fixed {
   border-radius: 6px;
   margin-left: -10px;
 }
-
+.header_search.opened_search {
+  margin-top: 20px;
+    padding: 10px;
+  display: flex !important;
+}
 .header_search input {
   height: 44px;
   color: #393939;
@@ -19733,7 +19755,7 @@ header .header_inner,
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
   header {
     min-height: 60px !important;
     height: auto;
@@ -19890,8 +19912,9 @@ header .header_inner,
   }
   .header_search {
     position: absolute;
-    width: 85%;
-    display: none !important;
+    left: 0;
+    width: 100%;
+    margin-left: 0px
   }
   .header_search input {
     width: 100%;
@@ -19918,7 +19941,7 @@ header .header_inner,
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .is-verticle header {
     background-color: transparent;
     border: 0;
@@ -19979,7 +20002,7 @@ header .header_inner,
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
   header .header_inner {
     padding-left: 0;
   }
@@ -20007,7 +20030,9 @@ header .header_inner,
   }
   header .header_search input {
     background: #f2f2f2;
-    min-width: 100%;
+    width: 70%;
+    padding: 15px;
+    margin-right: 10px;
   }
 }
 
@@ -20609,7 +20634,7 @@ header .header_inner,
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
   .main_content {
     margin-left: 300px;
     margin-top: 0;
@@ -20628,7 +20653,7 @@ header .header_inner,
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
   .main_content .container,
   .horizontal .container {
     padding: 20px;
@@ -21151,6 +21176,9 @@ input[type="submit"].dark1 {
 }
 
 @media (max-width: 1024px) {
+  .course-description-container {
+    padding: 10px;
+  }
   .start-chat {
     top: 12px;
     bottom: auto;

@@ -189,7 +189,7 @@ const CourseSummaryCard = ({
       <div
         className="bg-white border-b z-20 mb-4 overflow-hidden uk-sticky uk-active uk-sticky-fixed"
         uk-sticky="media: 992; offset:70"
-        style={{ position: 'sticky', top: 65, width: 1125 }}
+        style={{ position: 'sticky', top: 65, width: '100%' }}
       >
         <div className="mcontainer py-0 lg:px-20 flex justify-between items-center">
           <nav className="cd-secondary-nav nav-smal l flex-1">
