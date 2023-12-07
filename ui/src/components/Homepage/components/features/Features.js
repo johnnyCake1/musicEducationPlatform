@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import "./Features.css";
-import lessonPicture from "../../assets/violin_lesson.jpeg"
 
 import soundWaves from "../../assets/soundWaves.svg";
 
@@ -8,7 +7,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import PictureTile from "./PictureTile";
 
-const Features = ({ heading, description1, description2, fourIcons }) => {
+const Features = ({ heading, descriptions, fourIcons }) => {
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -19,8 +18,7 @@ const Features = ({ heading, description1, description2, fourIcons }) => {
       <div className="container features">
         <div className="features-content">
           <div className="features-left" data-aos="fade-right">
-            {/* <img src={phoneFeatures} alt="phone" /> */}
-            <PictureTile images={[lessonPicture, lessonPicture, lessonPicture, lessonPicture]} />
+            <PictureTile images={fourIcons} />
           </div>
           <div className="features-right" data-aos="fade-left">
             {/**/}
@@ -32,25 +30,16 @@ const Features = ({ heading, description1, description2, fourIcons }) => {
                     &nbsp;&nbsp;&nbsp;{heading}
                   </h2>
                 </div>
-                <p className="u-text-small">
-                  {description1}
-                </p>
-                <br />
-                <p className="u-text-small">
-                  {description2}
-                </p>
-                <p className="u-text-small">{"blablabla"}</p>
+                {descriptions.map(description => {
+                  return <>
+                      <p className="u-text-small">
+                      {description}
+                      </p>
+                      <br />
+                    </>
+                })}
               </div>
             </div>
-            {/**/}
-            {/* {FeatureList.map((feature) => (
-              <Feature
-                key={feature.id}
-                icon={feature.icon}
-                heading={feature.heading}
-                text={feature.text}
-              />
-            ))} */}
           </div>
         </div>
       </div>

@@ -430,6 +430,14 @@ public class CourseService {
         return updatedReviews;
     }
 
+    public List<CourseResponseDTO> getAllCoursesByFiltering(Boolean mostEnrollment, Integer limit) {
+        final boolean ONLY_PUBLISHED = true;
+        if (mostEnrollment != null && mostEnrollment) {
+            courseRepository.findPublishedCoursesOrderByEnrolledStudentsDesc(ONLY_PUBLISHED, limit);
+        }
+        return getAllCourses(ONLY_PUBLISHED);
+    }
+
     public List<CategoryResponseDTO> getAllCategories() {
         return categoryRepository.findAll().stream().map(CourseService::mapCategoryToDto).collect(Collectors.toList());
     }

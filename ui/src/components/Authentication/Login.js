@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import Form from "./components/Forms";
-import Background from "./components/Background";
-import "./scss/auth.scss";
-import useLocalStorageState from "../../util/useLocalStorageState";
-import { API_URL } from "../../constants";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Form from './components/Forms';
+import Background from './components/Background';
+import './scss/auth.scss';
+import useLocalStorageState from '../../util/useLocalStorageState';
+import { API_URL } from '../../constants';
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
-  const [, setJwt] = useLocalStorageState("", "jwt");
-  const [, setCurrentUser] = useLocalStorageState(null, "currentUser");
+  const [, setJwt] = useLocalStorageState('', 'jwt');
+  const [, setCurrentUser] = useLocalStorageState(null, 'currentUser');
 
   const validateLogin = () => {
     let isValid = true;
@@ -48,11 +48,11 @@ const Login = () => {
       password: password,
     };
 
-    fetch(API_URL + "/api/v1/auth/login", {
+    fetch(API_URL + '/api/v1/auth/login', {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify(reqBody),
     })
       .then((res) => {
@@ -60,14 +60,14 @@ const Login = () => {
           return res.json();
         }
         if (res.status === 503) {
-          return Promise.reject("Server is not available");
+          return Promise.reject('Server is not available');
         }
-        return Promise.reject("Invalid login attempt");
+        return Promise.reject('Invalid login attempt');
       })
       .then((user) => {
         setCurrentUser(user);
         setJwt(user.accessToken);
-        window.location.href = "/dashboard";
+        window.location.href = '/dashboard';
       })
       .catch((message) => {
         alert(message);
@@ -108,15 +108,15 @@ const Login = () => {
                   className="auth-form"
                   method="POST"
                   onSubmit={authenticate}
-                  autoComplete={"off"}
+                  autoComplete={'off'}
                 >
                   <div className="username mb-3">
                     <input
                       type="username"
                       className={`form-control ${
                         validate.validate && validate.validate.username
-                          ? "is-invalid "
-                          : ""
+                          ? 'is-invalid '
+                          : ''
                       }`}
                       id="username"
                       name="username"
@@ -128,24 +128,24 @@ const Login = () => {
                     <div
                       className={`invalid-feedback text-start ${
                         validate.validate && validate.validate.username
-                          ? "d-block"
-                          : "d-none"
+                          ? 'd-block'
+                          : 'd-none'
                       }`}
                     >
                       {validate.validate && validate.validate.username
                         ? validate.validate.username[0]
-                        : ""}
+                        : ''}
                     </div>
                   </div>
 
                   <div className="password mb-3">
                     <div className="input-group">
                       <input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         className={`form-control ${
                           validate.validate && validate.validate.password
-                            ? "is-invalid "
-                            : ""
+                            ? 'is-invalid '
+                            : ''
                         }`}
                         name="password"
                         id="password"
@@ -161,27 +161,27 @@ const Login = () => {
                       >
                         <i
                           className={
-                            showPassword ? "far fa-eye" : "far fa-eye-slash"
+                            showPassword ? 'far fa-eye' : 'far fa-eye-slash'
                           }
-                        ></i>{" "}
+                        ></i>{' '}
                       </button>
 
                       <div
                         className={`invalid-feedback text-start ${
                           validate.validate && validate.validate.password
-                            ? "d-block"
-                            : "d-none"
+                            ? 'd-block'
+                            : 'd-none'
                         }`}
                       >
                         {validate.validate && validate.validate.password
                           ? validate.validate.password[0]
-                          : ""}
+                          : ''}
                       </div>
                     </div>
 
                     <div className="extra mt-3 row justify-content-between">
                       <div className="col-6">
-                        <div style={{ display: "flex" }}>
+                        <div style={{ display: 'flex' }}>
                           <input
                             className="form-check-input"
                             type="checkbox"
@@ -192,7 +192,7 @@ const Login = () => {
                             }
                           />
                           <label
-                            style={{ margin: "auto 10px" }}
+                            style={{ margin: 'auto 10px' }}
                             className="form-check-label"
                             htmlFor="remember"
                           >
@@ -201,7 +201,7 @@ const Login = () => {
                         </div>
                       </div>
                       <div className="col-6">
-                        <div className="forgot-password text-end">
+                        <div className="forgot-password text-end hidden">
                           <Link to="/forgot-password" className=".auth-link">
                             Forgot password?
                           </Link>
@@ -221,9 +221,9 @@ const Login = () => {
 
                 <hr />
                 <div className="auth-option text-center pt-2">
-                  No Account?{" "}
+                  No Account?{' '}
                   <Link className="text-link .auth-link" to="/register">
-                    Sign up{" "}
+                    Sign up{' '}
                   </Link>
                 </div>
               </div>

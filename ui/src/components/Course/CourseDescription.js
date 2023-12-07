@@ -125,7 +125,7 @@ const CourseDescription = () => {
             <Reviews
               reviews={course?.reviews}
               currentUserCanReview={course.enrolledStudentsIds.includes(
-                currentUser.id
+                currentUser?.id
               )}
               onSubmitReview={(reviewToSubmit) =>
                 httpReqAsync(

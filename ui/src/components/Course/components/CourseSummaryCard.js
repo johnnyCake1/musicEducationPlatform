@@ -23,7 +23,7 @@ const CourseSummaryCard = ({
   // const [author, setAuthor] = useState(null);
   const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [enrolled, setEnrolled] = useState(
-    enrolledStudentsIds.includes(currentUser.id)
+    enrolledStudentsIds.includes(currentUser?.id)
   );
 
   const navigate = useNavigate();
@@ -58,31 +58,11 @@ const CourseSummaryCard = ({
     stars.push(<FaRegStar key={stars.length} />);
   }
 
-  const handleToken = async (token) => {
-    await axios
-      .post(
-        `${API_URL}/api/v1/courses/${courseId}/enroll?userId=${currentUser.id}`,
-        '',
-        {
-          headers: {
-            token: token.id,
-            amount: price,
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      )
-      .then(() => {
-        alert('Payment Success');
-        navigate(
-          `/courses/content/${courseId}/${course?.curriculum[0]?.id}/${course?.curriculum[0].courseTopics[0]?.id}`
-        );
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
-
   const enrollCurrentUserToCourse = () => {
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
     httpReqAsync(
       `/api/v1/courses/${courseId}/enroll?userId=${currentUser.id}`,
       'POST',
@@ -205,7 +185,7 @@ const CourseSummaryCard = ({
             </ul>
           </nav>
           <div className="flex space-x-3">
-            {course.authorId === currentUser.id && (
+            {course.authorId === currentUser?.id && (
               <button
                 className="flex items-center justify-center h-9 px-6 rounded-md bg-green-200"
                 onClick={handleConvertToDraft}
@@ -214,7 +194,7 @@ const CourseSummaryCard = ({
               </button>
             )}
 
-            {course.authorId !== currentUser.id && (
+            {course.authorId !== currentUser?.id && (
               <>
                 {enrolled ? (
                   <>

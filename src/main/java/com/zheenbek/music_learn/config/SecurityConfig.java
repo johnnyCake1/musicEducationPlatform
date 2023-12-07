@@ -44,13 +44,13 @@ public class SecurityConfig {
                 .antMatchers("/ws/**", "/ws/info", "/ws/**/info").permitAll()
                 // mark those endpoints which do not require authorisation
                 .antMatchers(HttpMethod.GET, "/api/v1/courses").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/courses/filter").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/courses/{id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/courses/categories/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/courses/categories/{categoryId}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/courses/categories/{categoryId}/get-courses").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/courses/search/{keyword}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/courses/{id}/reviews").permitAll() // If reviews can be added without authentication
-                // ... add any other unauthenticated endpoints here ...
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

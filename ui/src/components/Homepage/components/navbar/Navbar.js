@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { AiOutlineBars } from "react-icons/ai";
-import { RiCloseLine } from "react-icons/ri";
-import Button from "../../../common/Button";
-import Logo from "../../../common/Logo";
-import "./Navbar.css";
-import useLocalStorageState from "../../../../util/useLocalStorageState";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { AiOutlineBars } from 'react-icons/ai';
+import { RiCloseLine } from 'react-icons/ri';
+import Button from '../../../common/Button';
+import Logo from '../../../common/Logo';
+import './Navbar.css';
+import useLocalStorageState from '../../../../util/useLocalStorageState';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [jwt] = useLocalStorageState("", "jwt");
-  const [currentUser] = useLocalStorageState(null, "currentUser");
+  const [jwt] = useLocalStorageState('', 'jwt');
+  const [currentUser] = useLocalStorageState(null, 'currentUser');
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -18,11 +18,11 @@ const Navbar = () => {
   };
 
   const handleGetStarted = () => {
-    console.log("zheee:", jwt, currentUser);
+    console.log('zheee:', jwt, currentUser);
     if (!jwt || !currentUser) {
-      navigate("/register");
+      navigate('/register');
     } else {
-      navigate("/dashboard");
+      navigate('/dashboard');
     }
   };
 
@@ -32,7 +32,7 @@ const Navbar = () => {
       <menu>
         <ul
           className="nav-links"
-          id={showMenu ? "nav-links-mobile" : "nav-links-mobile-hide"}
+          id={showMenu ? 'nav-links-mobile' : 'nav-links-mobile-hide'}
         >
           <li>
             <a href="/">Home</a>
@@ -41,15 +41,15 @@ const Navbar = () => {
             <a href="#features">Features</a>
           </li>
           <li>
-            <a href="#cards-gallery">Courses</a>
+            <a href="#cards">Courses</a>
           </li>
           <li>
             <a href="#testimonials">Feedbacks</a>
           </li>
           <li className="nav-btn">
             <Button
-              text={currentUser?"Dashboard":"Get Started"}
-              btnClass={"my-btn-dark"}
+              text={currentUser ? 'Dashboard' : 'Get Started'}
+              btnClass={'my-btn-dark'}
               onClick={handleGetStarted}
             />
           </li>

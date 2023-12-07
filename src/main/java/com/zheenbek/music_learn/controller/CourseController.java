@@ -39,13 +39,18 @@ public class CourseController {
     private final UserService userService;
     private final StripeService stripeService;
     private final PurchaseRecordService purchaseService;
-    private final JwtUtil jwtUtil = new JwtUtil();
+    private final JwtUtil jwtUtil;
     @Autowired
-    public CourseController(CourseService courseService, UserService userService, StripeService stripeService, PurchaseRecordService purchaseService) {
+    public CourseController(CourseService courseService,
+                            UserService userService,
+                            StripeService stripeService,
+                            PurchaseRecordService purchaseService,
+                            JwtUtil jwtUtil) {
         this.courseService = courseService;
         this.userService = userService;
         this.stripeService = stripeService;
         this.purchaseService = purchaseService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/recommendations") // must be authorised
@@ -94,6 +99,12 @@ public class CourseController {
         return new ResponseEntity<>(courseService.getAllCoursesByAuthorId(authorId, true), HttpStatus.OK);
     }
 
+    @GetMapping ("/filter")
+    public ResponseEntity<List<CourseResponseDTO>> getAllCoursesByFiltering(@RequestParam(required = false, defaultValue = "false") Boolean mostEnrollment, @RequestParam(required = false, defaultValue = "10") Integer limit) {
+        List<CourseResponseDTO> result = courseService.getAllCoursesByFiltering(mostEnrollment, limit);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}") // can be unauthorised
     public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("id") Long courseId,
                                                        @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
@@ -105,7 +116,7 @@ public class CourseController {
             String username = jwtUtil.extractUsername(jwtToken);
             User user = userService.findByUsername(username)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-            if (courseNoContentResponseDTO.getEnrolledStudentsIds().contains(user.getId())) {
+            if (courseNoContentResponseDTO.getAuthor().getId().equals(user.getId()) || courseNoContentResponseDTO.getEnrolledStudentsIds().contains(user.getId())) {
                 // if authenticated and enrolled then show full content:
                 return new ResponseEntity<>(courseService.getCourseById(courseId, true), HttpStatus.OK);
             }

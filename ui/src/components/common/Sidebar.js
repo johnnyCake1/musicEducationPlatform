@@ -98,6 +98,17 @@ function Sidebar(props) {
                       <span> &nbsp;Storage</span>
                     </NavLink>
                   </li>
+                  <li className={isActive('/transactions', 'active')}>
+                    <NavLink to="/transactions">
+                      <ion-icon
+                        name="cash"
+                        className="bg-gradient-to-br from-purple-300 p-1 rounded-md side-icon text-opacity-80 text-white to-blue-500 md hydrated"
+                        role="img"
+                        aria-label="newspaper"
+                      ></ion-icon>
+                      <span> &nbsp;Transactions</span>
+                    </NavLink>
+                  </li>
                 </ul>
               </div>
             </div>

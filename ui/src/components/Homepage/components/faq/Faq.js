@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { questions } from "./data.js";
-import Question from "./Question";
-import { MdOutlineLibraryBooks } from "react-icons/md";
+import React, { useEffect } from 'react';
+import { questions } from './data.js';
+import Question from './Question';
+import { MdOutlineLibraryBooks } from 'react-icons/md';
 
-import AOS from "aos";
-import "aos/dist/aos.css";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const Faq = () => {
   useEffect(() => {
@@ -16,7 +16,7 @@ const Faq = () => {
     <section id="faq">
       <div className="container faq">
         <div className="u-title" data-aos="fade-up">
-          <MdOutlineLibraryBooks color="#7A66CC" size={30} />
+          {/* <MdOutlineLibraryBooks color="#7A66CC" size={30} /> */}
           <h2>FAQs</h2>
         </div>
         <div className="questions">

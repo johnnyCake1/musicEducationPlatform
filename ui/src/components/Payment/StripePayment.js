@@ -16,6 +16,10 @@ const StripePayment = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (jwt && courseId) {
+      if (!currentUser) {
+        navigate('/login');
+        return;
+      }
       httpReqAsync(`/api/v1/courses/${courseId}`, 'GET', jwt).then((result) => {
         console.log('I got the course:', result);
         setCourse(result);

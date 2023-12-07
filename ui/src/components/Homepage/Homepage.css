@@ -12,7 +12,7 @@
 }
 
 .homepage-styling {
-  font-size: 10px;
+  /* font-size: 10px; */
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -23,14 +23,14 @@
 }
 .homepage-styling section{
   width: 100%;
-  padding: 8rem 0;
+  padding: 6rem 0;
 }
 
-.homepage-styling * {
+/* .homepage-styling * {
   font-size: inherit;
   font-family: "Poppins", sans-serif;
   scroll-behavior: smooth;
-}
+} */
 
 /* Text styles */
 .u-text-small {

@@ -4,11 +4,13 @@ import Login from './components/Authentication/Login';
 import Forgot from './components/Authentication/Forgot';
 import Register from './components/Authentication/Register';
 import ProfilePage from './components/Profile/ProfilePage';
-
+import Transactions from './components/Transactions/Transactions';
 import SearchResult from './components/Search/SearchResult';
 import CourseDescription from './components/Course/CourseDescription';
 import MyCourses from './components/MyCourses/MyCourses';
 import Courses from './components/Courses/Courses';
+import Explore from './components/Explore/Explore';
+
 import Storage from './components/Saved/Storage';
 // import CourseContentPage from "./components/Course/CourseContentPage";
 import Logout from './components/Authentication/Logout';
@@ -79,7 +81,17 @@ function App() {
             path="/my-learnings"
             element={withSidebarAndAuth(MyLearnings)}
           />
+          <Route
+            path="/transactions"
+            element={withSidebarAndAuth(Transactions)}
+          />
           <Route path="/chat" element={withSidebarAndAuth(ChatComponent)} />
+
+          <Route path="/explore-courses" element={<Explore />} />
+          <Route
+            path="/explore-courses/:courseId"
+            element={<CourseDescription />}
+          />
         </Routes>
       </div>
     </div>

@@ -85,7 +85,7 @@ const ChatComponent = () => {
     };
     webSocketService.sendMessage(`/app/chat`, messageToSend);
     setMessages((prevMessages) => [...prevMessages, messageToSend]); // Optimistically update the UI without ensuring that it reached the backend and got saved successfully
-
+    // alert('Message sent successfully');
     setImgUrl(null);
     setNewMessage('');
   };
@@ -131,25 +131,20 @@ const ChatComponent = () => {
           </div>
           <ul className="flex-1 overflow-y-auto p-3 space-y-2 relative">
             {chatLoading && <Loader />}
-            {messages.length > 0 && !chatLoading && (
-              <div className="flex justify-center items-center h-full">
-                No messages yet, start chatting!
-              </div>
-            )}
             {messages
               .filter(
-                (msg) => msg.senderId === otherUserId || msg.senderId === currentUser.id
-                        || msg.recipientId === otherUserId || msg.recipientId === currentUser.id
+                (msg) =>
+                  msg.recipientId === otherUserId || msg.senderId === otherUser
+                  || msg.recipientId === currentUser.id || msg.senderId === currentUser.id
               )
               .map((msg, index) => (
                 <li
                   key={index}
                   style={{ maxWidth: 'max-content' }}
-                  className={`p-2 rounded-lg ${
-                    msg.senderId === currentUser.id
+                  className={`p-2 rounded-lg ${msg.senderId === currentUser.id
                       ? 'bg-blue-200 ml-auto'
                       : 'bg-gray-200'
-                  }`}
+                    }`}
                 >
                   <p className="text-sm" style={{ maxWidth: 300 }}>
                     {msg.content}
@@ -169,6 +164,13 @@ const ChatComponent = () => {
                   </span>
                 </li>
               ))}
+            {
+              messages?.length === 0 && !chatLoading && (
+                <div className="flex justify-center items-center h-full">
+                  No messages yet, start chatting!
+                </div>
+              )
+            }
           </ul>
           {imgUrl && (
             <div className="w-full relative bg-gray-500">
