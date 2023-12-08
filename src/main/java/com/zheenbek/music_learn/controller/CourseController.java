@@ -110,14 +110,13 @@ public class CourseController {
                                                        @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         CourseResponseDTO courseNoContentResponseDTO = courseService.getCourseById(courseId, false);
         // Extract the JWT token from the Authorization header
-        String jwtToken;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwtToken = authorizationHeader.substring(7);
+            String jwtToken = authorizationHeader.substring(7);
             String username = jwtUtil.extractUsername(jwtToken);
             User user = userService.findByUsername(username)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
             if (courseNoContentResponseDTO.getAuthor().getId().equals(user.getId()) || courseNoContentResponseDTO.getEnrolledStudentsIds().contains(user.getId())) {
-                // if authenticated and enrolled then show full content:
+                // if user is authenticated and is author or just enrolled then show full content:
                 return new ResponseEntity<>(courseService.getCourseById(courseId, true), HttpStatus.OK);
             }
         }

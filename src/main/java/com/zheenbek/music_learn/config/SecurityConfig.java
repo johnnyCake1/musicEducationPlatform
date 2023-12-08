@@ -1,6 +1,7 @@
 package com.zheenbek.music_learn.config;
 
 import com.zheenbek.music_learn.repository.user.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,12 +18,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ContentSecurityPolicyHeaderWriter;
+
+import java.util.List;
 
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 //    private final CorsFilter corsFilter;
     private final UserRepository userRepo;
+
+    @Value("${allowed-origins}")
+    private List<String> allowedOrigins;
 
     public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserRepository userRepo) {
         this.jwtAuthFilter = jwtAuthFilter;
@@ -52,6 +59,8 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/v1/courses/search/{keyword}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/courses/{id}/reviews").permitAll() // If reviews can be added without authentication
                 .anyRequest().authenticated()
+                .and()
+                .headers().addHeaderWriter(new ContentSecurityPolicyHeaderWriter("frame-ancestors 'self' " + String.join(" ", allowedOrigins)))
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

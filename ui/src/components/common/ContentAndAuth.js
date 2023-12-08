@@ -344,8 +344,13 @@ const ContentAndAuth = () => {
                 {currentTopic?.contentData?.contentType == 'DOC' && (
                   <div className="relative ">
                     <div className="card  p-6">
+                      <iframe
+                        src={currentTopic?.contentData?.file_url}
+                        width="100%"
+                        height="auto"
+                      />
                       <a href={currentTopic?.contentData?.file_url}>
-                        {currentTopic?.contentData?.file_url}
+                        View file
                       </a>
                     </div>
                   </div>

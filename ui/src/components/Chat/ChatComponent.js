@@ -26,6 +26,7 @@ const ChatComponent = () => {
   const [otherUser, setOtherUser] = useState(null);
   const [roomsLoading, setRoomsLoading] = useState(true);
   const [chatLoading, setChatLoading] = useState(true);
+  
   useEffect(() => {
     //connect to the web sockets and subscribe
     webSocketService.connect(
@@ -74,6 +75,14 @@ const ChatComponent = () => {
     };
   }, [currentUser.id, jwt, otherUserId]);
 
+  // scroll down whenever user sends/receives message
+  const lastMessageRef = useRef(null);
+  useEffect(() => {
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   const sendMessage = () => {
     const timestamp = new Date(); // Current time
     const messageToSend = {
@@ -103,6 +112,11 @@ const ChatComponent = () => {
       return;
     }
   };
+
+  const isUrlImage = (fileUrl) => {
+    return fileUrl && /\.(png|jpe?g|gif|bmp|webp)$/i.test(fileUrl)
+  }
+
   return (
     <div className="chat-component">
       <div className="chat-room-list">
@@ -141,15 +155,28 @@ const ChatComponent = () => {
                 <li
                   key={index}
                   style={{ maxWidth: 'max-content' }}
+                  ref={index === messages.length - 1 ? lastMessageRef : null}
                   className={`p-2 rounded-lg ${msg.senderId === currentUser.id
-                      ? 'bg-blue-200 ml-auto'
-                      : 'bg-gray-200'
+                    ? 'bg-blue-200 ml-auto'
+                    : 'bg-gray-200'
                     }`}
-                >
+                > 
                   <p className="text-sm" style={{ maxWidth: 300 }}>
                     {msg.content}
                   </p>
                   {msg.file_url && (
+                  <>
+                    {isUrlImage(msg.file_url) ?
+                      <img
+                        className='message-attachment'
+                        src={msg.file_url}
+                      />
+                      :
+                      <iframe
+                        className='message-attachment'
+                        src={msg.file_url}
+                        allowFullScreen={true}
+                      />}
                     <a
                       href={msg.file_url}
                       target="_blank"
@@ -158,6 +185,7 @@ const ChatComponent = () => {
                     >
                       View file
                     </a>
+                  </>
                   )}
                   <span className="text-xs text-gray-500 block mt-1">
                     {new Date(msg.timestamp).toLocaleString()}

@@ -21,3 +21,10 @@
     /* Occupy 2/3 of the available space (adjust as needed) */
     padding: 10px;
 }
+
+.message-attachment {
+    width: 200px;
+    height: auto;
+    border: none;
+    overflow: scroll;
+}
