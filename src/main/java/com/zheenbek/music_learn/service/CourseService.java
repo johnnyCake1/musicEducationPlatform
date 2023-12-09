@@ -85,8 +85,14 @@ public class CourseService {
     }
 
     public List<CourseResponseDTO> getAllCourses(boolean onlyPublished) {
-        return courseRepository.findAll().stream()
-                .filter(course -> !onlyPublished || course.isPublished())
+        if (onlyPublished){
+            return courseRepository.findAllByIsPublished(true)
+                    .stream()
+                    .map(CourseService::mapCourseToDto)
+                    .collect(Collectors.toList());
+        }
+        return courseRepository.findAll()
+                .stream()
                 .map(CourseService::mapCourseToDto)
                 .collect(Collectors.toList());
     }
@@ -433,7 +439,10 @@ public class CourseService {
     public List<CourseResponseDTO> getAllCoursesByFiltering(Boolean mostEnrollment, Integer limit) {
         final boolean ONLY_PUBLISHED = true;
         if (mostEnrollment != null && mostEnrollment) {
-            courseRepository.findPublishedCoursesOrderByEnrolledStudentsDesc(ONLY_PUBLISHED, limit);
+            List<Course> courses = courseRepository.findPublishedCoursesOrderByEnrolledStudentsDesc(ONLY_PUBLISHED, limit);
+            return courses.stream()
+                    .map(CourseService::mapCourseToDto)
+                    .collect(Collectors.toList());
         }
         return getAllCourses(ONLY_PUBLISHED);
     }

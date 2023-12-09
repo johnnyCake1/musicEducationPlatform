@@ -12,15 +12,15 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findAllByAuthorId(Long authorId);
 
-    List<Course> findByEnrolledStudentsId(Long userId);
+    List<Course> findAllByIsPublished(boolean isPublished);
     List<Course> findAllByCategoryId(Long categoryId);
 
     // get most enrolled courses
-    @Query(value = "SELECT * FROM Course c WHERE c.isPublished = :isPublished ORDER BY (SELECT COUNT(*) FROM course_enrolled_students WHERE course_id = c.id) DESC LIMIT :limit", nativeQuery = true)
+    @Query(value = "SELECT * FROM Course c WHERE c.is_published = :isPublished ORDER BY (SELECT COUNT(*) FROM course_enrolled_students WHERE course_id = c.id) DESC LIMIT :limit", nativeQuery = true)
     List<Course> findPublishedCoursesOrderByEnrolledStudentsDesc(
-            @Param("isPublished") boolean isPublished,
-            @Param("limit") int limit
-    );
+                    @Param("isPublished") boolean isPublished,
+                    @Param("limit") int limit
+            );
     @Query("SELECT c FROM Course c WHERE " +
             "LOWER(c.courseName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.username) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
