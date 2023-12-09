@@ -78,9 +78,7 @@ const QuizCreator = ({
 
   const handleCorrectOptionChange = (event, questionIndex, optionIndex) => {
     const updatedQuizData = [...quizData];
-    const optionValue = `${String.fromCharCode(65 + optionIndex)}) ${
-      quizData[questionIndex].options[optionIndex]
-    }`;
+    const optionValue = `${quizData[questionIndex].options[optionIndex]}`;
     const optionIndexInCorrectOptions =
       updatedQuizData[questionIndex].correctOptions.indexOf(optionValue);
 
@@ -117,9 +115,7 @@ const QuizCreator = ({
               <input
                 type="checkbox"
                 className="mr-2 w-5 ml-5"
-                checked={question.correctOptions.includes(
-                  `${String.fromCharCode(65 + optionIndex)}) ${option}`
-                )}
+                checked={question.correctOptions.includes(option)}
                 onChange={(event) =>
                   handleCorrectOptionChange(event, questionIndex, optionIndex)
                 }
