@@ -461,7 +461,6 @@ public class CourseService {
         course.setRequirements(courseDTO.getRequirements());
         course.setWhatYouWillLearn(courseDTO.getWhatYouWillLearn());
         course.setTags(courseDTO.getTags());
-        course.setReviews(courseDTO.getReviews());
         course.setCreationDate(courseDTO.getCreationDate());
         course.setLastUpdatedDate(courseDTO.getLastUpdatedDate());
         course.setPublished(courseDTO.isPublished());
