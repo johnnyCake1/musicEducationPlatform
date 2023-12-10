@@ -278,6 +278,7 @@ public class CourseService {
                 throw new EntityNotFoundException("Course not found with ID" + courseDTO.getId() + " that has the user as author with ID: " + courseDTO.getAuthorId());
             }
             boolean oldPublishedStated = course.isPublished();
+            courseDTO.setLastUpdatedDate(new Date());
             //update course with given object
             Course updatedCourse = saveCourse(mapRequestDtoToCourse(courseDTO));
             //if it went from published to not published, then we move it to drafts. And if it went from not published to published then we move it to published

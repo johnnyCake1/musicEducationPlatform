@@ -15,7 +15,6 @@ const ProfilePage = () => {
   const [jwt] = useLocalStorageState('', 'jwt');
   const [currentUser] = useLocalStorageState(null, 'currentUser');
   const [user, setUser] = useState(null);
-  const [reviews, setReviews] = useState(null);
   const [takenCourses, setTakenCourses] = useState([]);
   const [publishedCourses, setPublishedCourses] = useState([]);
   const [toggleRefresh, setToggleRefresh] = useState(false);
@@ -30,12 +29,6 @@ const ProfilePage = () => {
     });
   }, [toggleRefresh, jwt, userId]);
   useEffect(() => {
-    //get the reviews info
-    httpReqAsync(`/api/v1/users/${userId}/reviews`, 'GET', jwt).then(
-      (result) => {
-        setReviews(result);
-      }
-    );
     //get the taken courses
     httpReqAsync(`/api/v1/users/${userId}/taken-courses`, 'GET', jwt).then(
       (result) => {
@@ -48,13 +41,11 @@ const ProfilePage = () => {
         setPublishedCourses(result);
       }
     );
-  }, [jwt, userId, navigate]);
+  }, [jwt, userId, toggleRefresh, navigate]);
 
   const handleMessage = () => {
     navigate(`/chat?otherUserId=${userId}`);
   };
-
-  console.log('profile card loaded');
 
   const handleFollow = () => {
     httpReqAsync(
@@ -171,9 +162,9 @@ const ProfilePage = () => {
               <div className="mt-10">
                 <h2 className="text-2xl font-semibold">Reviews</h2>
                 <div className="mt-2">
-                  {reviews && (
+                  {user?.reviews && (
                     <Reviews
-                      reviews={reviews}
+                      reviews={user.reviews}
                       currentUserCanReview={
                         String(currentUser.id) !== String(userId)
                       }
