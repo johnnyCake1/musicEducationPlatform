@@ -21,7 +21,7 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
     
-    private final int TOKEN_DURATION_MILLISECONDS = 10 * 1000 * 60 * 60 * 10; // temporarily 100 hours
+    private final int TOKEN_DURATION_MILLISECONDS = 10 * 1000 * 60 * 60 * 10 * 5; // temporarily 100 * 5 hours
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

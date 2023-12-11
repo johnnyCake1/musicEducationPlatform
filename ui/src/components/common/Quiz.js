@@ -53,9 +53,7 @@ const Exam = ({ quizData, nextAllowed = () => {} }) => {
     for (let i = 0; i < totalQuestions; i++) {
       const question = quizData[i];
       const studentAnswer = studentAnswers[i];
-      const correctOptions = question.correctOptions.map(
-        (opt) => opt.split(') ')[1]
-      ); // Extract correct option values
+      const correctOptions = question.correctOptions;
       if (
         studentAnswer.every((ans) => correctOptions.includes(ans)) &&
         studentAnswer.length === correctOptions.length
