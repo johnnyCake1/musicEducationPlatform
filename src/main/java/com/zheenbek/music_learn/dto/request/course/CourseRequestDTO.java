@@ -236,11 +236,11 @@ public class CourseRequestDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CourseRequestDTO that = (CourseRequestDTO) o;
-        return Float.compare(price, that.price) == 0 && isPublished == that.isPublished && Objects.equals(id, that.id) && Objects.equals(authorId, that.authorId) && Objects.equals(author, that.author) && Objects.equals(courseName, that.courseName) && Objects.equals(courseShortDescription, that.courseShortDescription) && Objects.equals(courseLongDescription, that.courseLongDescription) && Objects.equals(categoryId, that.categoryId) && Objects.equals(promoVideoId, that.promoVideoId) && Objects.equals(promoVideoPath, that.promoVideoPath) && Objects.equals(previewImageId, that.previewImageId) && Objects.equals(previewImagePath, that.previewImagePath) && Objects.equals(enrolledStudentsIds, that.enrolledStudentsIds) && Objects.equals(savedInStudentsIds, that.savedInStudentsIds) && Objects.equals(enrolledStudents, that.enrolledStudents) && Objects.equals(curriculum, that.curriculum) && Objects.equals(requirements, that.requirements) && Objects.equals(whatYouWillLearn, that.whatYouWillLearn) && Objects.equals(tags, that.tags) && Objects.equals(creationDate, that.creationDate) && Objects.equals(lastUpdatedDate, that.lastUpdatedDate);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, authorId, author, price, courseName, courseShortDescription, courseLongDescription, categoryId, promoVideoId, promoVideoPath, previewImageId, previewImagePath, enrolledStudentsIds, savedInStudentsIds, enrolledStudents, curriculum, requirements, whatYouWillLearn, tags, creationDate, lastUpdatedDate, isPublished);
+        return Objects.hash(id);
     }
 }
