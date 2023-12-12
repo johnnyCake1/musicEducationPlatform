@@ -11,7 +11,7 @@ const Testimonials = () => {
     });
   }, []);
   return (
-    <section>
+    <section id='feedbacks'>
       <div className="container md:space-y-10 space-y-5">
         <div
           className="w-full mx-auto text-center"

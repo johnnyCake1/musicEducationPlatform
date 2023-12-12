@@ -22,17 +22,19 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                     @Param("limit") int limit
             );
     @Query("SELECT c FROM Course c WHERE " +
+            "c.isPublished = true AND (" +
             "LOWER(c.courseName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.username) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.firstName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.lastName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.courseShortDescription) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.courseLongDescription) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
-            "EXISTS (SELECT element FROM c.whatYouWillLearn element WHERE LOWER(element) LIKE CONCAT('%', LOWER(:keyword), '%'))")
+            "EXISTS (SELECT element FROM c.whatYouWillLearn element WHERE LOWER(element) LIKE CONCAT('%', LOWER(:keyword), '%')))"
+    )
     List<Course> searchCoursesByKeyword(@Param("keyword") String keyword);
 
     @Query("SELECT c FROM Course c WHERE " +
-            "c.author.id != :userId AND (" +
+            "c.author.id != :userId AND c.isPublished = true AND (" +
             "LOWER(c.courseName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.username) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
             "LOWER(c.author.firstName) LIKE CONCAT('%', LOWER(:keyword), '%') OR " +
@@ -43,6 +45,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> searchCoursesByKeyword(@Param("keyword") String keyword, @Param("userId") Long userId);
 
     // Custom method to fetch N random courses
-    @Query(nativeQuery = true, value = "SELECT * FROM Course WHERE author_id != :userId ORDER BY RAND() LIMIT :limit")
+    @Query(nativeQuery = true, value = "SELECT * FROM Course WHERE is_published AND author_id != :userId ORDER BY RAND() LIMIT :limit")
     List<Course> findRandomCourses(@Param("limit") int limit, @Param("userId") Long userId);
 }

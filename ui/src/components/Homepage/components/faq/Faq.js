@@ -17,7 +17,7 @@ const Faq = () => {
       <div className="container faq">
         <div className="u-title" data-aos="fade-up">
           {/* <MdOutlineLibraryBooks color="#7A66CC" size={30} /> */}
-          <h2>FAQs</h2>
+          <h2>FAQ</h2>
         </div>
         <div className="questions">
           {questions.map((question) => (

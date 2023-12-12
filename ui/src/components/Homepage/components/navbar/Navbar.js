@@ -35,16 +35,16 @@ const Navbar = () => {
           id={showMenu ? 'nav-links-mobile' : 'nav-links-mobile-hide'}
         >
           <li>
-            <a href="/">Home</a>
-          </li>
-          <li>
             <a href="#features">Features</a>
           </li>
           <li>
-            <a href="#cards">Courses</a>
+            <a href="#courses">Courses</a>
           </li>
           <li>
-            <a href="#testimonials">Feedbacks</a>
+            <a href="#feedbacks">Feedbacks</a>
+          </li>
+          <li>
+            <a href="#faq">FAQ</a>
           </li>
           <li className="nav-btn">
             <Button

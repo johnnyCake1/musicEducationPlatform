@@ -45,7 +45,7 @@ const CardsGallery = () => {
     });
   }, []);
   return (
-    <section>
+    <section id='courses'>
       <div
         data-aos="fade-left"
         className="container px-4 py-10 mx-auto lg:h-128 lg:space-x-8 lg:flex lg:items-center"
