@@ -6,7 +6,7 @@ import useLocalStorageState from '../../util/useLocalStorageState';
 import CourseCard from '../Course/components/MyCourseCard';
 import Loader from '../common/Loader';
 
-const MyLearnings = () => {
+const Transactions = () => {
   //TODO: implement finished courses filter
   const finishedCourses = [];
   const navigate = useNavigate();
@@ -106,8 +106,8 @@ const MyLearnings = () => {
     {
       name: 'sellerTransactions',
       label: 'You earned',
-      content: buyerTransactions ? (
-        buyerTransactions.length > 0 ? (
+      content: sellerTransactions ? (
+        sellerTransactions.length > 0 ? (
           <div className=" py-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Your earnings from your courses
@@ -137,7 +137,7 @@ const MyLearnings = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {buyerTransactions.map((purchase) => (
+                  {sellerTransactions.map((purchase) => (
                     <tr key={purchase.id}>
                       <td className="py-2 px-4 border-b border-gray-200">
                         #{purchase.id}
@@ -156,7 +156,7 @@ const MyLearnings = () => {
                       </td>
                       <td className="py-2 px-4 border-b border-gray-200">
                         <Link
-                          to={`/course/${purchase.course.id}/description`}
+                          to={`/courses/${purchase.course.id}/description`}
                           className="text-blue-600 hover:text-blue-900"
                         >
                           View Course
@@ -186,4 +186,4 @@ const MyLearnings = () => {
   );
 };
 
-export default MyLearnings;
+export default Transactions;

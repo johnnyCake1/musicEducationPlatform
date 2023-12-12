@@ -7,10 +7,12 @@ import useLocalStorageState from '../../util/useLocalStorageState';
 import { httpReqAsync } from '../../services/httpReqAsync';
 import ChatRoomList from '../Chat/components/ChatRoomList';
 import CourseCard from '../Course/components/CourseCard';
+import Transactions from '../Transactions/Transactions';
 
 const Dashboard = () => {
-  const [courses, setCourses] = useState([]);
-  const [recommendedCourses, setRecommendedCourses] = useState(null);
+  const [takenCourses, setTakenCourses] = useState([]);
+  const [recommendedCourses, setRecommendedCourses] = useState([]);
+  const [savedCourses, setSavedCourses] = useState([]);
   const [chatRooms, setChatRooms] = useState([]);
   const [jwt] = useLocalStorageState('', 'jwt');
   const [currentUser] = useLocalStorageState(null, 'currentUser');
@@ -31,7 +33,14 @@ const Dashboard = () => {
         'GET',
         jwt
       ).then((result) => {
-        setCourses(result);
+        setTakenCourses(result);
+      });
+      httpReqAsync(
+        `/api/v1/users/${currentUser.id}/saved-courses`,
+        'GET',
+        jwt
+      ).then((result) => {
+        setSavedCourses(result);
       });
       httpReqAsync(`/api/v1/messages/${currentUser.id}`, 'GET', jwt)
         .then((result) => {
@@ -66,12 +75,12 @@ const Dashboard = () => {
       <div className="section-container my-learnings">
         <h2>My Learnings</h2>
         <div className="cards-container">
-          {courses.length === 0 && (
-            <div className="centered">You don't have any courses yet</div>
+          {takenCourses.length === 0 && (
+            <div className="centered">You don't have any taken courses yet</div>
           )}
           <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
-            {courses.length > 0 &&
-              courses.map((course) => (
+            {takenCourses.length > 0 &&
+              takenCourses.map((course) => (
                 <MyCourseCard
                   course={course}
                   key={course.id}
@@ -80,17 +89,17 @@ const Dashboard = () => {
               ))}
           </div>
         </div>
-        {courses.length >= 3 && (
+        {takenCourses.length >= 3 && (
           <Link to="/my-courses" className="see-all-link">
             See all of my courses
           </Link>
         )}
       </div>
       <div className="dashboard-wrapper">
-        <div className="section-container saved">
+        {/*Implement Saved Items: */}
+        {/* <div className="section-container saved">
           <h2>Saved Items</h2>
           <div className="saved-container">
-            {/* Show only max 10 saved items */}
             {documents.slice(0, 10).map((document) => (
               <SavedItemsPreviewCard key={document.id} {...document} />
             ))}
@@ -102,13 +111,12 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Show "See all saved items" link only if there are more than 6 items */}
           {documents.length > 6 && (
             <Link to="/storage" className="see-all-link">
               See all saved items
             </Link>
           )}
-        </div>
+        </div> */}
 
         <div className="section-container chat">
           <h2>Chats</h2>
@@ -127,6 +135,11 @@ const Dashboard = () => {
             </div>
           )}
         </div>
+
+        <div className="section-container">
+          <Transactions />
+        </div>
+
       </div>
       <div className="section-container recommended-courses">
         <h2>Recommended Courses</h2>
@@ -136,6 +149,31 @@ const Dashboard = () => {
               .filter((course) => course.authorId !== currentUser?.id)
               .map((course) => <CourseCard course={course} />)}
         </div>
+      </div>
+
+      
+      <div className="section-container my-learnings">
+        <h2>Saved courses</h2>
+        <div className="cards-container">
+          {savedCourses.length === 0 && (
+            <div className="centered">You don't have any saved courses yet</div>
+          )}
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-5">
+            {savedCourses.length > 0 &&
+              savedCourses.map((course) => (
+                <MyCourseCard
+                  course={course}
+                  key={course.id}
+                  onClick={() => navigate(`/courses/${course.id}/description`)}
+                />
+              ))}
+          </div>
+        </div>
+        {savedCourses.length >= 3 && (
+          <Link to="/my-courses" className="see-all-link">
+            See all of the saved courses
+          </Link>
+        )}
       </div>
     </div>
   );

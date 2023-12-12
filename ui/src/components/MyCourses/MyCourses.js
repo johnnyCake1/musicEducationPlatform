@@ -72,7 +72,7 @@ const MyCourses = () => {
               </div>
             ) : (
               <div className="flex">
-                {'Nothing in your published courses yet :('}
+                {'Nothing in your published courses yet :)'}
               </div>
             )
           ) : (
@@ -109,7 +109,7 @@ const MyCourses = () => {
               </div>
             ) : (
               <div className="flex">
-                {'Nothing in your published courses yet :('}
+                {'Nothing in your draft courses yet :)'}
               </div>
             )
           ) : (

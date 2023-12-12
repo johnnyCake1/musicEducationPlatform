@@ -87,7 +87,8 @@ function Sidebar(props) {
                       <span> &nbsp;My learnings </span>
                     </NavLink>
                   </li>
-                  <li className={isActive('/storage', 'active')}>
+                  {/* TODO: Implement storage: */}
+                  {/* <li className={isActive('/storage', 'active')}>
                     <NavLink to="/storage">
                       <ion-icon
                         name="newspaper"
@@ -97,7 +98,7 @@ function Sidebar(props) {
                       ></ion-icon>
                       <span> &nbsp;Storage</span>
                     </NavLink>
-                  </li>
+                  </li> */}
                   <li className={isActive('/transactions', 'active')}>
                     <NavLink to="/transactions">
                       <ion-icon
