@@ -19,6 +19,8 @@ public class UserDTO {
     private String aboutMe;
     @JsonProperty(value = "img_url")
     private String profilePicturePath;
+    @JsonProperty(value = "img_id")
+    private Long profilePictureId;
     private List<String> tags;
     private List<Long> followersIds;
     private List<Long> followingsIds;
@@ -186,5 +188,13 @@ public class UserDTO {
 
     public void setReviews(List<ReviewDTO> reviews) {
         this.reviews = reviews;
+    }
+
+    public Long getProfilePictureId() {
+        return profilePictureId;
+    }
+
+    public void setProfilePictureId(Long profilePictureId) {
+        this.profilePictureId = profilePictureId;
     }
 }

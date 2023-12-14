@@ -305,7 +305,7 @@ const CourseCreationPage = () => {
 
   const handleDeleteCourse = (e) => {
     e.preventDefault();
-    window.confirm('Are you sure you want to delete student?') &&
+    window.confirm('Are you sure you want to delete this course?') &&
       httpReqAsync(
         `/api/v1/courses/${courseData.id}`,
         'DELETE',

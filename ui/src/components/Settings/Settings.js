@@ -4,17 +4,11 @@ import { FaCamera, FaLock, FaUser } from 'react-icons/fa';
 import ProfilePicture from '../Profile/components/profile_card/ProfilePicture';
 import useLocalStorageState from '../../util/useLocalStorageState';
 import { httpReqAsync } from '../../services/httpReqAsync';
-import { API_URL } from '../../constants';
 
 const Settings = () => {
-  const [currentUser, setCurrentUser] = useLocalStorageState(
-    null,
-    'currentUser'
-  );
+  const [currentUser, setCurrentUser] = useLocalStorageState(null, 'currentUser');
   const [userInfo, setUserInfo] = useState(null);
   const [jwt] = useLocalStorageState('', 'jwt');
-  const [profilePictureSrc, setProfilePictureSrc] = useState('');
-  const [newProfilePicFile, setNewProfilePicFile] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [failMessage, setFailMessage] = useState('');
 
@@ -22,7 +16,6 @@ const Settings = () => {
     httpReqAsync(`/api/v1/users/${currentUser.id}`, 'GET', jwt).then(
       (result) => {
         setUserInfo(result);
-        setProfilePictureSrc(result.img_url);
       }
     );
   }, [jwt, currentUser]);
@@ -41,79 +34,33 @@ const Settings = () => {
 
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setProfilePictureSrc(reader.result);
-    };
-
-    if (file) {
-      setNewProfilePicFile(file);
-      reader.readAsDataURL(file);
-    }
+    httpReqAsync('/api/v1/files', 'POST', jwt, file).then((result) => {
+      console.log("result", result)
+      if (result.file_url) {
+        setUserInfo((prevValue) => ({
+          ...prevValue,
+          img_url: result.file_url,
+          img_id: result.id,
+        }));
+      }
+    });
   };
-
-  const handleFileChange = (e, moduleIndex, topicIndex) => {
-    const { type, files } = e.target;
-    if (type === 'file') {
-      httpReqAsync('/api/v1/files', 'POST', jwt, files[0]).then((result) => {
-        console.log('state of result content data after sending file:', result);
-        if (result.file_url) {
-          setUserInfo((prevValue) => ({
-            ...prevValue,
-            img_url: result.file_url,
-          }));
-        }
-      });
-      return;
-    }
-  };
-
-  // const handleUsernameChange = (e) => {
-  //   setUsername(e.target.value);
-  // };
-
-  // const handlePasswordChange = (e) => {
-  //   setPassword(e.target.value);
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (newProfilePicFile) {
-      const formData = new FormData();
-      formData.append('file', newProfilePicFile);
-
-      fetch(API_URL + `/api/v1/users/${currentUser.id}/profile-picture`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.status === 200) {
-            return res.text();
-          }
-          alert("Changes couldn't be saved");
-          // return Promise.reject("Couldn't update profile picture");
-        })
-        .then((img_url) => {
-          setCurrentUser({ ...currentUser, img_url: img_url });
-          alert('Changes succesfully saved');
-        })
-        .catch((error) => {
-          console.error('error', error);
-        });
-    }
-
+    console.log("sending userInfo:", userInfo);
     httpReqAsync(`/api/v1/users/${currentUser.id}`, 'PUT', jwt, userInfo)
       .then((result) => {
-        console.log('result', result);
         setSuccessMessage('Changes succesfully saved');
+        setCurrentUser({
+          ...currentUser,
+          firstName: result.firstName,
+          lastName: result.lastName,
+          aboutMe: result.aboutMe,
+          img_url: result.img_url
+        });
       })
       .catch(() => {
-        console.log('result!');
         setFailMessage("Changes couldn't be saved");
       });
   };
@@ -127,7 +74,7 @@ const Settings = () => {
             <FaCamera className="icon" /> Profile Picture:
           </label>
           <div className="profile-picture-container">
-            <ProfilePicture imageSrc={profilePictureSrc} size={100} />
+            <ProfilePicture imageSrc={userInfo?.img_url} size={100} />
             <input
               type="file"
               id="profilePicture"
@@ -163,14 +110,6 @@ const Settings = () => {
 
         <div>
           <label htmlFor="aboutMe">About me:</label>
-          {/* <input
-            type="text"
-            id="aboutMe"
-            name="aboutMe"
-            value={userInfo?.aboutMe ?? ""}
-            onChange={handleAboutMeChange}
-            className="settings-about-me"
-          /> */}
           <textarea
             id="aboutMe"
             name="aboutMe"

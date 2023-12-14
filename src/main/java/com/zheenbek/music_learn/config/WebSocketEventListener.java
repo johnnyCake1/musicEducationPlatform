@@ -26,13 +26,8 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
 
     @Override
     public void onApplicationEvent(SessionSubscribeEvent event) {
-        System.out.println("Someone subscribed: " + event.getMessage());
-
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        System.out.println("ALL NATIVE HEADERS: " + headerAccessor.toNativeHeaderMap());
-
         String destination = headerAccessor.getDestination();
-
         try {
             Long recipientId = extractRecipientId(headerAccessor);
             if (destination.contains("/queue/chatrooms")) {

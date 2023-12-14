@@ -105,7 +105,7 @@ const Transactions = () => {
 
     {
       name: 'sellerTransactions',
-      label: 'You earned',
+      label: 'My earnings',
       content: sellerTransactions ? (
         sellerTransactions.length > 0 ? (
           <div className=" py-6">

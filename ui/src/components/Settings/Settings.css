@@ -67,3 +67,11 @@
 .settings-about-me{
     height: 5rem;
 }
+
+.success {
+  color: green;
+}
+
+.fail {
+  color: red;
+}

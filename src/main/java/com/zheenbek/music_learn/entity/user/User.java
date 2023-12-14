@@ -44,7 +44,7 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "followers")
     @JsonIdentityReference(alwaysAsId = true)
     private List<User> followings = new ArrayList<>();
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIdentityReference(alwaysAsId = true)
     private FileEntity profilePic;
     private Date startDate;

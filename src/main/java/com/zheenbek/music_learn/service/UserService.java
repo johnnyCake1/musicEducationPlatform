@@ -83,6 +83,12 @@ public class UserService {
         if (userInfo.getTags() != null) {
             user.setTags(user.getTags());
         }
+        if (userInfo.getProfilePictureId() != null) {
+            FileEntity profilePic = fileRepository.findById(userInfo.getProfilePictureId())
+                    .orElseThrow(() -> new EntityNotFoundException("Profile picture file not found with ID: " + userInfo.getProfilePictureId()));
+
+            user.setProfilePic(fileRepository.save(profilePic));
+        }
         return mapUserToDto(userRepository.save(user));
     }
 
