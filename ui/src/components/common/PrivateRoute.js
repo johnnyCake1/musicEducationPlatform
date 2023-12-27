@@ -16,7 +16,11 @@ const PrivateRoute = ({ children }) => {
           setIsTokenValid(isValid);
           setIsLoading(false);
         }
-      );
+      ).catch(err => {
+        console.log("error:", err);
+        setIsTokenValid(false);
+        setIsLoading(false);
+      });
     } else {
       setIsLoading(false);
     }

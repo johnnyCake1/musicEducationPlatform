@@ -452,7 +452,7 @@ public class CourseService {
         return categoryRepository.findAll().stream().map(CourseService::mapCategoryToDto).collect(Collectors.toList());
     }
 
-    private Course mapRequestDtoToCourse(CourseRequestDTO courseDTO) {
+    public Course mapRequestDtoToCourse(CourseRequestDTO courseDTO) {
         Course course = new Course();
         course.setId(courseDTO.getId());
         course.setCourseName(courseDTO.getCourseName());
@@ -486,7 +486,7 @@ public class CourseService {
         return course;
     }
 
-    private CourseModule mapDtoToCourseModule(CourseModuleDTO courseModuleDTO) {
+    public CourseModule mapDtoToCourseModule(CourseModuleDTO courseModuleDTO) {
         CourseModule courseModule = new CourseModule();
         courseModule.setModuleName(courseModuleDTO.getModuleName());
         if (courseModuleDTO.getCourseTopics() != null) {
@@ -495,7 +495,7 @@ public class CourseService {
         return courseModule;
     }
 
-    private CourseTopic mapDtoToCourseTopic(CourseTopicDTO courseTopicDTO) {
+    public CourseTopic mapDtoToCourseTopic(CourseTopicDTO courseTopicDTO) {
         CourseTopic courseTopic = new CourseTopic();
         courseTopic.setTopicName(courseTopicDTO.getTopicName());
         if (courseTopicDTO.getContentData() != null) {
@@ -504,7 +504,7 @@ public class CourseService {
         return courseTopic;
     }
 
-    private ContentData mapDtoToContentData(ContentDataDTO contentDataDTO) {
+    public ContentData mapDtoToContentData(ContentDataDTO contentDataDTO) {
         ContentData contentData = new ContentData();
         contentData.setContentType(contentDataDTO.getContentType());
         if (contentDataDTO.getQuiz() != null) {
@@ -519,7 +519,7 @@ public class CourseService {
         return contentData;
     }
 
-    private Question mapDtoToQuiz(Question questionDTO) {
+    public Question mapDtoToQuiz(Question questionDTO) {
         if (questionDTO.getId() != null) {
             return questionRepository.findById(questionDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Question entity not found with ID: " + questionDTO.getId()));
         }

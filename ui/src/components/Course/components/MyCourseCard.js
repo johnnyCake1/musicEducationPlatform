@@ -74,7 +74,7 @@ const CourseCard = ({ course }) => {
             <div className="text-sm font-semibold">
               Author: {course.author.username}
             </div>
-            <div className="text-lg font-semibold"> ${course.price} </div>
+            <div className="text-lg font-semibold">  {course.price ? '$' + course.price : 'FREE'} </div>
           </div>
         </div>
       </Link>

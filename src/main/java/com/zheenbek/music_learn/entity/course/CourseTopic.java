@@ -40,21 +40,5 @@ public class CourseTopic {
         this.contentData = contentData;
     }
 
-    //    public FileEntity getDisplayableFile() {
-//        return displayableFile;
-//    }
-//
-//    public DisplayableContentType getContentType() {
-//        return contentType;
-//    }
-//
-//    public void setContentType(DisplayableContentType contentType) {
-//        this.contentType = contentType;
-//    }
-//
-//    public void setDisplayableFile(FileEntity displayableFile) {
-//        this.displayableFile = displayableFile;
-//    }
-
 }
 

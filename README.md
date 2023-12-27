@@ -1,1 +1,1 @@
-m# musicEducationPlatform
+Refer to user documentation part in ZHEENBEK_YFAGE6_THESIS.pdf
